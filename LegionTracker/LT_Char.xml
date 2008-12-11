@@ -62,5 +62,8 @@
         </FontString>
       </Layer>
     </Layers>
+    <Scripts>
+      <OnLoad>this:Hide();</OnLoad>
+    </Scripts>
   </Frame>
 </Ui>
