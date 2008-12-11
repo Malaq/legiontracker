@@ -10,7 +10,7 @@
 LT_Main.lua
 LT_Settings.lua
 LT_Attendance.lua
-Loot.lua
+LT_Loot.lua
 LT_Char.lua
 LT_Timer.lua
 LT_Export.lua
