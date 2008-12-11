@@ -16,6 +16,7 @@ function LT_SlashHandler(args)
 		DEFAULT_CHAT_FRAME:AddMessage(format("-------------------------------------"), 1, 1, 0)
 		DEFAULT_CHAT_FRAME:AddMessage(format("show - Displays the main window."), 1, 1, 0)
 		DEFAULT_CHAT_FRAME:AddMessage(format("hide - Hides the main window."), 1, 1, 0)
+		DEFAULT_CHAT_FRAME:AddMessage(format("loot - Loot commands."), 1, 1, 0)
 	else
 		if args == "show" then
 		    LT_Main:Show();
@@ -23,10 +24,13 @@ function LT_SlashHandler(args)
 		if args == "hide" then
 		    LT_Main:Hide();
 		end
+		if args == "loot" then
+			LT_Loot_SlashHandler(args);
+		end
 	end
 end
 
-function print(message, msg_format)
+function prettyprint(message, msg_format)
     if (msg_format == nil) then
         DEFAULT_CHAT_FRAME:AddMessage(message);
     else
