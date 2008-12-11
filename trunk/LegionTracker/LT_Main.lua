@@ -4,7 +4,7 @@
     this:RegisterEvent("CHAT_MSG_SYSTEM");
     
     SLASH_LEGIONTRACKER1 = "/lt";
-    --SLASH_LEGIONTRACKER2 = "/legiontracker";
+    SLASH_LEGIONTRACKER2 = "/legiontracker";
 	SlashCmdList['LEGIONTRACKER'] = function(msg)
 		LT_SlashHandler(msg)
 	end
@@ -12,10 +12,10 @@ end
 
 function LT_SlashHandler(args)
     if args == '' then
-		DEFAULT_CHAT_FRAME:AddMessage(format("Legion Tracker"), 1, 1, 0)
-		DEFAULT_CHAT_FRAME:AddMessage(format("-------------------------------------"), 1, 1, 0)
-		DEFAULT_CHAT_FRAME:AddMessage(format("show - Displays the main window."), 1, 1, 0)
-		DEFAULT_CHAT_FRAME:AddMessage(format("hide - Hides the main window."), 1, 1, 0)
+		LT_Print("Legion Tracker", "blah");
+		LT_Print("-------------------------------------", "blah");
+		LT_Print("show - Displays the main window.", "blah");
+		LT_Print("hide - Hides the main window.", "blah");
 		DEFAULT_CHAT_FRAME:AddMessage(format("loot - Loot commands."), 1, 1, 0)
 	else
 		if args == "show" then
@@ -30,7 +30,7 @@ function LT_SlashHandler(args)
 	end
 end
 
-function prettyprint(message, msg_format)
+function LT_Print(message, msg_format)
     if (msg_format == nil) then
         DEFAULT_CHAT_FRAME:AddMessage(message);
     else
