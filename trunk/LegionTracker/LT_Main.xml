@@ -443,11 +443,13 @@
             </FontString>
           </Layer>
         </Layers>
+        <Scripts>
+          <OnMouseDown>LT_Timer_Clicked(arg1);</OnMouseDown>
+        </Scripts>
       </Frame>
     </Frames>
     <Scripts>
-      <OnLoad>this:Hide();
-LT_OnLoad();
+      <OnLoad>LT_OnLoad();
 </OnLoad>
     </Scripts>
   </Frame>
