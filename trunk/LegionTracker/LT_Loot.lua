@@ -8,13 +8,19 @@ LT_UniqueLootId = 0;
 LT_VarsLoaded = nil;
 
 function LT_Loot_SlashHandler(args)
+	if (string.find(args, " ") == nil) then
+		LT_Print("lt loot reset");
+		LT_Print("lt loot print loot");
+		LT_Print("lt loot print players");
+		return
+	end
+
 	local cmd = string.sub(args, string.find(args, " ")+1);
 	LT_Print("Got command "..cmd);
 	if cmd == "reset" then
 		LT_PlayerLootTable = {};
 		LT_LootTable = {};
-	end
-	if cmd == "print loot" then
+	elseif cmd == "print loot" then
 		LT_Print("Loots:");
 		for k1, v1 in pairs(LT_LootTable) do
 			LT_Print("*");
@@ -22,8 +28,7 @@ function LT_Loot_SlashHandler(args)
 				LT_Print(string.format("%s:  %s", key, value));
 			end
 		end
-	end
-	if cmd == "print players" then
+	elseif cmd == "print players" then
 		LT_Print("Players:");
 		for k1, v1 in pairs(LT_PlayerLootTable) do
 			LT_Print(k1..":");
