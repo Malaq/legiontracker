@@ -12,22 +12,17 @@ function Print(text)
 end
 
 function Loot_OnEvent(this, event, arg1)
-	if event == "VARIABLES_LOADED" then
-		LT_VarsLoaded = 1;
-	end
-
-	if LT_VarsLoaded == nil then
-		return
-	end
-
 	if event == "CHAT_MSG_LOOT" then
 		local player = nil;
+		Print(arg1);
 		-- Remove receive* item, just for testing
 		if (string.find(arg1, "receive loot:") or string.find(arg1, "receives loot:") or string.find(arg1, "receive* item")) then
-			player = string.sub(arg1, string.find(arg1, " receive"));	
+			player = string.sub(arg1, 0, string.find(arg1, " receive")-1);	
 			if (player == "You") then
+				Print("Player was YOU!");
 				player = UnitName("player");
 			end
+			Print("Setting player to '"..player.."' because of "..arg1);
 		else 
 			return
 		end
