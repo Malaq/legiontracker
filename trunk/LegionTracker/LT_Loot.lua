@@ -7,22 +7,42 @@ LT_UniqueLootId = 0;
 
 LT_VarsLoaded = nil;
 
-function Print(text)
-	DEFAULT_CHAT_FRAME:AddMessage(text, 1, 1, 0);
+function LT_Loot_SlashHandler(args)
+	local cmd = string.sub(args, string.find(args, " ")+1);
+	LT_Print("Got command "..cmd);
+	if cmd == "reset" then
+		LT_PlayerLootTable = {};
+		LT_LootTable = {};
+	end
+	if cmd == "print loot" then
+		LT_Print("Loots:");
+		for k1, v1 in pairs(LT_LootTable) do
+			LT_Print("*");
+			for key, value in pairs(LT_LootTable[k1]) do
+				LT_Print(string.format("%s:  %s", key, value));
+			end
+		end
+	end
+	if cmd == "print players" then
+		LT_Print("Players:");
+		for k1, v1 in pairs(LT_PlayerLootTable) do
+			LT_Print(k1..":");
+			for key, value in pairs(LT_PlayerLootTable[k1]) do
+				LT_Print(string.format("%s", key));
+			end
+		end
+	end
 end
 
 function Loot_OnEvent(this, event, arg1)
 	if event == "CHAT_MSG_LOOT" then
 		local player = nil;
-		Print(arg1);
 		-- Remove receive* item, just for testing
 		if (string.find(arg1, "receive loot:") or string.find(arg1, "receives loot:") or string.find(arg1, "receive* item")) then
 			player = string.sub(arg1, 0, string.find(arg1, " receive")-1);	
 			if (player == "You") then
-				Print("Player was YOU!");
 				player = UnitName("player");
 			end
-			Print("Setting player to '"..player.."' because of "..arg1);
 		else 
 			return
 		end
@@ -48,19 +68,7 @@ function Loot_OnEvent(this, event, arg1)
 		LT_LootTable[lootId]["zone"] = GetRealZoneText();
 		LT_LootTable[lootId]["subzone"] = GetSubZoneText();
 
-		Print("Players:");
-		for key, value in pairs(LT_PlayerLootTable[player]) do
-			Print(string.format("key: %s  value: %s", key, value));
-		end
 
-		Print("__________________");
-		Print("Loots:");
-		for k1, v1 in pairs(LT_LootTable) do
-			Print("*");
-			for key, value in pairs(LT_LootTable[k1]) do
-				Print(string.format("key: %s  value: %s", key, value));
-			end
-		end
 	end
 end
 

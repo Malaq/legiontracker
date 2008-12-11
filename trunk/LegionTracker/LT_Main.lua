@@ -16,7 +16,7 @@ function LT_SlashHandler(args)
 		LT_Print("-------------------------------------", "blah");
 		LT_Print("show - Displays the main window.", "blah");
 		LT_Print("hide - Hides the main window.", "blah");
-		DEFAULT_CHAT_FRAME:AddMessage(format("loot - Loot commands."), 1, 1, 0)
+		LT_Print("loot - Loot commands.");
 	else
 		if args == "show" then
 		    LT_Main:Show();
@@ -24,7 +24,7 @@ function LT_SlashHandler(args)
 		if args == "hide" then
 		    LT_Main:Hide();
 		end
-		if args == "loot" then
+		if string.find(args, "loot") then
 			LT_Loot_SlashHandler(args);
 		end
 	end
