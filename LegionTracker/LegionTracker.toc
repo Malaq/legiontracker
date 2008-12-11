@@ -1,7 +1,19 @@
 ## Interface: 20400
 ## Title: LegionTracker
+## Author: Malaaq, Happyduude
 ## Version: 0.1
-## Author:
-## Notes: 
+## eMail: legiontracker@the-hermit.net
+## URL: n/a
+## DefaultState: Enabled
+## LoadOnDemand: 0
+LT_Main.lua
+LT_Settings.lua
+LT_Attendance.lua
 Loot.lua
-
+LT_Char.lua
+LT_Timer.lua
+LT_Export.lua
+LT_Main.xml
+LT_Char.xml
+LT_Settings.xml
+LT_Export.xml
