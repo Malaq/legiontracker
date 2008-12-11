@@ -1,7 +1,12 @@
-﻿function LT_OnLoad()
+﻿LT_VERSION = "Legion Tracker 0.1"
+
+function LT_OnLoad()
     this:RegisterEvent("VARIABLES_LOADED");
     this:RegisterEvent("GUILD_ROSTER_UPDATE");
     this:RegisterEvent("CHAT_MSG_SYSTEM");
+    
+    version_label = getglobal("LT_Main".."Version".."Label");
+    version_label:SetText(LT_VERSION);
     
     SLASH_LEGIONTRACKER1 = "/lt";
     SLASH_LEGIONTRACKER2 = "/legiontracker";
