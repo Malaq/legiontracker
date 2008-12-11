@@ -62,5 +62,10 @@
         </FontString>
       </Layer>
     </Layers>
+    <Scripts>
+      <OnLoad>this:Hide();
+LT_OnLoad();
+</OnLoad>
+    </Scripts>
   </Frame>
 </Ui>
