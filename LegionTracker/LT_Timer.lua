@@ -66,6 +66,7 @@ end
 function LT_Timer_ShowInfo(args)
     local info_label = getglobal("LT_Main".."TimerInfo".."Label");
     if (args == nil) then
+        info_label:SetTextColor(1, 1, 1);
         info_label:SetText(string.format("Tic: %02d:%02d; Stop: %02d:%02d:%02d", LT_GetInterval("min"), LT_GetInterval("sec"), LT_GetInterval("durationhr"),LT_GetInterval("durationmin"),LT_GetInterval("durationsec")));
     else
         info_label:SetText(args);
@@ -235,6 +236,7 @@ function LT_TimerOnUpdate(self, elapsed)
                 TIMER_HR = floor(TIMER_TOTAL/3600);
                 
                 timer_label = getglobal("LT_Main".."Timer".."Label");
+                timer_label:SetTextColor(0, 1, 1);
                 timer_label:SetText(string.format("%02d:%02d:%02d", TIMER_HR, TIMER_MIN, TIMER_SEC));
             end
             

@@ -192,7 +192,7 @@ end
 
 function LT_LoadLabels()
     local timer_label = getglobal("LT_Main".."Timer".."Label");
---    timer_label:SetText(string.format("%02d:%02d:%02d", "0", "0", "0"));
+    timer_label:SetTextColor(0, 1, 1);
     timer_label:SetText("<Click for timer>");
     
     local version_label = getglobal("LT_Main".."Version".."Label");
