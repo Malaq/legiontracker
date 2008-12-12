@@ -168,7 +168,8 @@
           </Slider>
         </Frames>
         <Scripts>
-          <OnValueChanged>LT_PlayerListSliderChanged();</OnValueChanged>
+          <OnValueChanged>LT_PlayerListSliderChanged();
+</OnValueChanged>
         </Scripts>
       </Frame>
       <Frame name="$parentUnassignedHead">
@@ -383,7 +384,7 @@
         </Anchors>
         <Layers>
           <Layer>
-            <FontString name="$parentLabel" font="Fonts\FRIZQT__.TTF" text="$parentNameHeadLabel" justifyH="LEFT">
+            <FontString name="$parentLabel" font="Fonts\FRIZQT__.TTF" text="$parentNameHeadLabel">
               <Anchors>
                 <Anchor point="TOPLEFT" />
                 <Anchor point="BOTTOMRIGHT" />
@@ -558,9 +559,11 @@
       </Frame>
     </Frames>
     <Scripts>
-      <OnEvent>LT_Main_OnEvent(this, event, args);</OnEvent>
       <OnLoad>LT_OnLoad();
 </OnLoad>
+      <OnEvent>LT_Main_OnEvent(this, event, args);
+</OnEvent>
+      <OnShow>LT_Main_OnShow();</OnShow>
     </Scripts>
   </Frame>
 </Ui>
