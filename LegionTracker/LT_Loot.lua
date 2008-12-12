@@ -1,4 +1,4 @@
-LT_LootFrame = CreateFrame("Frame", "LegionTrackerLoot");
+﻿LT_LootFrame = CreateFrame("Frame", "LegionTrackerLoot");
 -- playername -> { {loot_ids}->1 }
 LT_PlayerLootTable = {};
 -- loot_id -> { ... }
@@ -7,8 +7,10 @@ LT_UniqueLootId = 0;
 
 LT_VarsLoaded = nil;
 
+
 function LT_Loot_SlashHandler(args)
-	if (string.find(args, " ") == nil) then
+    LT_Print("Loot with args: "..args);
+    if (string.find(args, " ") == nil) then
 		LT_Print("lt loot reset");
 		LT_Print("lt loot print loot");
 		LT_Print("lt loot print players");
@@ -73,7 +75,7 @@ function Loot_OnEvent(this, event, arg1)
 		LT_LootTable[lootId]["zone"] = GetRealZoneText();
 		LT_LootTable[lootId]["subzone"] = GetSubZoneText();
 
-
+        LT_RedrawPlayerList();
 	end
 end
 
