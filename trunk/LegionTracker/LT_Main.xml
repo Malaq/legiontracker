@@ -104,6 +104,59 @@
                 <AbsValue val="8" />
               </EdgeSize>
             </Backdrop>
+            <Layers>
+              <Layer>
+                <FontString name="$parentTitle" font="Fonts\FRIZQT__.TTF">
+                  <Anchors>
+                    <Anchor point="LEFT" relativePoint="RIGHT">
+                      <Offset>
+                        <AbsDimension x="2" y="0" />
+                      </Offset>
+                    </Anchor>
+                  </Anchors>
+                  <FontHeight>
+                    <AbsValue val="10" />
+                  </FontHeight>
+                  <Color r="1" g="0.8196079" b="0" />
+                  <Shadow>
+                    <Color r="0" g="0" b="0" />
+                    <Offset>
+                      <AbsDimension x="1" y="-1" />
+                    </Offset>
+                  </Shadow>
+                </FontString>
+                <FontString name="$parentLow" font="Fonts\FRIZQT__.TTF" text="Low">
+                  <Anchors>
+                    <Anchor point="BOTTOM" relativePoint="TOP" />
+                  </Anchors>
+                  <FontHeight>
+                    <AbsValue val="10" />
+                  </FontHeight>
+                  <Color r="1" g="1" b="1" />
+                  <Shadow>
+                    <Color r="0" g="0" b="0" />
+                    <Offset>
+                      <AbsDimension x="1" y="-1" />
+                    </Offset>
+                  </Shadow>
+                </FontString>
+                <FontString name="$parentHigh" font="Fonts\FRIZQT__.TTF" text="High">
+                  <Anchors>
+                    <Anchor point="TOP" relativePoint="BOTTOM" />
+                  </Anchors>
+                  <FontHeight>
+                    <AbsValue val="10" />
+                  </FontHeight>
+                  <Color r="1" g="1" b="1" />
+                  <Shadow>
+                    <Color r="0" g="0" b="0" />
+                    <Offset>
+                      <AbsDimension x="1" y="-1" />
+                    </Offset>
+                  </Shadow>
+                </FontString>
+              </Layer>
+            </Layers>
             <Scripts>
               <OnValueChanged>LT_PlayerListSliderChanged();</OnValueChanged>
             </Scripts>
