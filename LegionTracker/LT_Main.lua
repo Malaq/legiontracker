@@ -63,12 +63,18 @@ function LT_SetupPlayerList()
     LT_NumPlayersShown = floor((LT_Main:GetHeight() - (LT_Main:GetTop() - name_label:GetBottom())) / spread);
     for i = 0, LT_NumPlayersShown-1 do
         for j = 1, #labels do
-            -- NAME --
             local label_name = "LT_"..headings[j].."Label_"..i;
             _G[label_name] = CreateFrame("Button", label_name, LT_Main);
             local label = _G[label_name];
             
             label:SetParent(LT_Main);
+            
+            -- Setup OnClick for only the name
+            if (j == 1) then
+                label:SetScript("OnClick", function (this)
+                    LT_Char_ShowPlayer(this:GetText());
+                end);
+            end
             
             label:SetWidth(labels[j]:GetWidth());
             label:SetHeight(labels[j]:GetHeight());
@@ -125,9 +131,14 @@ function LT_RedrawPlayerList()
             name_label:GetFontString():SetTextColor(1.0, 1.0, 1.00);
             local class = LT_ClassLookup[name];
             class_label:SetText(class);
-            
-            local colors = RAID_CLASS_COLORS[string.upper(class)];
-            class_label:GetFontString():SetTextColor(colors.r, colors.g, colors.b);
+            local color_class = string.upper(class);
+            if (color_class == "DEATH KNIGHT") then
+                color_class = "DEATHKNIGHT";
+            end
+            local colors = RAID_CLASS_COLORS[color_class];
+            if (colors ~= nil) then
+                class_label:GetFontString():SetTextColor(colors.r, colors.g, colors.b);
+            end
             
             -- Loots
             local loot_types = {"Main", "Alt", "Off", "Unassigned"};
@@ -163,7 +174,9 @@ function LT_UpdatePlayerList()
     for i = 1, num_members do
         local class;
         LT_PlayerList[i], _, _, _, class = GetGuildRosterInfo(i);
-        LT_ClassLookup[LT_PlayerList[i]] = class;
+        if LT_PlayerList[i] ~= nil then
+            LT_ClassLookup[LT_PlayerList[i]] = class;
+        end
     end
     table.sort(LT_PlayerList);
     LT_RedrawPlayerList();
