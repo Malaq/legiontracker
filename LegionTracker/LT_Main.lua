@@ -151,7 +151,11 @@ function LT_RedrawPlayerList()
         local name = LT_PlayerList[i + offset];
         if name ~= nil and name_label ~= nil then
             name_label:SetText(name);
-            class_label:SetText(LT_ClassLookup[name]);
+            local class = LT_ClassLookup[name];
+            class_label:SetText(class);
+            
+            local colors = RAID_CLASS_COLORS[string.upper(class)];
+            class_label:GetFontString():SetTextColor(colors.r, colors.g, colors.b);
             local num_loots = 0;
             if LT_PlayerLootTable[name] ~= nil then
                 for k,v in pairs(LT_PlayerLootTable[name]) do
@@ -167,6 +171,13 @@ function LT_RedrawPlayerList()
 end
 
 function LT_UpdatePlayerList()
+    for k, v in pairs(RAID_CLASS_COLORS) do
+        LT_Print("k "..k);
+        for k2, v2 in pairs(RAID_CLASS_COLORS[k]) do
+            LT_Print("k2 "..k2.." v2 "..v2);
+        end
+    end
+   
     LT_PlayerList = {};
     LT_ClassLookup = {};
     local num_members = GetNumGuildMembers(false);
