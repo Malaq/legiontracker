@@ -3,7 +3,7 @@
   <Frame name="LT_Timer_Settings" movable="true" enableMouse="true" enableKeyboard="true">
     <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508883-59c2-4f83-ae10-27aaad48391b" />-->
     <Size>
-      <AbsDimension x="274" y="104" />
+      <AbsDimension x="258" y="110" />
     </Size>
     <Anchors>
       <Anchor point="CENTER" relativeTo="UIParent">
@@ -12,6 +12,7 @@
         </Offset>
       </Anchor>
     </Anchors>
+    <TitleRegion setAllPoints="true" />
     <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
       <BackgroundInsets>
         <AbsInset left="11" right="12" top="12" bottom="11" />
@@ -63,21 +64,146 @@
       </Layer>
     </Layers>
     <Frames>
-      <Button name="$parentSettingOK" text="OK">
-        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508884-59c2-4f83-ae10-27aaad48391b" />-->
+      <Frame name="$parentSecLabel">
+        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
+        <Size>
+          <AbsDimension x="40" y="20" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="126" y="-45" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Layers>
+          <Layer>
+            <FontString name="$parentLabel" font="Fonts\FRIZQT__.TTF" text="$parentSecLabelLabel">
+              <Anchors>
+                <Anchor point="TOPLEFT" />
+                <Anchor point="BOTTOMRIGHT" />
+              </Anchors>
+              <FontHeight>
+                <AbsValue val="12" />
+              </FontHeight>
+              <Color r="1" g="0.8196079" b="0" />
+              <Shadow>
+                <Color r="0" g="0" b="0" />
+                <Offset>
+                  <AbsDimension x="1" y="-1" />
+                </Offset>
+              </Shadow>
+            </FontString>
+          </Layer>
+        </Layers>
+      </Frame>
+      <Frame name="$parentMinLabel">
+        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
+        <Size>
+          <AbsDimension x="40" y="20" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="24" y="-45" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Layers>
+          <Layer>
+            <FontString name="$parentLabel" font="Fonts\FRIZQT__.TTF" text="$parentMinLabelLabel">
+              <Anchors>
+                <Anchor point="TOPLEFT" />
+                <Anchor point="BOTTOMRIGHT" />
+              </Anchors>
+              <FontHeight>
+                <AbsValue val="12" />
+              </FontHeight>
+              <Color r="1" g="0.8196079" b="0" />
+              <Shadow>
+                <Color r="0" g="0" b="0" />
+                <Offset>
+                  <AbsDimension x="1" y="-1" />
+                </Offset>
+              </Shadow>
+            </FontString>
+          </Layer>
+        </Layers>
+      </Frame>
+      <EditBox name="$parentSecInterval" enableMouse="true">
+        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508887-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
           <AbsDimension x="50" y="20" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="202" y="-60" />
+              <AbsDimension x="172" y="-45" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Layers>
+          <Layer level="BACKGROUND">
+            <Texture name="$parentLeft" file="Interface\Common\Common-Input-Border">
+              <Size>
+                <AbsDimension x="8" y="20" />
+              </Size>
+              <Anchors>
+                <Anchor point="LEFT" />
+              </Anchors>
+              <TexCoords left="0" right="0.0625" top="0" bottom="0.625" />
+            </Texture>
+            <Texture name="$parentRight" file="Interface\Common\Common-Input-Border">
+              <Size>
+                <AbsDimension x="8" y="20" />
+              </Size>
+              <Anchors>
+                <Anchor point="RIGHT" />
+              </Anchors>
+              <TexCoords left="0.9375" right="1" top="0" bottom="0.625" />
+            </Texture>
+            <Texture name="$parentMiddle" file="Interface\Common\Common-Input-Border">
+              <Size>
+                <AbsDimension x="10" y="20" />
+              </Size>
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT" />
+                <Anchor point="RIGHT" relativeTo="$parentRight" relativePoint="LEFT" />
+              </Anchors>
+              <TexCoords left="0.0625" right="0.9375" top="0" bottom="0.625" />
+            </Texture>
+          </Layer>
+        </Layers>
+        <FontString font="Fonts\ARIALN.TTF">
+          <FontHeight>
+            <AbsValue val="14" />
+          </FontHeight>
+          <Color r="1" g="1" b="1" />
+          <Shadow>
+            <Color r="0" g="0" b="0" />
+            <Offset>
+              <AbsDimension x="1" y="-1" />
+            </Offset>
+          </Shadow>
+        </FontString>
+      </EditBox>
+      <Button name="$parentSettingOK" text="OK">
+        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508884-59c2-4f83-ae10-27aaad48391b" />-->
+        <Size>
+          <AbsDimension x="48" y="20" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="188" y="-71" />
             </Offset>
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnMouseDown>LT_SetInterval(LT_Timer_SettingsTimeInterval:GetText());
-LT_Timer_Settings:Hide();</OnMouseDown>
+          <OnClick>LT_SetInterval(LT_Timer_SettingsMinInterval:GetText(),"min");
+LT_SetInterval(LT_Timer_SettingsSecInterval:GetText(),"sec");
+LT_Timer_Settings:Hide();
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -107,15 +233,15 @@ LT_Timer_Settings:Hide();</OnMouseDown>
         <HighlightFont style="GameFontHighlight" />
         <DisabledFont style="GameFontDisable" />
       </Button>
-      <EditBox name="$parentTimeInterval" enableMouse="true">
+      <EditBox name="$parentMinInterval" enableMouse="true">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508887-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
-          <AbsDimension x="141" y="20" />
+          <AbsDimension x="50" y="20" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="25" y="-60" />
+              <AbsDimension x="70" y="-45" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -167,18 +293,18 @@ LT_Timer_Settings:Hide();</OnMouseDown>
       <Frame name="$parentTimerSetting1">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
-          <AbsDimension x="227" y="20" />
+          <AbsDimension x="212" y="20" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="25" y="-23" />
+              <AbsDimension x="24" y="-19" />
             </Offset>
           </Anchor>
         </Anchors>
         <Layers>
           <Layer>
-            <FontString name="$parentLabel" font="Fonts\FRIZQT__.TTF" text="Enter time interval in seconds.">
+            <FontString name="$parentLabel" font="Fonts\FRIZQT__.TTF" text="Enter time interval in minutes.">
               <Anchors>
                 <Anchor point="TOPLEFT" />
                 <Anchor point="BOTTOMRIGHT" />
@@ -199,8 +325,10 @@ LT_Timer_Settings:Hide();</OnMouseDown>
       </Frame>
     </Frames>
     <Scripts>
-      <OnLoad>this:Hide();</OnLoad>
-      <OnShow>LT_Timer_Settings_OnShow();</OnShow>
+      <OnLoad>this:Hide();
+</OnLoad>
+      <OnShow>LT_Timer_Settings_OnShow();
+this:SetFrameLevel(100);</OnShow>
     </Scripts>
   </Frame>
 </Ui>

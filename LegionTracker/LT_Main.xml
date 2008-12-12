@@ -307,6 +307,9 @@
             </Offset>
           </Anchor>
         </Anchors>
+        <Scripts>
+          <OnClick>LT_Print(arg1);</OnClick>
+        </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
         </NormalTexture>
@@ -348,7 +351,7 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnMouseDown>LT_Main:Hide();</OnMouseDown>
+          <OnClick>LT_Main:Hide();</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -444,7 +447,8 @@
           </Layer>
         </Layers>
         <Scripts>
-          <OnMouseDown>LT_Timer_Clicked(arg1);</OnMouseDown>
+          <OnMouseDown>LT_Timer_Clicked(arg1);
+</OnMouseDown>
         </Scripts>
       </Frame>
     </Frames>
