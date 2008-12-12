@@ -74,7 +74,7 @@ function LT_SetupPlayerList()
         local font_string = label:CreateFontString("$parentText", "OVERLAY", "GameFontNormal");
         font_string:SetFont("Fonts\\FRIZQT__.TTF", 9);
         font_string:SetText("Player"..i);
-        font_string:SetTextColor(1.0, 0.9, 0.8);
+        font_string:SetTextColor(0.8, 1.0, 0.8);
         font_string:SetJustifyH("LEFT");
         label:SetFontString(font_string);
         
@@ -171,13 +171,6 @@ function LT_RedrawPlayerList()
 end
 
 function LT_UpdatePlayerList()
-    for k, v in pairs(RAID_CLASS_COLORS) do
-        LT_Print("k "..k);
-        for k2, v2 in pairs(RAID_CLASS_COLORS[k]) do
-            LT_Print("k2 "..k2.." v2 "..v2);
-        end
-    end
-   
     LT_PlayerList = {};
     LT_ClassLookup = {};
     local num_members = GetNumGuildMembers(false);
