@@ -4,13 +4,8 @@ TIMER_TOTAL = 0;
 LT_Timer_UpdateInterval = 1.0;
 
 function LT_TimerOnLoad()
+    this:RegisterEvent("VARIABLES_LOADED");
     LT_Print("Loaded LT_Timer");
-    if (LT_TimerInterval == nil) then
-        LT_TimerInterval = {};
-        LT_SetInterval(1,"min");
-        LT_SetInterval(0,"sec");
-        LT_Print("LT_Timer: min-"..LT_TimerInterval["min"].." sec-"..LT_TimerInterval["sec"].." total-"..LT_TimerInterval["total"]);
-    end
 end
 
 function LT_Timer_Clicked(args)
@@ -20,6 +15,31 @@ function LT_Timer_Clicked(args)
     elseif (args == "RightButton") then
         LT_Timer_Settings:Show();
     end
+end
+
+function LT_Timer_OnEvent(arg)
+    if (event == "VARIABLES_LOADED") then
+        LT_Print("EVENT: "..event);
+        if (LT_TimerInterval == nil) then
+            LT_TimerInterval = {};
+            LT_SetInterval(1,"min");
+            LT_SetInterval(0,"sec");
+            LT_SetInterval(4,"durationhr");
+            LT_SetInterval(0,"durationmin");
+            LT_SetInterval(0,"durationsec");
+            LT_Print("LT_Timer: min-"..LT_TimerInterval["min"].." sec-"..LT_TimerInterval["sec"].." total-"..LT_TimerInterval["total"]);
+        end
+    end
+end
+
+function LT_Timer_Settings_OK()
+    LT_SetInterval(LT_Timer_SettingsMinInterval:GetText(),"min");
+    LT_SetInterval(LT_Timer_SettingsSecInterval:GetText(),"sec");
+    LT_Timer_Settings:Hide();
+end
+
+function LT_Timer_Settings_Cancel()
+    LT_Timer_Settings:Hide();
 end
 
 function LT_Timer_Settings_OnShow()
@@ -32,9 +52,36 @@ function LT_Timer_Settings_OnShow()
     sec_int:SetText(""..LT_GetInterval("sec"));
     sec_label = getglobal("LT_Timer_Settings".."SecLabel".."Label");
     sec_label:SetText("Sec:");
+    
+    durhr_int = getglobal("LT_Timer_Settings".."DurationHr");
+    durhr_int:SetText(LT_GetInterval("durationhr"));
+    durhr_label = getglobal("LT_Timer_Settings".."DurationHrLabel".."Label");
+    durhr_label:SetText("Hr:");
+    
+    durmin_int = getglobal("LT_Timer_Settings".."DurationMin");
+    durmin_int:SetText(LT_GetInterval("durationmin"));
+    durmin_label = getglobal("LT_Timer_Settings".."DurationMinLabel".."Label");
+    durmin_label:SetText("Min:");
+    
+    dursec_int = getglobal("LT_Timer_Settings".."DurationSec");
+    dursec_int:SetText(LT_GetInterval("durationsec"));
+    dursec_label = getglobal("LT_Timer_Settings".."DurationSecLabel".."Label");
+    dursec_label:SetText("Sec:");
 end
 
 function LT_SetInterval(args, arg2)
+    --If they entered nothing, set value to 0.
+    if (args == "") then
+        args = 0;
+    end
+    
+    --If they entered a non-numeric, set value to 0.
+    test = string.find(args, "%D");
+    if (test ~= nil) then
+        --args = 0;
+        return;
+    end
+    
     if (arg2 ~= nil) then
         if (arg2 == "sec") then
             LT_TimerInterval["sec"] = args;
@@ -46,28 +93,42 @@ function LT_SetInterval(args, arg2)
             if (LT_TimerInterval["sec"] == nil) then
                 LT_TimerInterval["sec"] = 0;
             end
+        elseif (arg2 == "durationhr") then
+            LT_TimerInterval["durationhr"] = args;
+            return;
+        elseif (arg2 == "durationmin") then
+            LT_TimerInterval["durationmin"] = args;
+            return;
+        elseif (arg2 == "durationsec") then
+            LT_TimerInterval["durationsec"] = args;
+            return;
         end
         LT_TimerInterval["total"] = LT_TimerInterval["min"]*60 + LT_TimerInterval["sec"];
     else
         LT_TimerInterval["total"] = args;
     end
-    LT_Print("Timer reset to total: "..LT_TimerInterval["total"]);
+    --LT_Print("Timer reset to total: "..LT_TimerInterval["total"]);
 end
 
 function LT_GetInterval(args)
     if (LT_TimerInterval == nil) then
-        LT_Print("DEBUG:  TABLE IS EMPTY");
+        LT_Print("CRITICAL ERROR, TimerInterval is empty");
         return "Err.";
     end
     if (args == nil) then
-        LT_Print("DEBUG1: "..LT_TimerInterval["total"]);
-        return ""..LT_TimerInterval["total"];
+        return LT_TimerInterval["total"];
     elseif (args == "min") then
-        LT_Print("DEBUG2: "..LT_TimerInterval["min"]);
-        return ""..LT_TimerInterval["min"];
+        LT_TimerInterval["min"] = floor(LT_TimerInterval["total"]/60);
+        return LT_TimerInterval["min"];
     elseif (args == "sec") then
-        LT_Print("DEBUG3: "..LT_TimerInterval["sec"]);
-        return ""..LT_TimerInterval["sec"];
+        LT_TimerInterval["sec"] = mod(LT_TimerInterval["total"],60);
+        return LT_TimerInterval["sec"];
+    elseif (args == "durationhr") then
+        return LT_TimerInterval["durationhr"];
+    elseif (args == "durationmin") then
+        return LT_TimerInterval["durationmin"];
+    elseif (args == "durationsec") then
+        return LT_TimerInterval["durationsec"];
     end
 end
 
