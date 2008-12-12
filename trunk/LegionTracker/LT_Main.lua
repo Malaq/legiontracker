@@ -1,4 +1,5 @@
 ﻿LT_VERSION = "Legion Tracker 0.1"
+LT_NumPlayersShown = 5;
 
 function LT_OnLoad()
     this:RegisterEvent("VARIABLES_LOADED");
@@ -13,8 +14,9 @@ function LT_OnLoad()
 	SlashCmdList['LEGIONTRACKER'] = function(msg)
 		LT_SlashHandler(msg)
 	end
-    
-    GuildRoster();
+end
+
+function LT_Main_OnShow()
 end
 
 function LT_SlashHandler(args)
@@ -45,84 +47,44 @@ function LT_Print(message, msg_format)
     end
 end
 
-num_slots = 6;
 function LT_SetupPlayerList()
-    
     local name_label = getglobal("LT_Main".."NameHead".."Label");
     local class_label = getglobal("LT_Main".."ClassHead".."Label");
-    local spread = (name_label:GetHeight()+10);
     local ms_label = getglobal("LT_Main".."MSHead".."Label");
+    local attendance_label = getglobal("LT_Main".."AttendanceHead".."Label");
+    local as_label = getglobal("LT_Main".."ASHead".."Label");   
+    local os_label = getglobal("LT_Main".."OSHead".."Label");
+    local unassigned_label = getglobal("LT_Main".."UnassignedHead".."Label");
     
-    num_slots = floor((LT_Main:GetHeight() - (LT_Main:GetTop() - name_label:GetBottom())) / spread);
-    for i = 0, num_slots-1 do
-        -- NAME --
-        local label_name = "LT_PlayerLabel_"..i;
-        _G[label_name] = CreateFrame("Button", label_name, LT_Main);
-        local label = _G[label_name];
-        
-        label:SetText("Player"..i);
-        label:SetParent(LT_Main);
-        
-        label:SetWidth(name_label:GetWidth());
-        label:SetHeight(name_label:GetHeight());
-        label:ClearAllPoints();
-        local x = 0;
-        local y = -(i+1)*spread;
-        label:SetPoint("TOPLEFT", name_label, "TOPLEFT", x, y);
-        
-        label:Show();
-        local font_string = label:CreateFontString("$parentText", "OVERLAY", "GameFontNormal");
-        font_string:SetFont("Fonts\\FRIZQT__.TTF", 9);
-        font_string:SetText("Player"..i);
-        font_string:SetTextColor(0.8, 1.0, 0.8);
-        font_string:SetJustifyH("LEFT");
-        label:SetFontString(font_string);
-        
-        -- CLASS --
-        label_name = "LT_ClassLabel_"..i;
-        _G[label_name] = CreateFrame("Button", label_name, LT_Main);
-        label = _G[label_name];
-        
-        label:SetText("Class"..i);
-        label:SetParent(LT_Main);
-        
-        label:SetWidth(class_label:GetWidth());
-        label:SetHeight(class_label:GetHeight());
-        label:ClearAllPoints();
-        x = 0;
-        y = -(i+1)*spread;
-        label:SetPoint("CENTER", class_label, "CENTER", x, y);
-        
-        label:Show();
-        font_string = label:CreateFontString("$parentText", "OVERLAY", "GameFontNormal");
-        font_string:SetFont("Fonts\\FRIZQT__.TTF", 9);
-        font_string:SetText("Player"..i);
-        font_string:SetTextColor(0.6, 1.0, 0.8);
-        font_string:SetJustifyH("LEFT");
-        label:SetFontString(font_string);
-        
-        -- MAINSPEC --
-        label_name = "LT_MainSpecLabel_"..i;
-        _G[label_name] = CreateFrame("Button", label_name, LT_Main);
-        label = _G[label_name];
-        
-        label:SetText("0");
-        label:SetParent(LT_Main);
-        
-        label:SetWidth(ms_label:GetWidth());
-        label:SetHeight(ms_label:GetHeight());
-        label:ClearAllPoints();
-        x = 0;
-        y = -(i+1)*spread;
-        label:SetPoint("CENTER", ms_label, "CENTER", x, y);
-        
-        label:Show();
-        font_string = label:CreateFontString("$parentText", "OVERLAY", "GameFontNormal");
-        font_string:SetFont("Fonts\\FRIZQT__.TTF", 9);
-        font_string:SetText("0");
-        font_string:SetTextColor(0.6, 0.9, 1.0);
-        font_string:SetJustifyH("LEFT");
-        label:SetFontString(font_string);
+    local spread = (name_label:GetHeight() + 4);
+    
+    local labels = {name_label, class_label, attendance_label, ms_label, as_label, os_label, unassigned_label};
+    local headings = {"Name", "Class", "Attendance", "MainSpec", "AltSpec", "OffSpec", "Unassigned"};
+    LT_NumPlayersShown = floor((LT_Main:GetHeight() - (LT_Main:GetTop() - name_label:GetBottom())) / spread);
+    for i = 0, LT_NumPlayersShown-1 do
+        for j = 1, #labels do
+            -- NAME --
+            local label_name = "LT_"..headings[j].."Label_"..i;
+            _G[label_name] = CreateFrame("Button", label_name, LT_Main);
+            local label = _G[label_name];
+            
+            label:SetParent(LT_Main);
+            
+            label:SetWidth(labels[j]:GetWidth());
+            label:SetHeight(labels[j]:GetHeight());
+            label:ClearAllPoints();
+            local x = 0;
+            local y = -(i+1)*spread;
+            label:SetPoint("CENTER", labels[j], "CENTER", x, y);
+            
+            label:Show();
+            local font_string = label:CreateFontString("$parentText", "OVERLAY", "GameFontNormal");
+            font_string:SetFont("Fonts\\FRIZQT__.TTF", 9);
+            font_string:SetText("");
+            font_string:SetTextColor(0.8, 1.0, 0.8);
+            font_string:SetJustifyH("LEFT");
+            label:SetFontString(font_string);
+        end
 
     end
 end
@@ -143,37 +105,61 @@ function LT_RedrawPlayerList()
         LT_UpdatePlayerList();
     end
     
-    local offset = floor(LT_SliderVal() * (#LT_PlayerList - num_slots) + 0.5) + 1;
-    for i = 0, num_slots-1 do
-        local name_label = getglobal("LT_PlayerLabel_"..i);
-        local class_label = getglobal("LT_ClassLabel_"..i);
-        local ms_label = getglobal("LT_MainSpecLabel_"..i);
+    local headings = {"Name", "Class", "Attendance", "MainSpec", "AltSpec", "OffSpec", "Unassigned"};
+    local offset = floor(LT_SliderVal() * (#LT_PlayerList - LT_NumPlayersShown) + 0.5) + 1;
+    if (offset < 1) then
+        offset = 1;
+    end
+    for i = 0, LT_NumPlayersShown-1 do
+        local labels = {};
+        for j = 1, #headings do
+            labels[j] = getglobal("LT_"..headings[j].."Label_"..i);
+        end
+        
+        local name_label = labels[1];
+        local class_label = labels[2];
+        local ms_label = labels[3];
         local name = LT_PlayerList[i + offset];
         if name ~= nil and name_label ~= nil then
             name_label:SetText(name);
+            name_label:GetFontString():SetTextColor(1.0, 1.0, 1.00);
             local class = LT_ClassLookup[name];
             class_label:SetText(class);
             
             local colors = RAID_CLASS_COLORS[string.upper(class)];
             class_label:GetFontString():SetTextColor(colors.r, colors.g, colors.b);
-            local num_loots = 0;
-            if LT_PlayerLootTable[name] ~= nil then
-                for k,v in pairs(LT_PlayerLootTable[name]) do
-                    num_loots = num_loots + 1;
+            
+            -- Loots
+            local loot_types = {"Main", "Alt", "Off", "Unassigned"};
+            for i = 1, #loot_types do
+                local num_loots = 0;
+                if LT_PlayerLootTable[name] ~= nil then
+                    for lootid in pairs(LT_PlayerLootTable[name]) do
+                        if LT_LootTable[lootid]["spec"] == loot_types[i] then
+                            num_loots = num_loots + 1;
+                        end
+                    end
                 end
-            end
            
-            ms_label:SetText(num_loots);
+                labels[3 + i]:SetText(num_loots);
+            end
+            
+            -- Attendance
+            labels[3]:SetText("100%");
+        else
+            for i = 1, #labels do
+                labels[i]:SetText("");
+            end
         end
-        
-      --  LT_PlayerLootTable
     end
 end
 
 function LT_UpdatePlayerList()
+    LT_Print("Updating player list");
     LT_PlayerList = {};
     LT_ClassLookup = {};
     local num_members = GetNumGuildMembers(false);
+    LT_Print("there are "..num_members);
     for i = 1, num_members do
         local class;
         LT_PlayerList[i], _, _, _, class = GetGuildRosterInfo(i);
@@ -188,38 +174,46 @@ function LT_PlayerListSliderChanged()
 end
 
 function LT_LoadLabels()
-    timer_label = getglobal("LT_Main".."Timer".."Label");
+    local timer_label = getglobal("LT_Main".."Timer".."Label");
     timer_label:SetText(string.format("%02d:%02d:%02d", "0", "0", "0"));
     
-    version_label = getglobal("LT_Main".."Version".."Label");
+    local version_label = getglobal("LT_Main".."Version".."Label");
     version_label:SetText(LT_VERSION);
     
-    name_label = getglobal("LT_Main".."NameHead".."Label");
+    local name_label = getglobal("LT_Main".."NameHead".."Label");
     name_label:SetText("Name");
     
-    class_label = getglobal("LT_Main".."ClassHead".."Label");
+    local class_label = getglobal("LT_Main".."ClassHead".."Label");
     class_label:SetText("Class");
     
-    attendance_label = getglobal("LT_Main".."AttendanceHead".."Label");
+    local attendance_label = getglobal("LT_Main".."AttendanceHead".."Label");
     attendance_label:SetText("Attendance");
     
-    ms_label = getglobal("LT_Main".."MSHead".."Label");
+    local ms_label = getglobal("LT_Main".."MSHead".."Label");
     ms_label:SetText("Main");
     
-    as_label = getglobal("LT_Main".."ASHead".."Label");
+    local as_label = getglobal("LT_Main".."ASHead".."Label");
     as_label:SetText("Alt");
     
-    os_label = getglobal("LT_Main".."OSHead".."Label");
+    local os_label = getglobal("LT_Main".."OSHead".."Label");
     os_label:SetText("Off");
     
-    unassigned_label = getglobal("LT_Main".."UnassignedHead".."Label");
+    local unassigned_label = getglobal("LT_Main".."UnassignedHead".."Label");
     unassigned_label:SetText("Unassigned");
     
     LT_SetupPlayerList();
 end
 
 function LT_Main_OnEvent(this, event, arg1)
+    -- A hack to get the list working on startup... the guild roster is empty until some
+    -- arbitrary amount of time into the game.
+    if (LT_PlayerList == nil or #LT_PlayerList == 0) then
+        GuildRoster();
+    end
+    
     if (event == "GUILD_ROSTER_UPDATE") then
+        LT_UpdatePlayerList();
+    elseif (event == "VARIABLES_LOADED") then
         LT_UpdatePlayerList();
     end
 end
