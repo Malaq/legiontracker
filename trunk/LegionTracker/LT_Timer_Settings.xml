@@ -375,12 +375,13 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="117" y="-136" />
+              <AbsDimension x="171" y="-136" />
             </Offset>
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_Timer_Settings_Cancel();</OnClick>
+          <OnClick>LT_Timer_Settings_Cancel();
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -541,12 +542,13 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="188" y="-136" />
+              <AbsDimension x="117" y="-136" />
             </Offset>
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_Timer_Settings_OK();</OnClick>
+          <OnClick>LT_Timer_Settings_OK();
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -671,7 +673,8 @@
       <OnLoad>this:Hide();
 </OnLoad>
       <OnShow>LT_Timer_Settings_OnShow();
-this:SetFrameLevel(100);</OnShow>
+this:SetFrameLevel(100);
+</OnShow>
     </Scripts>
   </Frame>
 </Ui>

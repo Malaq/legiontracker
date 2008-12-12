@@ -25,7 +25,8 @@ function LT_SlashHandler(args)
 		LT_Print("-------------------------------------", "blah");
 		LT_Print("show - Displays the main window.", "blah");
 		LT_Print("hide - Hides the main window.", "blah");
-		LT_Print("loot - Loot commands.")
+		LT_Print("loot - Loot commands.");
+        LT_Print("timer - Timer commands.", "bleh");
 	else
 		if args == "show" then
 		    LT_Main:Show();
@@ -36,6 +37,9 @@ function LT_SlashHandler(args)
 		if string.find(args, "^loot") ~= nil then
 			LT_Loot_SlashHandler(args);
 		end
+        if string.find(args, "^timer") ~= nil then
+            LT_Timer_SlashHandler(args);
+        end
 	end
 end
 
@@ -188,7 +192,8 @@ end
 
 function LT_LoadLabels()
     local timer_label = getglobal("LT_Main".."Timer".."Label");
-    timer_label:SetText(string.format("%02d:%02d:%02d", "0", "0", "0"));
+--    timer_label:SetText(string.format("%02d:%02d:%02d", "0", "0", "0"));
+    timer_label:SetText("<Click for timer>");
     
     local version_label = getglobal("LT_Main".."Version".."Label");
     version_label:SetText(LT_VERSION);
