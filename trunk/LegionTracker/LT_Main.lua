@@ -174,7 +174,7 @@ function LT_RedrawPlayerList()
             
             -- Attendance
             local attendance_ph = LT_GetAttendance(LT_PlayerList[i+offset]);
-            if ( attendance_ph == nil ) then
+            if ( attendance_ph == "" ) then
                 labels[3]:SetText("");
             else
                 labels[3]:SetText(""..LT_GetAttendance(LT_PlayerList[i+offset]).."%");
@@ -184,6 +184,14 @@ function LT_RedrawPlayerList()
                 labels[i]:SetText("");
             end
         end
+    end
+end
+
+function LT_IsNumber(str)
+    if string.find(""..str, "%d") and string.find(""..str, "%D")==nil then
+        return 1;
+    else
+        return nil;
     end
 end
 
@@ -197,8 +205,14 @@ function LT_ComparePlayerOrder(p1, p2)
         _, _, _, _, p1 = GetGuildRosterInfo(p1);
         _, _, _, _, p2 = GetGuildRosterInfo(p2);
     elseif sort_index == 3 then
-        p1 = LT_GetAttendance(GetGuildRosterInfo(p1));
-        p2 = LT_GetAttendance(GetGuildRosterInfo(p2));
+        p1 = LT_GetAttendance(p1);
+        p2 = LT_GetAttendance(p2);
+        if LT_IsNumber(p1)==nil then
+            p1 = -1;
+        end
+        if LT_IsNumber(p2)==nil then
+            p2 = -1;
+        end
     elseif sort_index >= 4 then
         p1 = LT_Loot_GetLootCount(sort_index - 3, GetGuildRosterInfo(p1));
         p2 = LT_Loot_GetLootCount(sort_index - 3, GetGuildRosterInfo(p2));
