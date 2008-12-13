@@ -35,7 +35,6 @@ end
 
 function LT_Timer_OnEvent(arg)
     if (event == "VARIABLES_LOADED") then
-        LT_Print("EVENT: "..event);
         if (LT_TimerInterval == nil) then
             LT_TimerInterval = {};
             LT_SetInterval(10,"min");

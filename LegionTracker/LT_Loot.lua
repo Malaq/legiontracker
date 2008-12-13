@@ -71,12 +71,26 @@ function Loot_OnEvent(this, event, arg1)
 		LT_LootTable[lootId]["itemString"] = itemString;
 		LT_LootTable[lootId]["time"] = time();
 		LT_LootTable[lootId]["player"] = player;
-		LT_LootTable[lootId]["spec"] = "Main";
+		LT_LootTable[lootId]["spec"] = "Unassigned";
 		LT_LootTable[lootId]["zone"] = GetRealZoneText();
 		LT_LootTable[lootId]["subzone"] = GetSubZoneText();
 
         LT_RedrawPlayerList();
 	end
+end
+
+
+function LT_Loot_GetLootCount(loot_type, player_name)
+    local loot_types = {"Main", "Alt", "Off", "Unassigned"};
+    local num_loots = 0;
+    if LT_PlayerLootTable[player_name] ~= nil then
+        for lootid in pairs(LT_PlayerLootTable[player_name]) do
+            if LT_LootTable[lootid]["spec"] == loot_types[loot_type] then
+                num_loots = num_loots + 1;
+            end
+        end
+    end
+    return num_loots;
 end
 
 LT_LootFrame:SetScript("OnEvent", Loot_OnEvent);
