@@ -1,4 +1,4 @@
-﻿OLT_VERSION = "Legion Tracker 0.1"
+﻿LT_VERSION = "Legion Tracker 0.1"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -89,11 +89,11 @@ function LT_SetupPlayerList()
             _G[label_name] = CreateFrame("Button", label_name, LT_Main);
             local label = _G[label_name];
             
-            label:SetParent(LT_Main);
-            
-                label:SetScript("OnClick", function (this)
+            label:SetScript("OnClick", function (this)
+                if (LT_PlayerList[i+offset] ~= nil) then
                     LT_Char_ShowPlayer(GetGuildRosterInfo(LT_PlayerList[i + offset]));
-                end);
+                end
+            end);
             
             label:SetWidth(labels[j]:GetWidth());
             label:SetHeight(labels[j]:GetHeight());
@@ -107,7 +107,6 @@ function LT_SetupPlayerList()
             font_string:SetFont("Fonts\\FRIZQT__.TTF", 9);
             font_string:SetText("");
             font_string:SetTextColor(0.8, 1.0, 0.8);
-            font_string:SetJustifyH("LEFT");
             label:SetFontString(font_string);
         end
 
@@ -147,6 +146,9 @@ function LT_RedrawPlayerList()
         local name_label = labels[1];
         local class_label = labels[2];
         local ms_label = labels[3];
+		if LT_PlayerList[i+offset] == nil then
+			return
+		end
         local name = GetGuildRosterInfo(LT_PlayerList[i + offset]);
         if name ~= nil and name_label ~= nil then
             name_label:SetText(name);
