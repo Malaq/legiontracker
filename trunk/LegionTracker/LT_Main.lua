@@ -1,5 +1,10 @@
-﻿LT_VERSION = "Legion Tracker 0.1"
+﻿OLT_VERSION = "Legion Tracker 0.1"
 LT_NumPlayersShown = 5;
+LT_Main_SortIndex = 1;
+-- {0, 1, ..., n-1} -> player_name
+LT_PlayerList = nil;
+-- {name} -> {class}
+LT_ClassLookup = nil;
 
 function LT_OnLoad()
     this:RegisterEvent("VARIABLES_LOADED");
@@ -8,7 +13,8 @@ function LT_OnLoad()
     --this:RegisterForClicks("LeftButtonDown", "RightButtonDown");
     
     LT_LoadLabels();
-    
+    this:EnableMouseWheel(true);
+    this:SetScript("OnMouseWheel", LT_OnMouseWheel);
     SLASH_LEGIONTRACKER1 = "/lt";
     SLASH_LEGIONTRACKER2 = "/legiontracker";
 	SlashCmdList['LEGIONTRACKER'] = function(msg)
@@ -51,6 +57,17 @@ function LT_Print(message, msg_format)
     end
 end
 
+function LT_Main_SortBy(id)
+    id = id+1;
+    if math.abs(LT_Main_SortIndex) == id then
+        LT_Main_SortIndex = -LT_Main_SortIndex;
+    else
+        LT_Main_SortIndex = id;
+    end
+    
+    LT_UpdatePlayerList();
+end
+
 function LT_SetupPlayerList()
     local name_label = getglobal("LT_Main".."NameHead".."Label");
     local class_label = getglobal("LT_Main".."ClassHead".."Label");
@@ -65,6 +82,7 @@ function LT_SetupPlayerList()
     local labels = {name_label, class_label, attendance_label, ms_label, as_label, os_label, unassigned_label};
     local headings = {"Name", "Class", "Attendance", "MainSpec", "AltSpec", "OffSpec", "Unassigned"};
     LT_NumPlayersShown = floor((LT_Main:GetHeight() - (LT_Main:GetTop() - name_label:GetBottom())) / spread);
+    local offset = floor(LT_SliderVal() * (#LT_PlayerList - LT_NumPlayersShown) + 0.5) + 1;
     for i = 0, LT_NumPlayersShown-1 do
         for j = 1, #labels do
             local label_name = "LT_"..headings[j].."Label_"..i;
@@ -73,12 +91,9 @@ function LT_SetupPlayerList()
             
             label:SetParent(LT_Main);
             
-            -- Setup OnClick for only the name
-            if (j == 1) then
                 label:SetScript("OnClick", function (this)
-                    LT_Char_ShowPlayer(this:GetText());
+                    LT_Char_ShowPlayer(GetGuildRosterInfo(LT_PlayerList[i + offset]));
                 end);
-            end
             
             label:SetWidth(labels[j]:GetWidth());
             label:SetHeight(labels[j]:GetHeight());
@@ -106,9 +121,12 @@ function LT_SliderVal()
     return slider:GetValue() / (sliderMax-sliderMin);
 end
 
--- {0, 1, ..., n-1} -> player_name
-LT_PlayerList = nil;
-LT_ClassLookup = nil;
+function LT_OnMouseWheel(this, amt)
+    local slider = getglobal("LT_PlayerListSliderSlider");
+    local diff = 1500;
+    slider:SetValue(slider:GetValue() - diff * amt);
+    LT_RedrawPlayerList();
+end
 
 function LT_RedrawPlayerList()
     if (LT_PlayerList == nil) then
@@ -129,11 +147,11 @@ function LT_RedrawPlayerList()
         local name_label = labels[1];
         local class_label = labels[2];
         local ms_label = labels[3];
-        local name = LT_PlayerList[i + offset];
+        local name = GetGuildRosterInfo(LT_PlayerList[i + offset]);
         if name ~= nil and name_label ~= nil then
             name_label:SetText(name);
             name_label:GetFontString():SetTextColor(1.0, 1.0, 1.00);
-            local class = LT_ClassLookup[name];
+            local _, _, _, _, class = GetGuildRosterInfo(LT_PlayerList[i + offset]);
             class_label:SetText(class);
             local color_class = string.upper(class);
             if (color_class == "DEATH KNIGHT") then
@@ -145,22 +163,12 @@ function LT_RedrawPlayerList()
             end
             
             -- Loots
-            local loot_types = {"Main", "Alt", "Off", "Unassigned"};
-            for i = 1, #loot_types do
-                local num_loots = 0;
-                if LT_PlayerLootTable[name] ~= nil then
-                    for lootid in pairs(LT_PlayerLootTable[name]) do
-                        if LT_LootTable[lootid]["spec"] == loot_types[i] then
-                            num_loots = num_loots + 1;
-                        end
-                    end
-                end
-           
-                labels[3 + i]:SetText(num_loots);
+            for i = 1, 4 do
+                labels[3 + i]:SetText(LT_Loot_GetLootCount(i, name));
             end
             
             -- Attendance
-            labels[3]:SetText("100%");
+            labels[3]:SetText(""..LT_GetAttendance(name).."%");
         else
             for i = 1, #labels do
                 labels[i]:SetText("");
@@ -169,20 +177,42 @@ function LT_RedrawPlayerList()
     end
 end
 
+function LT_GetAttendance(player_name)
+    return 100;
+end
+
+function LT_ComparePlayerOrder(p1, p2)
+    local headings = {"Name", "Class", "Attendance", "MainSpec", "AltSpec", "OffSpec", "Unassigned"};
+    local sort_index = math.abs(LT_Main_SortIndex);
+    if sort_index == 1 then
+        p1 = GetGuildRosterInfo(p1);
+        p2 = GetGuildRosterInfo(p2);
+    elseif sort_index == 2 then
+        _, _, _, _, p1 = GetGuildRosterInfo(p1);
+        _, _, _, _, p2 = GetGuildRosterInfo(p2);
+    elseif sort_index == 3 then
+        p1 = LT_GetAttendance(GetGuildRosterInfo(p1));
+        p2 = LT_GetAttendance(GetGuildRosterInfo(p2));
+    elseif sort_index >= 4 then
+        p1 = LT_Loot_GetLootCount(sort_index - 3, GetGuildRosterInfo(p1));
+        p2 = LT_Loot_GetLootCount(sort_index - 3, GetGuildRosterInfo(p2));
+    end
+    
+    if (LT_Main_SortIndex < 0) then
+        return p1 > p2;
+    else
+        return p1 < p2;
+    end
+end
+
 function LT_UpdatePlayerList()
-    LT_Print("Updating player list");
     LT_PlayerList = {};
     LT_ClassLookup = {};
     local num_members = GetNumGuildMembers(false);
-    LT_Print("there are "..num_members);
     for i = 1, num_members do
-        local class;
-        LT_PlayerList[i], _, _, _, class = GetGuildRosterInfo(i);
-        if LT_PlayerList[i] ~= nil then
-            LT_ClassLookup[LT_PlayerList[i]] = class;
-        end
+        LT_PlayerList[i] = i;
     end
-    table.sort(LT_PlayerList);
+    table.sort(LT_PlayerList, LT_ComparePlayerOrder);
     LT_RedrawPlayerList();
 end
 
