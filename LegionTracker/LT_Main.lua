@@ -27,12 +27,13 @@ end
 
 function LT_SlashHandler(args)
     if args == '' then
-		LT_Print("Legion Tracker", "blah");
-		LT_Print("-------------------------------------", "blah");
-		LT_Print("show - Displays the main window.", "blah");
-		LT_Print("hide - Hides the main window.", "blah");
+		LT_Print("Legion Tracker", "yellow");
+		LT_Print("-------------------------------------", "yellow");
+		LT_Print("show - Displays the main window.", "yellow");
+		LT_Print("hide - Hides the main window.", "yellow");
 		LT_Print("loot - Loot commands.");
-        LT_Print("timer - Timer commands.", "bleh");
+        LT_Print("timer - Timer commands.", "yellow");
+        LT_Print("attendance - Attendance Commands.", "yellow");
 	else
 		if args == "show" then
 		    LT_Main:Show();
@@ -42,13 +43,15 @@ function LT_SlashHandler(args)
 		end
 		if string.find(args, "^loot") ~= nil then
 			LT_Loot_SlashHandler(args);
-		end
-        if string.find(args, "^timer") ~= nil then
+		elseif string.find(args, "^timer") ~= nil then
             LT_Timer_SlashHandler(args);
+        elseif string.find(args, "^attendance") ~= nil then
+            LT_Attendance_SlashHandler(args);    
         end
 	end
 end
 
+--Add color choices for msg_format?
 function LT_Print(message, msg_format)
     if (msg_format == nil) then
         DEFAULT_CHAT_FRAME:AddMessage(message);
@@ -170,17 +173,18 @@ function LT_RedrawPlayerList()
             end
             
             -- Attendance
-            labels[3]:SetText(""..LT_GetAttendance(name).."%");
+            local attendance_ph = LT_GetAttendance(LT_PlayerList[i+offset]);
+            if ( attendance_ph == nil ) then
+                labels[3]:SetText("");
+            else
+                labels[3]:SetText(""..LT_GetAttendance(LT_PlayerList[i+offset]).."%");
+            end
         else
             for i = 1, #labels do
                 labels[i]:SetText("");
             end
         end
     end
-end
-
-function LT_GetAttendance(player_name)
-    return 100;
 end
 
 function LT_ComparePlayerOrder(p1, p2)

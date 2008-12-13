@@ -248,6 +248,7 @@ function LT_TimerOnUpdate(self, elapsed)
                 TIME_OF_LAST_TIC = time();
                 LT_Print(LT_TimerInterval["total"].." SECONDS PASSED!!!","bleh");
                 --Add attendance ticking code here!
+                LT_AttendanceTic();
             end
             if ( (time()-TIMER_START) >= LT_TimerInterval["durationtotal"]) then
                 TIMER_TOGGLE = false;
