@@ -108,6 +108,11 @@
             </Texture>
           </Layer>
         </Layers>
+        <Scripts>
+          <OnEnterPressed>LT_Timer_Settings_OK();</OnEnterPressed>
+          <OnEscapePressed>LT_Timer_Settings_Cancel();</OnEscapePressed>
+          <OnTabPressed>LT_Timer_SettingsMinInterval:SetFocus();</OnTabPressed>
+        </Scripts>
         <FontString font="Fonts\ARIALN.TTF">
           <FontHeight>
             <AbsValue val="14" />
@@ -165,6 +170,11 @@
             </Texture>
           </Layer>
         </Layers>
+        <Scripts>
+          <OnEnterPressed>LT_Timer_Settings_OK();</OnEnterPressed>
+          <OnEscapePressed>LT_Timer_Settings_Cancel();</OnEscapePressed>
+          <OnTabPressed>LT_Timer_SettingsDurationSec:SetFocus();</OnTabPressed>
+        </Scripts>
         <FontString font="Fonts\ARIALN.TTF">
           <FontHeight>
             <AbsValue val="14" />
@@ -222,6 +232,11 @@
             </Texture>
           </Layer>
         </Layers>
+        <Scripts>
+          <OnEnterPressed>LT_Timer_Settings_OK();</OnEnterPressed>
+          <OnEscapePressed>LT_Timer_Settings_Cancel();</OnEscapePressed>
+          <OnTabPressed>LT_Timer_SettingsDurationMin:SetFocus();</OnTabPressed>
+        </Scripts>
         <FontString font="Fonts\ARIALN.TTF">
           <FontHeight>
             <AbsValue val="14" />
@@ -521,6 +536,11 @@
             </Texture>
           </Layer>
         </Layers>
+        <Scripts>
+          <OnEnterPressed>LT_Timer_Settings_OK();</OnEnterPressed>
+          <OnEscapePressed>LT_Timer_Settings_Cancel();</OnEscapePressed>
+          <OnTabPressed>LT_Timer_SettingsDurationHr:SetFocus();</OnTabPressed>
+        </Scripts>
         <FontString font="Fonts\ARIALN.TTF">
           <FontHeight>
             <AbsValue val="14" />
@@ -622,6 +642,11 @@
             </Texture>
           </Layer>
         </Layers>
+        <Scripts>
+          <OnEnterPressed>LT_Timer_Settings_OK();</OnEnterPressed>
+          <OnEscapePressed>LT_Timer_Settings_Cancel();</OnEscapePressed>
+          <OnTabPressed>LT_Timer_SettingsSecInterval:SetFocus();</OnTabPressed>
+        </Scripts>
         <FontString font="Fonts\ARIALN.TTF">
           <FontHeight>
             <AbsValue val="14" />
@@ -673,6 +698,7 @@
       <OnLoad>this:Hide();
 </OnLoad>
       <OnShow>LT_Timer_Settings_OnShow();
+LT_Timer_SettingsDurationHr:SetFocus();
 this:SetFrameLevel(100);
 </OnShow>
     </Scripts>
