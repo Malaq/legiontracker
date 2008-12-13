@@ -67,3 +67,9 @@ function LT_GetAttendance(playerIndex)
     local percent = floor(counter * 100 / total);
     return percent;
 end
+
+--For export and drawing timelines
+function LT_GetRawAttendance(playerIndex)
+    local _, _, _, _, _, _, _, onote = GetGuildRosterInfo(playerIndex);
+    return onote;
+end
