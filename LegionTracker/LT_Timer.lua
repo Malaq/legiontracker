@@ -1,7 +1,7 @@
-﻿TIMER_TOGGLE = false;
-TIMER_START = time();
-TIME_OF_LAST_TIC = time();
-TIMER_TOTAL = 0;
+﻿LT_TIMER_TOGGLE = false;
+LT_TIMER_START = time();
+LT_TIME_OF_LAST_TIC = time();
+LT_TIMER_TOTAL = 0;
 LT_Timer_UpdateInterval = 1.0;
 
 function LT_TimerOnLoad()
@@ -78,29 +78,29 @@ function LT_Timer_HideInfo()
 end
 
 function LT_Timer_Settings_OnShow()
-    min_int = getglobal("LT_Timer_Settings".."MinInterval");
+    local min_int = getglobal("LT_Timer_Settings".."MinInterval");
     min_int:SetText(LT_GetInterval("min"));
-    min_label = getglobal("LT_Timer_Settings".."MinLabel".."Label");
+    local min_label = getglobal("LT_Timer_Settings".."MinLabel".."Label");
     min_label:SetText("Min:");
     
-    sec_int = getglobal("LT_Timer_Settings".."SecInterval");
+    local sec_int = getglobal("LT_Timer_Settings".."SecInterval");
     sec_int:SetText(LT_GetInterval("sec"));
-    sec_label = getglobal("LT_Timer_Settings".."SecLabel".."Label");
+    local sec_label = getglobal("LT_Timer_Settings".."SecLabel".."Label");
     sec_label:SetText("Sec:");
     
-    durhr_int = getglobal("LT_Timer_Settings".."DurationHr");
+    local durhr_int = getglobal("LT_Timer_Settings".."DurationHr");
     durhr_int:SetText(LT_GetInterval("durationhr"));
-    durhr_label = getglobal("LT_Timer_Settings".."DurationHrLabel".."Label");
+    local durhr_label = getglobal("LT_Timer_Settings".."DurationHrLabel".."Label");
     durhr_label:SetText("Hr:");
     
-    durmin_int = getglobal("LT_Timer_Settings".."DurationMin");
+    local durmin_int = getglobal("LT_Timer_Settings".."DurationMin");
     durmin_int:SetText(LT_GetInterval("durationmin"));
-    durmin_label = getglobal("LT_Timer_Settings".."DurationMinLabel".."Label");
+    local durmin_label = getglobal("LT_Timer_Settings".."DurationMinLabel".."Label");
     durmin_label:SetText("Min:");
     
-    dursec_int = getglobal("LT_Timer_Settings".."DurationSec");
+    local dursec_int = getglobal("LT_Timer_Settings".."DurationSec");
     dursec_int:SetText(LT_GetInterval("durationsec"));
-    dursec_label = getglobal("LT_Timer_Settings".."DurationSecLabel".."Label");
+    local dursec_label = getglobal("LT_Timer_Settings".."DurationSecLabel".."Label");
     dursec_label:SetText("Sec:");
 end
 
@@ -111,14 +111,14 @@ function LT_SetInterval(args, arg2)
     end
     
     --If they entered a non-numeric, set value to 0.
-    test = string.find(args, "%D");
+    local test = string.find(args, "%D");
     if (test ~= nil) then
         return;
     end
     
     --Flags for total calculations at the bottom
-    timeflag = false;
-    durflag = false;
+    local timeflag = false;
+    local durflag = false;
     --If they didn't specify what to set, end.
     if (arg2 ~= nil) then
         --Handle attendance timer.
@@ -204,37 +204,37 @@ function LT_GetInterval(args)
 end
 
 function LT_TimerToggle()
-    if (TIMER_TOGGLE == true) then
-        TIMER_TOGGLE = false;
-        timer_label = getglobal("LT_Main".."Timer".."Label");
+    if (LT_TIMER_TOGGLE == true) then
+        LT_TIMER_TOGGLE = false;
+        local timer_label = getglobal("LT_Main".."Timer".."Label");
         timer_label:SetText("<Click for timer>");
         LT_Timer_HideInfo();
-    elseif (TIMER_TOGGLE == false) then
-        TIMER_START = time();
-        TIME_OF_LAST_TIC = time();
-        timer_label = getglobal("LT_Main".."Timer".."Label");
+    elseif (LT_TIMER_TOGGLE == false) then
+        LT_TIMER_START = time();
+        LT_TIME_OF_LAST_TIC = time();
+        local timer_label = getglobal("LT_Main".."Timer".."Label");
         timer_label:SetText("Starting timer...");
-        TIMER_TOGGLE = true;
+        LT_TIMER_TOGGLE = true;
         LT_Timer_ShowInfo();
     end 
 end
 
 function LT_TimerOnUpdate(self, elapsed)
-    if (TIMER_TOGGLE == true) then
+    if (LT_TIMER_TOGGLE == true) then
         self.TimeSinceLastUpdate  = self.TimeSinceLastUpdate + elapsed;
         
         --Prevent code from running more than once a second.
         if (self.TimeSinceLastUpdate > LT_Timer_UpdateInterval) then
             --DEFAULT_CHAT_FRAME:AddMessage("Thrashing?");
-            TIMER_TOTAL = difftime(time(), TIMER_START);
-            --TICKER = mod(TIMER_TOTAL, LT_TimerInterval["total"]);
+            LT_TIMER_TOTAL = difftime(time(), LT_TIMER_START);
+
             --Prevent painting data if the window its in is not shown.
             if (LT_Main:IsShown()) then
-                TIMER_SEC = mod(TIMER_TOTAL,60);
-                TIMER_MIN = mod(floor(TIMER_TOTAL/60),60);
-                TIMER_HR = floor(TIMER_TOTAL/3600);
+                TIMER_SEC = mod(LT_TIMER_TOTAL,60);
+                TIMER_MIN = mod(floor(LT_TIMER_TOTAL/60),60);
+                TIMER_HR = floor(LT_TIMER_TOTAL/3600);
                 
-                timer_label = getglobal("LT_Main".."Timer".."Label");
+                local timer_label = getglobal("LT_Main".."Timer".."Label");
                 timer_label:SetTextColor(0, 1, 1);
                 timer_label:SetText(string.format("%02d:%02d:%02d", TIMER_HR, TIMER_MIN, TIMER_SEC));
             end
@@ -243,15 +243,13 @@ function LT_TimerOnUpdate(self, elapsed)
             self.TimeSinceLastUpdate = 0;
             
             --If your specified interval has been met, run the code (watch out for lag problems here)
-            --if (TICKER == 0) and (TIMER_TOTAL ~= 0) then
-            if ( (time()-TIME_OF_LAST_TIC) >= LT_TimerInterval["total"]) then
-                TIME_OF_LAST_TIC = time();
-                LT_Print(LT_TimerInterval["total"].." SECONDS PASSED!!!","bleh");
-                --Add attendance ticking code here!
+            if ( (time()-LT_TIME_OF_LAST_TIC) >= LT_TimerInterval["total"]) then
+                LT_TIME_OF_LAST_TIC = time();
+                LT_Print(LT_TimerInterval["total"].." SECONDS PASSED!!!","yellow");
                 LT_AttendanceTic();
             end
-            if ( (time()-TIMER_START) >= LT_TimerInterval["durationtotal"]) then
-                TIMER_TOGGLE = false;
+            if ( (time()-LT_TIMER_START) >= LT_TimerInterval["durationtotal"]) then
+                LT_TIMER_TOGGLE = false;
             end
         end
     end
