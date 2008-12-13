@@ -158,7 +158,7 @@
                     </Offset>
                   </Shadow>
                 </FontString>
-                <FontString name="$parentLow" font="Fonts\FRIZQT__.TTF" text="Low">
+                <FontString name="$parentLow" font="Fonts\FRIZQT__.TTF"> <!--text="">-->
                   <Anchors>
                     <Anchor point="BOTTOM" relativePoint="TOP" />
                   </Anchors>
@@ -173,7 +173,7 @@
                     </Offset>
                   </Shadow>
                 </FontString>
-                <FontString name="$parentHigh" font="Fonts\FRIZQT__.TTF" text="High">
+                <FontString name="$parentHigh" font="Fonts\FRIZQT__.TTF"> <!--text="">-->
                   <Anchors>
                     <Anchor point="TOP" relativePoint="BOTTOM" />
                   </Anchors>
