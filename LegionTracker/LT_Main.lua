@@ -19,6 +19,7 @@ function LT_OnLoad()
 	SlashCmdList['LEGIONTRACKER'] = function(msg)
 		LT_SlashHandler(msg)
 	end
+    this:Show();
 end
 
 function LT_Main_OnShow()
@@ -147,7 +148,7 @@ function LT_GetClassColor(class)
     return RAID_CLASS_COLORS[color_class];
 end
 
-function LT_RedrawPlayerList()
+function LT_RedrawPlayerList(do_update)
     if (LT_PlayerList == nil) then
         LT_UpdatePlayerList();
     end
@@ -163,11 +164,9 @@ function LT_RedrawPlayerList()
         local name_label = labels[1];
         local class_label = labels[2];
         local ms_label = labels[3];
-		if LT_PlayerList[i+offset] == nil then
-			return
-		end
-        local name = GetGuildRosterInfo(LT_PlayerList[i + offset]);
-        if name ~= nil and name_label ~= nil then
+        
+        if LT_PlayerList[i+offset] ~= nil and name_label ~= nil then
+            local name = GetGuildRosterInfo(LT_PlayerList[i + offset]);
             name_label:SetText(name);
             name_label:GetFontString():SetTextColor(1.0, 1.0, 1.00);
             local _, _, _, _, class = GetGuildRosterInfo(LT_PlayerList[i + offset]);
@@ -251,7 +250,7 @@ function LT_UpdatePlayerList()
         end
     end
     table.sort(LT_PlayerList, LT_ComparePlayerOrder);
-    LT_RedrawPlayerList();
+    LT_RedrawPlayerList(false);
 end
 
 function LT_PlayerListSliderChanged()
