@@ -76,7 +76,7 @@
             </Offset>
           </Anchor>
         </Anchors>
-        <Backdrop bgFile="Interface\TutorialFrame\TutorialFrameBackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+        <Backdrop bgFile="Interface\TutorialFrame\TutorialFrameBackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border">
           <BackgroundInsets>
             <AbsInset left="3" right="5" top="3" bottom="5" />
           </BackgroundInsets>
