@@ -13,7 +13,7 @@ function LT_Char_ShowPlayer(name)
 
     LT_CharTitleString:SetText(name);
     LT_CharUpperLeftAttendancePercentLabel:SetText(LT_GetAttendance(LT_GetPlayerIndexFromName(name)).."%");
-    LT_CharUpperRightMainSpecTotalLabel:SetText("Main Loot: "..LT_Loot_GetLootCount(0, name));
+    LT_CharUpperRightMainSpecTotalLabel:SetText("Main Loot: "..LT_Loot_GetLootCount(1, name));
     LT_Char:SetFrameLevel(100);
     LT_Char:Show();
     
@@ -25,12 +25,44 @@ LT_Char_EntryHeight = 15;
 LT_Char_EntrySpread = 15;
 LT_Char_NumEntries = 200;
 LT_Char_Loots = nil;
+LT_Char_SortIndex = -3;
+function LT_Char_SortBy(index)
+    if math.abs(LT_Char_SortIndex) == index then
+        LT_Char_SortIndex = -LT_Char_SortIndex;
+    else
+        LT_Char_SortIndex = index;
+    end
+    LT_Char_UpdateLootFrame();
+end
+
+function LT_Char_Compare(l1, l2)
+    local v1 = l1.time;
+    local v2 = l2.time;
+    local index = math.abs(LT_Char_SortIndex);
+    if (index == 1) then
+        v1 = GetItemInfo(l1.itemString);
+        v2 = GetItemInfo(l2.itemString);
+    elseif (index == 2) then
+        v1 = l1.zone..l1.subzone;
+        v2 = l2.zone..l2.subzone;
+    elseif (index == 4) then
+        v1 = l1.spec;
+        v2 = l2.spec;
+    end
+    if (LT_Char_SortIndex > 0) then
+        return v1 < v2;
+    else
+        return v1 > v2;
+    end
+end
+
 function LT_Char_UpdateLootFrame()
     local scroll_frame = _G["LT_Char_ScrollFrame"];
     if (scroll_frame == nil) then
         return;
     end
     LT_Char_Loots = LT_Loot_GetLoots(LT_Char_CurPlayer);
+    table.sort(LT_Char_Loots, LT_Char_Compare);
     LT_Char_NumEntries = #LT_Char_Loots;
     FauxScrollFrame_Update(scroll_frame, math.max(LT_Char_NumEntriesShown+1, LT_Char_NumEntries), LT_Char_NumEntriesShown, LT_Char_EntrySpread);
     local offset = FauxScrollFrame_GetOffset(scroll_frame);
@@ -62,7 +94,8 @@ function LT_Char_UpdateLootFrame()
             zone_label:SetText(LT_Char_Loots[id].zone);
             
             local date_label = _G["LT_CharDate_"..i];
-            date_label:SetText("...");
+            local secs = LT_Char_Loots[id].time;
+            date_label:SetText(date("%b %d %H:%M", secs));
             
             local spec_label = _G["LT_CharSpec_"..i];
             spec_label:SetText(LT_Char_Loots[id].spec);

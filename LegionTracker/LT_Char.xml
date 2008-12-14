@@ -214,6 +214,9 @@
             </FontString>
           </Layer>
         </Layers>
+        <Scripts>
+          <OnMouseDown>LT_Char_SortBy(4);</OnMouseDown>
+        </Scripts>
       </Frame>
       <Frame name="$parentLabelDate">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
@@ -247,6 +250,9 @@
             </FontString>
           </Layer>
         </Layers>
+        <Scripts>
+          <OnMouseDown>LT_Char_SortBy(3);</OnMouseDown>
+        </Scripts>
       </Frame>
       <Frame name="$parentLabelZone">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
@@ -280,6 +286,9 @@
             </FontString>
           </Layer>
         </Layers>
+        <Scripts>
+          <OnMouseDown>LT_Char_SortBy(2);</OnMouseDown>
+        </Scripts>
       </Frame>
       <Frame name="$parentLabelName">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
@@ -313,6 +322,9 @@
             </FontString>
           </Layer>
         </Layers>
+        <Scripts>
+          <OnMouseDown>LT_Char_SortBy(1);</OnMouseDown>
+        </Scripts>
       </Frame>
       <Frame name="LT_LootListPanel">
         <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4972-d66d-444e-bb2d-1ad102c87fed" />-->
@@ -342,7 +354,8 @@
     <Scripts>
       <OnLoad>LT_Char_OnLoad();
 </OnLoad>
-      <OnEscapePressed>this:Hide();</OnEscapePressed>
+      <OnEscapePressed>this:Hide();
+</OnEscapePressed>
     </Scripts>
   </Frame>
 </Ui>
