@@ -100,7 +100,6 @@ function LT_Loot_GetLoots(player_name)
             table.insert(loots, LT_LootTable[lootid]);
         end
     end
-    LT_Print("Returning "..#loots.." loots for "..player_name);
     return loots;
 end
 

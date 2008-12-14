@@ -133,6 +133,14 @@ function LT_OnMouseWheel(this, amt)
     LT_RedrawPlayerList();
 end
 
+function LT_GetClassColor(class)
+    local color_class = string.upper(class);
+    if (color_class == "DEATH KNIGHT") then
+        color_class = "DEATHKNIGHT";
+    end
+    return RAID_CLASS_COLORS[color_class];
+end
+
 function LT_RedrawPlayerList()
     if (LT_PlayerList == nil) then
         LT_UpdatePlayerList();
@@ -161,14 +169,8 @@ function LT_RedrawPlayerList()
             name_label:GetFontString():SetTextColor(1.0, 1.0, 1.00);
             local _, _, _, _, class = GetGuildRosterInfo(LT_PlayerList[i + offset]);
             class_label:SetText(class);
-            local color_class = string.upper(class);
-            if (color_class == "DEATH KNIGHT") then
-                color_class = "DEATHKNIGHT";
-            end
-            local colors = RAID_CLASS_COLORS[color_class];
-            if (colors ~= nil) then
-                class_label:GetFontString():SetTextColor(colors.r, colors.g, colors.b);
-            end
+            local colors = LT_GetClassColor(class);
+            class_label:GetFontString():SetTextColor(colors.r, colors.g, colors.b);
             
             -- Loots
             for i = 1, 4 do
