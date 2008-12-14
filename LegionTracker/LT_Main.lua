@@ -70,6 +70,14 @@ function LT_Main_SortBy(id)
     LT_UpdatePlayerList();
 end
 
+function LT_GetCurOffset()
+    local offset = floor(LT_SliderVal() * (#LT_PlayerList - LT_NumPlayersShown) + 0.5) + 1;
+    if (offset < 1) then
+        offset = 1;
+    end
+    return offset;
+end
+
 function LT_SetupPlayerList()
     local name_label = getglobal("LT_Main".."NameHead".."Label");
     local class_label = getglobal("LT_Main".."ClassHead".."Label");
@@ -84,7 +92,7 @@ function LT_SetupPlayerList()
     local labels = {name_label, class_label, attendance_label, ms_label, as_label, os_label, unassigned_label};
     local headings = {"Name", "Class", "Attendance", "MainSpec", "AltSpec", "OffSpec", "Unassigned"};
     LT_NumPlayersShown = floor((LT_Main:GetHeight() - (LT_Main:GetTop() - name_label:GetBottom())) / spread);
-    local offset = floor(LT_SliderVal() * (#LT_PlayerList - LT_NumPlayersShown) + 0.5) + 1;
+    local offset = LT_GetCurOffset();
     for i = 0, LT_NumPlayersShown-1 do
         local id = i+offset;
         for j = 1, #labels do
@@ -94,7 +102,7 @@ function LT_SetupPlayerList()
             
             label:SetScript("OnClick", function (this)
                 if (LT_PlayerList[i+offset] ~= nil) then
-                    local cur_offset = floor(LT_SliderVal() * (#LT_PlayerList - LT_NumPlayersShown) + 0.5) + 1;
+                    local cur_offset = LT_GetCurOffset();
                     LT_Char_ShowPlayer(GetGuildRosterInfo(LT_PlayerList[cur_offset + i]));
                 end
             end);
@@ -145,10 +153,7 @@ function LT_RedrawPlayerList()
     end
     
     local headings = {"Name", "Class", "Attendance", "MainSpec", "AltSpec", "OffSpec", "Unassigned"};
-    local offset = floor(LT_SliderVal() * (#LT_PlayerList - LT_NumPlayersShown) + 0.5) + 1;
-    if (offset < 1) then
-        offset = 1;
-    end
+    local offset = LT_GetCurOffset();
     for i = 0, LT_NumPlayersShown-1 do
         local labels = {};
         for j = 1, #headings do
