@@ -1,5 +1,6 @@
 ﻿function LT_Export_OnShow()
     local export_label = getglobal("LT_Export".."ExportTextWindow");
+    export_label:SetText(" ");
     --use pipe delimiters \n is return
     local count = 0;
     local guildCount = GetNumGuildMembers(true);

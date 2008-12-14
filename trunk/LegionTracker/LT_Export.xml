@@ -64,7 +64,7 @@
       </Layer>
     </Layers>
     <Frames>
-      <EditBox name="$parentExportTextWindow" enableMouse="true" enableKeyboard="true" multiLine="true" historyLines="1000">
+      <EditBox name="$parentExportTextWindow" enableMouse="true" enableKeyboard="true" multiLine="true" historyLines="5">
         <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4975-d66d-444e-bb2d-1ad102c87fed" />-->
         <Size>
           <AbsDimension x="343" y="327" />
@@ -88,11 +88,12 @@
           </EdgeSize>
         </Backdrop>
         <Scripts>
-          <OnEscapePressed>LT_Export:Hide();</OnEscapePressed>
+          <OnEscapePressed>LT_Export:Hide();
+</OnEscapePressed>
         </Scripts>
-        <FontString font="Fonts\ARIALN.TTF">
+        <FontString font="Fonts\ARIALN.TTF" justifyV="TOP" justifyH="LEFT" maxLines="10" indented="true">
           <FontHeight>
-            <AbsValue val="14" />
+            <AbsValue val="8" />
           </FontHeight>
           <Color r="1" g="1" b="1" />
           <Shadow>
@@ -120,7 +121,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_Export:Hide();</OnClick>
+          <OnClick>LT_Export:Hide();
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -154,7 +156,8 @@
     <Scripts>
       <OnLoad>this:Hide();
 </OnLoad>
-      <OnShow>LT_Export_OnShow();</OnShow>
+      <OnShow>LT_Export_OnShow();
+</OnShow>
     </Scripts>
   </Frame>
 </Ui>
