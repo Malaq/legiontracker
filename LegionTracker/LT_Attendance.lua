@@ -12,6 +12,7 @@ function LT_Attendance_SlashHandler(args)
 end
 
 function LT_AttendanceTic()
+    SetGuildRosterShowOffline(false);
     --Do online first
     local guildCount = GetNumGuildMembers(false);
     for i = 1, guildCount do 

@@ -123,8 +123,18 @@ function LT_Char_UpdateLootFrame()
         return;
     end
     
-    local _, rank, _, _, class = GetGuildRosterInfo(LT_GetPlayerIndexFromName(LT_Char_CurPlayer));
+    local name, rank, _, _, class = GetGuildRosterInfo(LT_GetPlayerIndexFromName(LT_Char_CurPlayer));
     local color = LT_GetClassColor(class);
+    if (rank == "Alt") then
+        local main = LT_GetMainName(LT_GetPlayerIndexFromName(LT_Char_CurPlayer));
+        if (main == name) then
+            LT_CharMainNameLabel:SetText("Main: Fix officer note.");
+        else
+            LT_CharMainNameLabel:SetText("Main: "..main);
+        end
+    else
+        LT_CharMainNameLabel:SetText("");
+    end
     LT_CharTitleString:SetTextColor(color.r, color.g, color.b);
     LT_CharTitleString:SetText(LT_Char_CurPlayer);
     local temp = LT_GetAttendance(LT_GetPlayerIndexFromName(LT_Char_CurPlayer));
@@ -132,6 +142,8 @@ function LT_Char_UpdateLootFrame()
         LT_CharUpperLeftAttendancePercentLabel:SetText("");
         if (rank == "Friend") then
             LT_CharUpperLeftAttendancePercentLabel:SetText("Friend");
+        elseif (rank == "Alt") then
+            LT_CharUpperLeftAttendancePercentLabel:SetText("Alt");
         end
     else
         LT_CharUpperLeftAttendancePercentLabel:SetText(temp.."%");
