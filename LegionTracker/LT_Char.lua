@@ -27,33 +27,41 @@ function LT_Char_UpdateLootFrame()
     end
     LT_Char_Loots = LT_Loot_GetLoots(LT_Char_CurPlayer);
     LT_Char_NumEntries = #LT_Char_Loots;
-    FauxScrollFrame_Update(scroll_frame, LT_Char_NumEntries, LT_Char_NumEntriesShown, LT_Char_EntrySpread);
+    FauxScrollFrame_Update(scroll_frame, math.max(LT_Char_NumEntriesShown+1, LT_Char_NumEntries), LT_Char_NumEntriesShown, LT_Char_EntrySpread);
     local offset = FauxScrollFrame_GetOffset(scroll_frame);
     for i=1, LT_Char_NumEntriesShown do
         local id = i + offset;
         if (id > LT_Char_NumEntries) then
-            return;
+            local name_label = _G["LT_CharName_"..i];
+            name_label:SetText("");
+            local zone_label = _G["LT_CharZone_"..i];
+            zone_label:SetText("");       
+            local date_label = _G["LT_CharDate_"..i];
+            date_label:SetText("");
+            local spec_label = _G["LT_CharSpec_"..i];
+            spec_label:SetText("");
+        else
+        
+            local name_label = _G["LT_CharName_"..i];
+            local _, link = GetItemInfo(LT_Char_Loots[id].itemString)
+            name_label:SetText(link);
+            name_label:SetScript("OnClick", function()
+                LT_Char_Tooltip:SetHyperlink(link);
+                LT_Char_Tooltip:Show();
+                LT_Char_Tooltip:SetWidth(300);
+                LT_Char_Tooltip:SetHeight(300);
+                LT_Char_Tooltip:ClearAllPoints();
+                LT_Char_Tooltip:SetPoint("CENTER", 0, 0);
+            end);
+            local zone_label = _G["LT_CharZone_"..i];
+            zone_label:SetText(LT_Char_Loots[id].zone);
+            
+            local date_label = _G["LT_CharDate_"..i];
+            date_label:SetText("...");
+            
+            local spec_label = _G["LT_CharSpec_"..i];
+            spec_label:SetText(LT_Char_Loots[id].spec);
         end
-        
-        local name_label = _G["LT_CharName_"..i];
-        local _, link = GetItemInfo(LT_Char_Loots[id].itemString)
-        name_label:SetText(link);
-        name_label:SetScript("OnClick", function()
-            LT_Char_Tooltip:SetHyperlink(link);
-            LT_Char_Tooltip:Show();
-            LT_Char_Tooltip:SetWidth(300);
-            LT_Char_Tooltip:SetHeight(300);
-            LT_Char_Tooltip:ClearAllPoints();
-            LT_Char_Tooltip:SetPoint("CENTER", 0, 0);
-        end);
-        local zone_label = _G["LT_CharZone_"..i];
-        zone_label:SetText(LT_Char_Loots[id].zone);
-        
-        local date_label = _G["LT_CharDate_"..i];
-        date_label:SetText("...");
-        
-        local spec_label = _G["LT_CharSpec_"..i];
-        spec_label:SetText(LT_Char_Loots[id].spec);
     end
 end
 
@@ -96,7 +104,6 @@ function LT_Char_OnLoad()
             font_string:SetTextColor(0.8, 1.0, 0.8);
             label:SetFontString(font_string);
         end
-        LT_Char_UpdateLootFrame();
         scroll_frame:SetScript("OnVerticalScroll", function (this, offset)
             FauxScrollFrame_OnVerticalScroll(this, offset, LT_Char_EntrySpread, LT_Char_UpdateLootFrame);
         end);
