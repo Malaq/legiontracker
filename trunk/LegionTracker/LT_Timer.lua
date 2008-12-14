@@ -222,6 +222,9 @@ function LT_TimerToggle()
 end
 
 function LT_TimerOnUpdate(self, elapsed)
+    if (LT_Main:IsShown()) then
+        GuildRoster();
+    end
     if (LT_TIMER_TOGGLE == true) then
         self.TimeSinceLastUpdate  = self.TimeSinceLastUpdate + elapsed;
         
