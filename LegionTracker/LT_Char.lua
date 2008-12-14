@@ -11,12 +11,12 @@ function LT_Char_ShowPlayer(name)
     end
     LT_Char_CurPlayer = name;
     
-    local _, _, _, _, class = GetGuildRosterInfo(LT_GetPlayerIndexFromName(name));
-    local color = LT_GetClassColor(class);
-    LT_CharTitleString:SetTextColor(color.r, color.g, color.b);
-    LT_CharTitleString:SetText(name);
-    LT_CharUpperLeftAttendancePercentLabel:SetText(LT_GetAttendance(LT_GetPlayerIndexFromName(name)).."%");
-    LT_CharUpperRightMainSpecTotalLabel:SetText(LT_Loot_GetLootCount(1, name).." Items");
+--    local _, _, _, _, class = GetGuildRosterInfo(LT_GetPlayerIndexFromName(name));
+--    local color = LT_GetClassColor(class);
+--    LT_CharTitleString:SetTextColor(color.r, color.g, color.b);
+--    LT_CharTitleString:SetText(name);
+--    LT_CharUpperLeftAttendancePercentLabel:SetText(LT_GetAttendance(LT_GetPlayerIndexFromName(name)).."%");
+--    LT_CharUpperRightMainSpecTotalLabel:SetText(LT_Loot_GetLootCount(1, name).." Items");
 
     LT_Char:SetFrameLevel(100);
 
@@ -66,6 +66,14 @@ function LT_Char_UpdateLootFrame()
     if (scroll_frame == nil) then
         return;
     end
+    
+    local _, _, _, _, class = GetGuildRosterInfo(LT_GetPlayerIndexFromName(LT_Char_CurPlayer));
+    local color = LT_GetClassColor(class);
+    LT_CharTitleString:SetTextColor(color.r, color.g, color.b);
+    LT_CharTitleString:SetText(LT_Char_CurPlayer);
+    LT_CharUpperLeftAttendancePercentLabel:SetText(LT_GetAttendance(LT_GetPlayerIndexFromName(LT_Char_CurPlayer)).."%");
+    LT_CharUpperRightMainSpecTotalLabel:SetText(LT_Loot_GetLootCount(1, LT_Char_CurPlayer).." Items");
+
     LT_Char_Loots = LT_Loot_GetLoots(LT_Char_CurPlayer);
     table.sort(LT_Char_Loots, LT_Char_Compare);
     LT_Char_NumEntries = #LT_Char_Loots;
