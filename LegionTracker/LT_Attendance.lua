@@ -69,7 +69,7 @@ function LT_GetAttendance(playerIndex)
     if (rank == "Alt") then
         local pname = LT_GetPlayerIndexFromName(onote);
         if (pname ~= nil) then
-            return LT_GetAttendance(onote);
+            return LT_GetAttendance(pname);
         end
     end
     

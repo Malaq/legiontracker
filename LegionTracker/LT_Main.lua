@@ -244,11 +244,16 @@ function LT_UpdatePlayerList()
     local num_members = GetNumGuildMembers(false);
     for i = 1, num_members do
         LT_PlayerList[i] = i;
+    end
+    
+    local num_all_members = GetNumGuildMembers(true);
+    for i = 1, num_all_members do
         local name = GetGuildRosterInfo(i);
         if (name ~= nil) then
             LT_NameLookup[name] = i;
         end
     end
+    
     table.sort(LT_PlayerList, LT_ComparePlayerOrder);
     LT_RedrawPlayerList(false);
 end
