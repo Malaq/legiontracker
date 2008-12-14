@@ -56,8 +56,65 @@ function LT_Char_Compare(l1, l2)
         return v1 > v2;
     end
 end
-
+LT_PrevNumTimelineEntries = -1;                   
 function LT_Char_DrawTimeline()
+    local attendance = LT_GetRawAttendance(LT_GetPlayerIndexFromName(LT_Char_CurPlayer))
+    local num_entries = string.len(attendance);
+    if (LT_IsNumber(attendance) == nil) then
+        num_entries = 0;
+        LT_Timeline:Hide();
+    else
+        LT_Timeline:Show();
+    end
+    local entry_width = (LT_Timeline:GetWidth()-10) / num_entries;
+    if (LT_Timeline.texture == nil) then
+        LT_Timeline.texture = LT_Timeline:CreateTexture();
+        LT_Timeline.texture:SetAllPoints(LT_Timeline);
+        LT_Timeline.texture:SetTexture(0.2, 0.2, 0.2);
+    end
+    
+    for i = 1, LT_PrevNumTimelineEntries+1 do
+        if (i ~= LT_PrevNumTimelineEntries + 1) then
+            _G["LT_TimelineBlock_"..i]:Hide();
+        end
+        _G["LT_TimeLabel_"..i]:Hide();
+    end
+    LT_PrevNumTimelineEntries = num_entries;
+    
+    for i = 1, num_entries+1 do
+        if (i ~= num_entries + 1) then
+            local name = "LT_TimelineBlock_"..i;
+            local block = _G[name] or CreateFrame("Frame", name, LT_Timeline);
+            block:Show();
+            block:SetWidth(entry_width-1.5);
+            block:SetHeight(LT_Timeline:GetHeight()-10);
+            if (block.texture == nil) then
+                block.texture = block:CreateTexture();
+            end
+            block.texture:SetAllPoints(block);
+            if (string.char(attendance:byte(i)) == "0") then
+                block.texture:SetTexture(0, 0.0, 0.0);
+            else
+                block.texture:SetTexture(0.1, 1, 0.1);
+            end
+            block:ClearAllPoints();
+            block:SetPoint("TOPLEFT", LT_Timeline, "TOPLEFT", (i - 1) * entry_width + 5, -3);
+        end
+        
+        local label_name = "LT_TimeLabel_"..i;
+        local label = _G[label_name] or CreateFrame("Button", label_name, LT_Timeline);
+        label:Show();
+        label:ClearAllPoints();
+        label:SetWidth(entry_width);
+        label:SetHeight(15);
+        label:SetPoint("CENTER", LT_Timeline, "TOPLEFT", (i - 1) * entry_width + 5, -LT_Timeline:GetHeight()+3);
+
+        local font_string = label:CreateFontString("$parentText", "OVERLAY", "GameFontNormal");
+        font_string:SetFont("Fonts\\FRIZQT__.TTF", 5);
+        font_string:SetText(date("%H:%M", LT_TIMER_START + (i-1)*LT_GetInterval()));
+        font_string:SetTextColor(0.8, 1.0, 0.8);
+        label:SetFontString(font_string);
+    end
 end
 
 function LT_Char_UpdateLootFrame()
