@@ -77,7 +77,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_ResetAll();</OnClick>
+          <OnClick>LT_ResetAll();
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -110,12 +111,12 @@
       <Frame name="$parentTimerInfo">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
-          <AbsDimension x="170" y="20" />
+          <AbsDimension x="170" y="11" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="126" y="-17" />
+              <AbsDimension x="126" y="-26" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -127,7 +128,7 @@
                 <Anchor point="BOTTOMRIGHT" />
               </Anchors>
               <FontHeight>
-                <AbsValue val="12" />
+                <AbsValue val="10" />
               </FontHeight>
               <Color r="1" g="0.8196079" b="0" />
               <Shadow>

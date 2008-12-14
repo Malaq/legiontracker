@@ -30,6 +30,8 @@ function LT_Timer_SlashHandler(args)
             LT_SetInterval(4,"durationhr");
             LT_SetInterval(0,"durationmin");
             LT_SetInterval(0,"durationsec");
+            local info_label = getglobal("LT_Main".."TimerInfo".."Label");
+            info_label:SetText(string.format("Tic: %02d:%02d; Stop: %02d:%02d:%02d", LT_GetInterval("min"), LT_GetInterval("sec"), LT_GetInterval("durationhr"),LT_GetInterval("durationmin"),LT_GetInterval("durationsec")));
     end
 end
 

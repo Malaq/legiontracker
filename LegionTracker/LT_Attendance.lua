@@ -1,4 +1,6 @@
-﻿function LT_Attendance_SlashHandler(args)
+﻿LT_AttendanceCheckList = {};
+
+function LT_Attendance_SlashHandler(args)
     if (string.find(args, " ") == nil) then
 		LT_Print("lt attendance reset");
 		return;
@@ -10,10 +12,18 @@
 end
 
 function LT_AttendanceTic()
+    --Do online first
+    local guildCount = GetNumGuildMembers(false);
+    for i = 1, guildCount do 
+        LT_SingleMemberTic(i);
+    end
+    
+    --Then do offline
     local guildCount = GetNumGuildMembers(true);
     for i = 1, guildCount do 
         LT_SingleMemberTic(i);
     end
+    LT_AttendanceCheckList = {};
     LT_Print("Attendance updated for " ..guildCount.. " players.");
 end
 
@@ -32,6 +42,8 @@ function LT_ResetAttendance()
         elseif (rank == "Friend") and (onote ~= "Friend") then
             GuildRosterSetOfficerNote(i, "Friend");
             count = count+1;
+        elseif (rank == "Friend") then
+            count = count+1;
         else
             GuildRosterSetOfficerNote(i, "");
             count = count+1;
@@ -45,6 +57,8 @@ function LT_SingleMemberTic(memberIndex)
     local name, rank, _, _, _, _, _, onote, online = GetGuildRosterInfo(memberIndex);
     if (rank == "Friend") and (onote ~= "Friend") then
         GuildRosterSetOfficerNote(memberIndex,"Friend"); 
+    elseif (rank == "Friend") then
+            return;
     elseif (rank == "Alt") then
         local pname = LT_GetPlayerIndexFromName(onote);
         if (pname ~= nil) then
@@ -53,10 +67,16 @@ function LT_SingleMemberTic(memberIndex)
     else
         if (online == nil) then
             --DEFAULT_CHAT_FRAME:AddMessage("DEBUG1: " ..name.." is Offline.");
-            GuildRosterSetOfficerNote(memberIndex, onote.."0");
+            if ( LT_AttendanceCheckList[name] == nil ) then
+                GuildRosterSetOfficerNote(memberIndex, onote.."0");
+                LT_AttendanceCheckList[name] = 1;
+            end
         else
             --DEFAULT_CHAT_FRAME:AddMessage("DEBUG1: " ..name.." is Online ");
-            GuildRosterSetOfficerNote(memberIndex, onote.."1");
+            if ( LT_AttendanceCheckList[name] == nil ) then
+                GuildRosterSetOfficerNote(memberIndex, onote.."1");
+                LT_AttendanceCheckList[name] = 1;
+            end
         end
     end
 end
@@ -93,6 +113,12 @@ end
 
 --For export and drawing timelines
 function LT_GetRawAttendance(playerIndex)
-    local _, _, _, _, _, _, _, onote = GetGuildRosterInfo(playerIndex);
+    local _, rank, _, _, _, _, _, onote = GetGuildRosterInfo(playerIndex);
+    if (rank == "Alt") then
+        local pname = LT_GetPlayerIndexFromName(onote);
+        if (pname ~= nil) then
+            return LT_GetRawAttendance(pname);
+        end
+    end
     return onote;
 end

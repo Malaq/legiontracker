@@ -10,13 +10,6 @@ function LT_Char_ShowPlayer(name)
         return
     end
     LT_Char_CurPlayer = name;
-    
---    local _, _, _, _, class = GetGuildRosterInfo(LT_GetPlayerIndexFromName(name));
---    local color = LT_GetClassColor(class);
---    LT_CharTitleString:SetTextColor(color.r, color.g, color.b);
---    LT_CharTitleString:SetText(name);
---    LT_CharUpperLeftAttendancePercentLabel:SetText(LT_GetAttendance(LT_GetPlayerIndexFromName(name)).."%");
---    LT_CharUpperRightMainSpecTotalLabel:SetText(LT_Loot_GetLootCount(1, name).." Items");
 
     LT_Char:SetFrameLevel(100);
 
@@ -77,7 +70,12 @@ function LT_Char_UpdateLootFrame()
     local color = LT_GetClassColor(class);
     LT_CharTitleString:SetTextColor(color.r, color.g, color.b);
     LT_CharTitleString:SetText(LT_Char_CurPlayer);
-    LT_CharUpperLeftAttendancePercentLabel:SetText(LT_GetAttendance(LT_GetPlayerIndexFromName(LT_Char_CurPlayer)).."%");
+    local temp = LT_GetAttendance(LT_GetPlayerIndexFromName(LT_Char_CurPlayer));
+    if (temp == "") then
+        LT_CharUpperLeftAttendancePercentLabel:SetText("");
+    else
+        LT_CharUpperLeftAttendancePercentLabel:SetText(temp.."%");
+    end
     LT_CharUpperRightMainSpecTotalLabel:SetText(LT_Loot_GetLootCount(1, LT_Char_CurPlayer).." Items");
     
     LT_Char_DrawTimeline();
