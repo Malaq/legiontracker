@@ -3,8 +3,6 @@ LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
 LT_PlayerList = nil;
--- {name} -> {class}
-LT_ClassLookup = nil;
 LT_NameLookup = nil;
 
 function LT_OnLoad()
@@ -238,7 +236,6 @@ end
 
 function LT_UpdatePlayerList()
     LT_PlayerList = {};
-    LT_ClassLookup = {};
     LT_NameLookup = {};
     local num_members = GetNumGuildMembers(false);
     for i = 1, num_members do

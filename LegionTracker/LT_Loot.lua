@@ -44,7 +44,7 @@ end
 function Loot_OnEvent(this, event, arg1)
 	if event == "CHAT_MSG_LOOT" then
 		local player = nil;
-		if (string.find(arg1, "receive loot:") or string.find(arg1, "receives loot:") then
+		if (string.find(arg1, "receive loot:") or string.find(arg1, "receives loot:")) then
 			player = string.sub(arg1, 0, string.find(arg1, " receive")-1);	
 			if (player == "You") then
 				player = UnitName("player");
@@ -73,14 +73,15 @@ function Loot_OnEvent(this, event, arg1)
 		LT_LootTable[lootId]["spec"] = "Unassigned";
 		LT_LootTable[lootId]["zone"] = GetRealZoneText();
 		LT_LootTable[lootId]["subzone"] = GetSubZoneText();
+        LT_LootTable[lootId]["lootId"] = lootId;
 
         LT_RedrawPlayerList();
 	end
 end
-
+LT_Loot_LootTypes = {"Main", "Alt", "Off", "Unassigned"};
 
 function LT_Loot_GetLootCount(loot_type, player_name)
-    local loot_types = {"Main", "Alt", "Off", "Unassigned"};
+    local loot_types = LT_Loot_LootTypes;
     local num_loots = 0;
     if LT_PlayerLootTable[player_name] ~= nil then
         for lootid in pairs(LT_PlayerLootTable[player_name]) do
@@ -96,10 +97,23 @@ function LT_Loot_GetLoots(player_name)
     local loots = {};
     if LT_PlayerLootTable[player_name] ~= nil then
         for lootid in pairs(LT_PlayerLootTable[player_name]) do
+            LT_LootTable[lootid].lootId = lootid; -- Going to save this value from now on, but in some old stuff it wasn't there.
             table.insert(loots, LT_LootTable[lootid]);
         end
     end
     return loots;
+end
+
+function LT_Loot_ToggleSpec(loot_id)
+    local loot_types = LT_Loot_LootTypes;
+    local cur_type = 1;
+    for i = 1, #loot_types do
+        if (loot_types[i] == LT_LootTable[loot_id].spec) then
+            cur_type = i;
+        end
+    end
+    cur_type = mod(cur_type, #loot_types) + 1;
+    LT_LootTable[loot_id].spec = loot_types[cur_type];
 end
 
 LT_LootFrame:SetScript("OnEvent", Loot_OnEvent);
