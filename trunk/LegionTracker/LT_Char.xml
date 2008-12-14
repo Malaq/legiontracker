@@ -67,12 +67,12 @@
       <Frame name="LT_Timeline">
         <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4972-d66d-444e-bb2d-1ad102c87fed" />-->
         <Size>
-          <AbsDimension x="487" y="57" />
+          <AbsDimension x="490" y="22" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="18" y="-55" />
+              <AbsDimension x="15" y="-84" />
             </Offset>
           </Anchor>
         </Anchors>
