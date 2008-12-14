@@ -234,13 +234,36 @@ function LT_TimerToggle()
         StaticPopup_Show("Stop Timer Warning");
         
     elseif (LT_TIMER_TOGGLE == false) then
-        LT_TIMER_START = time();
-        LT_TIME_OF_LAST_TIC = time();
-        local timer_label = getglobal("LT_Main".."Timer".."Label");
-        timer_label:SetTextColor(0, 1, 1);
-        timer_label:SetText("Starting timer...");
-        LT_TIMER_TOGGLE = true;
-        LT_Timer_ShowInfo();
+        StaticPopupDialogs["Reset Warning"] = {
+        text = "Do you want to reset all loot and attendance before starting the timer?",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function()
+            LT_ResetAttendance();
+            LT_PlayerLootTable = {};
+            LT_LootTable = {};
+            LT_TIMER_START = time();
+            LT_TIME_OF_LAST_TIC = time();
+            local timer_label = getglobal("LT_Main".."Timer".."Label");
+            timer_label:SetTextColor(0, 1, 1);
+            timer_label:SetText("Starting timer...");
+            LT_TIMER_TOGGLE = true;
+            LT_Timer_ShowInfo();
+        end,
+        OnCancel = function()
+            LT_TIMER_START = time();
+            LT_TIME_OF_LAST_TIC = time();
+            local timer_label = getglobal("LT_Main".."Timer".."Label");
+            timer_label:SetTextColor(0, 1, 1);
+            timer_label:SetText("Starting timer...");
+            LT_TIMER_TOGGLE = true;
+            LT_Timer_ShowInfo();
+        end,
+        timeout = 0,
+        whileDead = 1,
+        hideOnEscape = 1
+        };
+        StaticPopup_Show("Reset Warning");
     end 
 end
 

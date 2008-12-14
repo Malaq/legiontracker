@@ -3,6 +3,7 @@
     export_label:SetText("");
     --use pipe delimiters \n is return
     local count = 0;
+    SortGuildRoster("name");
     local guildCount = GetNumGuildMembers(true);
     for i = 1, guildCount do 
         local name, rank, _, level, class, _, _, onote = GetGuildRosterInfo(i);

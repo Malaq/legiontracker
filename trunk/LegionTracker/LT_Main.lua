@@ -262,6 +262,19 @@ function LT_PlayerListSliderChanged()
     LT_RedrawPlayerList();
 end
 
+function LT_GetMainName(playerIndex)
+    local name, rank, _, _, _, _, _, onote = GetGuildRosterInfo(playerIndex);
+    if (rank == "Alt") then
+        local pindex = LT_GetPlayerIndexFromName(onote);
+        if (pindex ~= nil) then
+            return LT_GetMainName(pindex);
+        end
+        return name;
+    else
+        return name;
+    end
+end
+
 function LT_ResetAll()
     StaticPopupDialogs["Reset Warning"] = {
     text = "You are about to reset all attendance and loot data, are you sure?  This process can not be reversed.",
@@ -321,6 +334,9 @@ function LT_Main_OnEvent(this, event, arg1)
     
     if (event == "GUILD_ROSTER_UPDATE") then
         LT_UpdatePlayerList();
+        if (LT_Char:IsShown()) then
+            LT_Char_UpdateLootFrame();
+        end
     elseif (event == "VARIABLES_LOADED") then
         LT_UpdatePlayerList();
     end
