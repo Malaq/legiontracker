@@ -104,6 +104,10 @@ function LT_Char_UpdateLootFrame()
             
             local spec_label = _G["LT_CharSpec_"..i];
             spec_label:SetText(LT_Char_Loots[id].spec);
+            spec_label:SetScript("OnClick", function()
+                LT_Loot_ToggleSpec(LT_Char_Loots[id].lootId);
+                LT_Char_UpdateLootFrame();
+            end);
         end
     end
 end
