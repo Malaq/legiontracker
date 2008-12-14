@@ -262,7 +262,6 @@ function LT_ResetAll()
         LT_ResetAttendance();
         LT_PlayerLootTable = {};
 		LT_LootTable = {};
-        LT_UpdatePlayerList();
     end,
     timeout = 0,
     whileDead = 1,
