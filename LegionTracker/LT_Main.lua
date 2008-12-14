@@ -301,3 +301,17 @@ function LT_Main_OnEvent(this, event, arg1)
         LT_UpdatePlayerList();
     end
 end
+
+function LT_ExportButton()
+    StaticPopupDialogs["Example_HelloWorld"] = {
+    text = "",
+    button1 = "",
+    button2 = "",
+    OnAccept = function()
+        LT_Print("You clicked Yes.","Yellow");
+    end,
+    timeout = 0,
+    whileDead = 1,
+    hideOnEscape = 1
+    };
+end
