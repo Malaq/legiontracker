@@ -50,9 +50,14 @@ function LT_SingleMemberTic(memberIndex)
     end
 end
 
+--Used to return their percentage
 function LT_GetAttendance(playerIndex)
     local counter = 0;
     local _, _, _, _, _, _, _, onote = GetGuildRosterInfo(playerIndex);
+    --If their onote is empty return nothing.
+    if (onote == "") then
+        return "";
+    end
     local total = string.len(onote);
     
     --Test if the o-note is valid.  Just 1's and 0's.
