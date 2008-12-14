@@ -323,17 +323,5 @@ function LT_Main_OnEvent(this, event, arg1)
 end
 
 function LT_ExportButton()
-    StaticPopupDialogs["Example_HelloWorld"] = {
-    text = "You are about to export all data, are you sure?",
-    button1 = "Yes",
-    button2 = "No",
-    OnAccept = function()
-        LT_Print("You clicked Yes.","Yellow");
-    end,
-    timeout = 0,
-    whileDead = 1,
-    hideOnEscape = 1
-    };
-    
-    StaticPopup_Show("Example_HelloWorld");
+    LT_Export:Show();
 end
