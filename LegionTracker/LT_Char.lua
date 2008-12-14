@@ -12,8 +12,8 @@ function LT_Char_ShowPlayer(name)
     LT_Char_CurPlayer = name;
 
     LT_CharTitleString:SetText(name);
-    LT_CharUpperLeftAttendancePercentLabel:SetText("100");--LT_GetAttendance(LT_GetIndexFromName(name)));
-    LT_CharUpperRightMainSpecTotalLabel:SetText(LT_Loot_GetLootCount("Main", name));
+    LT_CharUpperLeftAttendancePercentLabel:SetText(LT_GetAttendance(LT_GetPlayerIndexFromName(name)).."%");
+    LT_CharUpperRightMainSpecTotalLabel:SetText("Main Loot: "..LT_Loot_GetLootCount(0, name));
     LT_Char:SetFrameLevel(100);
     LT_Char:Show();
     
