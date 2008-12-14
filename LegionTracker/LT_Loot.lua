@@ -85,12 +85,22 @@ function LT_Loot_GetLootCount(loot_type, player_name)
     local num_loots = 0;
     if LT_PlayerLootTable[player_name] ~= nil then
         for lootid in pairs(LT_PlayerLootTable[player_name]) do
-            if LT_LootTable[lootid]["spec"] == loot_types[loot_type] then
+            if LT_LootTable[lootid]["spec"] == loot_types[loot_type] or loot_type == "All" then
                 num_loots = num_loots + 1;
             end
         end
     end
     return num_loots;
+end
+
+function LT_Loot_GetLoots(player_name)
+    local loots = {};
+    if LT_PlayerLootTable[player_name] ~= nil then
+        for lootid in pairs(LT_PlayerLootTable[player_name]) do
+            loots[#loots+1] = LT_LootTable[lootid];
+        end
+    end
+    return loots;
 end
 
 LT_LootFrame:SetScript("OnEvent", Loot_OnEvent);
