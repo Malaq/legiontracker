@@ -44,8 +44,7 @@ end
 function Loot_OnEvent(this, event, arg1)
 	if event == "CHAT_MSG_LOOT" then
 		local player = nil;
-		-- Remove receive* item, just for testing
-		if (string.find(arg1, "receive loot:") or string.find(arg1, "receives loot:") or string.find(arg1, "receive* item")) then
+		if (string.find(arg1, "receive loot:") or string.find(arg1, "receives loot:") then
 			player = string.sub(arg1, 0, string.find(arg1, " receive")-1);	
 			if (player == "You") then
 				player = UnitName("player");
