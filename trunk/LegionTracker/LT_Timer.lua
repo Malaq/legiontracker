@@ -3,6 +3,7 @@ LT_TIMER_START = time();
 LT_TIME_OF_LAST_TIC = time();
 LT_TIMER_TOTAL = 0;
 LT_Timer_UpdateInterval = 1.0;
+LT_TIME_EXPIRED = false;
 
 function LT_TimerOnLoad()
     this:RegisterEvent("VARIABLES_LOADED");
@@ -204,12 +205,33 @@ function LT_GetInterval(args)
 end
 
 function LT_TimerToggle()
+    if (LT_TIME_EXPIRED) then
+            local timer_label = getglobal("LT_Main".."Timer".."Label");
+            timer_label:SetTextColor(0, 1, 1);
+            timer_label:SetText("<Click for timer>");
+            LT_Timer_HideInfo();
+            LT_TIME_EXPIRED = false;
+            return;
+    end
     if (LT_TIMER_TOGGLE == true) then
-        LT_TIMER_TOGGLE = false;
-        local timer_label = getglobal("LT_Main".."Timer".."Label");
-        timer_label:SetTextColor(0, 1, 1);
-        timer_label:SetText("<Click for timer>");
-        LT_Timer_HideInfo();
+        StaticPopupDialogs["Stop Timer Warning"] = {
+        text = "Are you sure you want to stop the raid timer?",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function()
+            LT_TIMER_TOGGLE = false;
+            local timer_label = getglobal("LT_Main".."Timer".."Label");
+            timer_label:SetTextColor(0, 1, 1);
+            timer_label:SetText("<Click for timer>");
+            LT_Timer_HideInfo();
+        end,
+        timeout = 5,
+        whileDead = 1,
+        hideOnEscape = 1
+        };
+        
+        StaticPopup_Show("Stop Timer Warning");
+        
     elseif (LT_TIMER_TOGGLE == false) then
         LT_TIMER_START = time();
         LT_TIME_OF_LAST_TIC = time();
@@ -252,12 +274,12 @@ function LT_TimerOnUpdate(self, elapsed)
                 LT_TIME_OF_LAST_TIC = time();
                 LT_Print(LT_TimerInterval["total"].." SECONDS PASSED!!!","yellow");
                 LT_AttendanceTic();
-                LT_UpdatePlayerList();
             end
             if ( (time()-LT_TIMER_START) >= LT_TimerInterval["durationtotal"]) then
                 LT_TIMER_TOGGLE = false;
                 local timer_label = getglobal("LT_Main".."Timer".."Label");
                 timer_label:SetTextColor(1, 0, 0);
+                LT_TIME_EXPIRED = true;
             end
         end
     end
