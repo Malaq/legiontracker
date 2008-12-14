@@ -53,7 +53,7 @@ function LT_ResetAttendance()
 end
 
 --Remove hard coded friend rank
-function LT_SingleMemberTic(memberIndex)
+function LT_SingleMemberTic(memberIndex,ticfromalt)
     local name, rank, _, _, _, _, _, onote, online = GetGuildRosterInfo(memberIndex);
     if (rank == "Friend") and (onote ~= "Friend") then
         GuildRosterSetOfficerNote(memberIndex,"Friend"); 
@@ -62,9 +62,12 @@ function LT_SingleMemberTic(memberIndex)
     elseif (rank == "Alt") then
         local pname = LT_GetPlayerIndexFromName(onote);
         if (pname ~= nil) then
-            LT_SingleMemberTic(pname);
+            LT_SingleMemberTic(pname,true);
         end
     else
+        if (ticfromalt) then
+            online = "yes";
+        end
         if (online == nil) then
             --DEFAULT_CHAT_FRAME:AddMessage("DEBUG1: " ..name.." is Offline.");
             if ( LT_AttendanceCheckList[name] == nil ) then
