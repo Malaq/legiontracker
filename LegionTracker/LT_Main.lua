@@ -253,12 +253,31 @@ function LT_PlayerListSliderChanged()
     LT_RedrawPlayerList();
 end
 
+function LT_ResetAll()
+    StaticPopupDialogs["Reset Warning"] = {
+    text = "You are about to reset all attendance and loot data, are you sure?  This process can not be reversed.",
+    button1 = "Yes",
+    button2 = "No",
+    OnAccept = function()
+        LT_ResetAttendance();
+        LT_PlayerLootTable = {};
+		LT_LootTable = {};
+        LT_UpdatePlayerList();
+    end,
+    timeout = 0,
+    whileDead = 1,
+    hideOnEscape = 1
+    };
+    
+    StaticPopup_Show("Reset Warning");
+end
+
 function LT_LoadLabels()
     local timer_label = getglobal("LT_Main".."Timer".."Label");
     timer_label:SetTextColor(0, 1, 1);
     timer_label:SetText("<Click for timer>");
     
-    local version_label = getglobal("LT_Main".."Version".."Label");
+    local version_label = getglobal("LT_Main".."TitleString");
     version_label:SetText(LT_VERSION);
     
     local name_label = getglobal("LT_Main".."NameHead".."Label");
@@ -301,9 +320,9 @@ end
 
 function LT_ExportButton()
     StaticPopupDialogs["Example_HelloWorld"] = {
-    text = "",
-    button1 = "",
-    button2 = "",
+    text = "You are about to export all data, are you sure?",
+    button1 = "Yes",
+    button2 = "No",
     OnAccept = function()
         LT_Print("You clicked Yes.","Yellow");
     end,
@@ -311,4 +330,6 @@ function LT_ExportButton()
     whileDead = 1,
     hideOnEscape = 1
     };
+    
+    StaticPopup_Show("Example_HelloWorld");
 end

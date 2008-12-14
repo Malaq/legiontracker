@@ -249,6 +249,7 @@ function LT_TimerOnUpdate(self, elapsed)
                 LT_TIME_OF_LAST_TIC = time();
                 LT_Print(LT_TimerInterval["total"].." SECONDS PASSED!!!","yellow");
                 LT_AttendanceTic();
+                LT_UpdatePlayerList();
             end
             if ( (time()-LT_TIMER_START) >= LT_TimerInterval["durationtotal"]) then
                 LT_TIMER_TOGGLE = false;
