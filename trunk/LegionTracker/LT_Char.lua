@@ -64,6 +64,9 @@ function LT_Char_Compare(l1, l2)
     end
 end
 
+function LT_Char_DrawTimeline()
+end
+
 function LT_Char_UpdateLootFrame()
     local scroll_frame = _G["LT_Char_ScrollFrame"];
     if (scroll_frame == nil) then
@@ -76,6 +79,8 @@ function LT_Char_UpdateLootFrame()
     LT_CharTitleString:SetText(LT_Char_CurPlayer);
     LT_CharUpperLeftAttendancePercentLabel:SetText(LT_GetAttendance(LT_GetPlayerIndexFromName(LT_Char_CurPlayer)).."%");
     LT_CharUpperRightMainSpecTotalLabel:SetText(LT_Loot_GetLootCount(1, LT_Char_CurPlayer).." Items");
+    
+    LT_Char_DrawTimeline();
 
     LT_Char_Loots = LT_Loot_GetLoots(LT_Char_CurPlayer);
     table.sort(LT_Char_Loots, LT_Char_Compare);
