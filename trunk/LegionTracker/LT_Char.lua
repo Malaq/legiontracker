@@ -21,7 +21,10 @@ function LT_Char_ShowPlayer(name)
     LT_Char:SetFrameLevel(100);
 
     LT_Char:Show();
-    
+    local scroll_frame = _G["LT_Char_ScrollFrame"];
+    if (scroll_frame ~= nil) then
+        scroll_frame:SetVerticalScroll(0);
+    end
     LT_Char_UpdateLootFrame();
 end
 
@@ -51,8 +54,8 @@ function LT_Char_Compare(l1, l2)
         v1 = l1.zone..l1.subzone;
         v2 = l2.zone..l2.subzone;
     elseif (index == 4) then
-        v1 = l1.spec;
-        v2 = l2.spec;
+        v1 = LT_Loot_GetSpecId(l1.spec);
+        v2 = LT_Loot_GetSpecId(l2.spec);
     end
     if (LT_Char_SortIndex > 0) then
         return v1 < v2;
@@ -104,14 +107,18 @@ function LT_Char_UpdateLootFrame()
                 LT_Char_Tooltip:SetPoint("CENTER", 0, 0);
             end);
             local zone_label = _G["LT_CharZone_"..i];
-            zone_label:SetText(LT_Char_Loots[id].zone);
+            zone_label:SetText(LT_Char_Loots[id].zone.." - "..LT_Char_Loots[id].subzone);
+            zone_label:GetFontString():SetFont("Fonts\\FRIZQT__.TTF", 7);
             
             local date_label = _G["LT_CharDate_"..i];
             local secs = LT_Char_Loots[id].time;
             date_label:SetText(date("%b %d %H:%M", secs));
+            date_label:GetFontString():SetTextColor(1, 1, 1);
             
             local spec_label = _G["LT_CharSpec_"..i];
             spec_label:SetText(LT_Char_Loots[id].spec);
+            local color = LT_Loot_GetSpecColor(LT_Char_Loots[id].spec);
+            spec_label:GetFontString():SetTextColor(color.r, color.g, color.b);
             spec_label:SetScript("OnClick", function()
                 LT_Loot_ToggleSpec(LT_Char_Loots[id].lootId);
                 LT_Char_UpdateLootFrame();
@@ -163,4 +170,7 @@ function LT_Char_OnLoad()
             FauxScrollFrame_OnVerticalScroll(this, offset, LT_Char_EntrySpread, LT_Char_UpdateLootFrame);
         end);
     end
+    
+    -- Makes ESC work
+    tinsert(UISpecialFrames, this:GetName());
 end

@@ -68,7 +68,7 @@ function Loot_OnEvent(this, event, arg1)
 
 		LT_LootTable[lootId] = {};
 		LT_LootTable[lootId]["itemString"] = itemString;
-		LT_LootTable[lootId]["time"] = time();
+		LT_LootTable[lootId]["time"] = LT_GetGameTime();
 		LT_LootTable[lootId]["player"] = player;
 		LT_LootTable[lootId]["spec"] = "Unassigned";
 		LT_LootTable[lootId]["zone"] = GetRealZoneText();
@@ -78,7 +78,32 @@ function Loot_OnEvent(this, event, arg1)
         LT_RedrawPlayerList();
 	end
 end
-LT_Loot_LootTypes = {"Main", "Alt", "Off", "Unassigned"};
+LT_Loot_LootTypes = {"Main", "Alt", "Off", "Unassigned", "DE'd"};
+
+function LT_Loot_GetSpecColor(spec)
+    local color = {r=1, g=1, b=1};
+    if (spec == "Main") then
+        color={r=0.8,g=0.8,b=1};
+    elseif (spec == "Alt") then
+        color={r=0.6,g=0.6,b=0.75};
+    elseif (spec == "Off") then
+        color={r=0.5,g=0.5,b=0.5};
+    elseif (spec == "Unassigned") then
+        color={r=1.0,g=0.4,b=0.4};
+    elseif (spec == "DE'd") then
+        color={r=0.7,g=1.0,b=0.7};
+    end
+    return color;
+end
+
+function LT_Loot_GetSpecId(spec)
+    for i=1,#LT_Loot_LootTypes do
+        if (LT_Loot_LootTypes[i] == spec) then
+            return i;
+        end;
+    end
+    return 1;
+end
 
 function LT_Loot_GetLootCount(loot_type, player_name)
     local loot_types = LT_Loot_LootTypes;

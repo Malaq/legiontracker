@@ -7,7 +7,6 @@ LT_TIME_EXPIRED = false;
 
 function LT_TimerOnLoad()
     this:RegisterEvent("VARIABLES_LOADED");
-    LT_Print("Loaded LT_Timer");
 end
 
 function LT_Timer_Clicked(args)
@@ -243,9 +242,36 @@ function LT_TimerToggle()
     end 
 end
 
+LT_GameTimeOffset = nil;
+LT_GameTimeStart = nil;
+function LT_GetGameTime()
+    if LT_GameTimeOffset == nil then
+        local hour, minute = GetGameTime();
+        local time_table = date("*t", time());
+        time_table.hour = hour;
+        time_table.min = minute;
+        return time(time_table);
+    else
+        return time() + LT_GameTimeOffset;
+    end
+end
+
 function LT_TimerOnUpdate(self, elapsed)
     if (LT_Main:IsShown()) then
         GuildRoster();
+    end
+    if (LT_GameTimeOffset == nil) then
+        local hour, minute = GetGameTime();
+        if (LT_GameTimeStart == nil) then
+            LT_GameTimeStart = minute;
+        elseif (LT_GameTimeStart ~= minute) then
+            local seconds = time();
+            local time_table = date("*t", seconds);
+            time_table.hour = hour;
+            time_table.min = minute;
+            time_table.sec = 0;
+            LT_GameTimeOffset = time(time_table) - time();
+        end
     end
     if (LT_TIMER_TOGGLE == true) then
         self.TimeSinceLastUpdate  = self.TimeSinceLastUpdate + elapsed;
