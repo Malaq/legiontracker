@@ -626,7 +626,8 @@
 </OnEvent>
       <OnShow>LT_Main_OnShow();
 </OnShow>
-      <OnEscapePressed>this:Hide();</OnEscapePressed>
+      <OnEscapePressed>this:Hide();
+</OnEscapePressed>
     </Scripts>
   </Frame>
 </Ui>
