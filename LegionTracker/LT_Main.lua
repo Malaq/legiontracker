@@ -5,6 +5,7 @@ LT_Main_SortIndex = 1;
 LT_PlayerList = nil;
 -- {name} -> {class}
 LT_ClassLookup = nil;
+LT_NameLookup = nil;
 
 function LT_OnLoad()
     this:RegisterEvent("VARIABLES_LOADED");
@@ -229,12 +230,21 @@ function LT_ComparePlayerOrder(p1, p2)
     end
 end
 
+function LT_GetPlayerIndexFromName(name)
+    return LT_NameLookup[name];
+end
+
 function LT_UpdatePlayerList()
     LT_PlayerList = {};
     LT_ClassLookup = {};
+    LT_NameLookup = {};
     local num_members = GetNumGuildMembers(false);
     for i = 1, num_members do
         LT_PlayerList[i] = i;
+        local name = GetGuildRosterInfo(i);
+        if (name ~= nil) then
+            LT_NameLookup[name] = i;
+        end
     end
     table.sort(LT_PlayerList, LT_ComparePlayerOrder);
     LT_RedrawPlayerList();
