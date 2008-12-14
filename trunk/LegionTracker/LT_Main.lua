@@ -87,6 +87,7 @@ function LT_SetupPlayerList()
     LT_NumPlayersShown = floor((LT_Main:GetHeight() - (LT_Main:GetTop() - name_label:GetBottom())) / spread);
     local offset = floor(LT_SliderVal() * (#LT_PlayerList - LT_NumPlayersShown) + 0.5) + 1;
     for i = 0, LT_NumPlayersShown-1 do
+        local id = i+offset;
         for j = 1, #labels do
             local label_name = "LT_"..headings[j].."Label_"..i;
             _G[label_name] = CreateFrame("Button", label_name, LT_Main);
@@ -94,7 +95,8 @@ function LT_SetupPlayerList()
             
             label:SetScript("OnClick", function (this)
                 if (LT_PlayerList[i+offset] ~= nil) then
-                    LT_Char_ShowPlayer(GetGuildRosterInfo(LT_PlayerList[i + offset]));
+                    local cur_offset = floor(LT_SliderVal() * (#LT_PlayerList - LT_NumPlayersShown) + 0.5) + 1;
+                    LT_Char_ShowPlayer(GetGuildRosterInfo(LT_PlayerList[cur_offset + i]));
                 end
             end);
             
@@ -199,8 +201,10 @@ function LT_ComparePlayerOrder(p1, p2)
     local headings = {"Name", "Class", "Attendance", "MainSpec", "AltSpec", "OffSpec", "Unassigned"};
     local sort_index = math.abs(LT_Main_SortIndex);
     if sort_index == 1 then
-        p1 = GetGuildRosterInfo(p1);
-        p2 = GetGuildRosterInfo(p2);
+        if (GetGuildRosterInfo(p1) ~= nil and GetGuildRosterInfo(p2) ~= nil) then
+            p1 = GetGuildRosterInfo(p1);
+            p2 = GetGuildRosterInfo(p2);
+        end
     elseif sort_index == 2 then
         _, _, _, _, p1 = GetGuildRosterInfo(p1);
         _, _, _, _, p2 = GetGuildRosterInfo(p2);

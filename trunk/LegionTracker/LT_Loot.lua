@@ -97,9 +97,10 @@ function LT_Loot_GetLoots(player_name)
     local loots = {};
     if LT_PlayerLootTable[player_name] ~= nil then
         for lootid in pairs(LT_PlayerLootTable[player_name]) do
-            loots[#loots+1] = LT_LootTable[lootid];
+            table.insert(loots, LT_LootTable[lootid]);
         end
     end
+    LT_Print("Returning "..#loots.." loots for "..player_name);
     return loots;
 end
 
