@@ -10,6 +10,11 @@ function LT_Char_ShowPlayer(name)
         return
     end
     LT_Char_CurPlayer = name;
+
+    LT_CharTitleString:SetText(name);
+    LT_CharUpperLeftAttendancePercentLabel:SetText("100");--LT_GetAttendance(LT_GetIndexFromName(name)));
+    LT_CharUpperRightMainSpecTotalLabel:SetText(LT_Loot_GetLootCount("Main", name));
+    LT_Char:SetFrameLevel(100);
     LT_Char:Show();
     
     LT_Char_UpdateLootFrame();
