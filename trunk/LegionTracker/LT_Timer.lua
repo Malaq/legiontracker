@@ -207,12 +207,14 @@ function LT_TimerToggle()
     if (LT_TIMER_TOGGLE == true) then
         LT_TIMER_TOGGLE = false;
         local timer_label = getglobal("LT_Main".."Timer".."Label");
+        timer_label:SetTextColor(0, 1, 1);
         timer_label:SetText("<Click for timer>");
         LT_Timer_HideInfo();
     elseif (LT_TIMER_TOGGLE == false) then
         LT_TIMER_START = time();
         LT_TIME_OF_LAST_TIC = time();
         local timer_label = getglobal("LT_Main".."Timer".."Label");
+        timer_label:SetTextColor(0, 1, 1);
         timer_label:SetText("Starting timer...");
         LT_TIMER_TOGGLE = true;
         LT_Timer_ShowInfo();
@@ -250,6 +252,8 @@ function LT_TimerOnUpdate(self, elapsed)
             end
             if ( (time()-LT_TIMER_START) >= LT_TimerInterval["durationtotal"]) then
                 LT_TIMER_TOGGLE = false;
+                local timer_label = getglobal("LT_Main".."Timer".."Label");
+                timer_label:SetTextColor(1, 0, 0);
             end
         end
     end
