@@ -123,13 +123,16 @@ function LT_Char_UpdateLootFrame()
         return;
     end
     
-    local _, _, _, _, class = GetGuildRosterInfo(LT_GetPlayerIndexFromName(LT_Char_CurPlayer));
+    local _, rank, _, _, class = GetGuildRosterInfo(LT_GetPlayerIndexFromName(LT_Char_CurPlayer));
     local color = LT_GetClassColor(class);
     LT_CharTitleString:SetTextColor(color.r, color.g, color.b);
     LT_CharTitleString:SetText(LT_Char_CurPlayer);
     local temp = LT_GetAttendance(LT_GetPlayerIndexFromName(LT_Char_CurPlayer));
     if (temp == "") then
         LT_CharUpperLeftAttendancePercentLabel:SetText("");
+        if (rank == "Friend") then
+            LT_CharUpperLeftAttendancePercentLabel:SetText("Friend");
+        end
     else
         LT_CharUpperLeftAttendancePercentLabel:SetText(temp.."%");
     end
