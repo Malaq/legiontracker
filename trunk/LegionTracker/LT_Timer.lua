@@ -308,13 +308,30 @@ function LT_TimerOnUpdate(self, elapsed)
 
             --Prevent painting data if the window its in is not shown.
             if (LT_Main:IsShown()) then
-                TIMER_SEC = mod(LT_TIMER_TOTAL,60);
-                TIMER_MIN = mod(floor(LT_TIMER_TOTAL/60),60);
-                TIMER_HR = floor(LT_TIMER_TOTAL/3600);
+                local ticremain = LT_GetInterval()-(time()-LT_TIME_OF_LAST_TIC);
+                local minRemain = mod(floor(ticremain/60),60);
+                local secRemain = mod(ticremain,60);
+                
+
+                
+                local TIMER_SEC = mod(LT_TIMER_TOTAL,60);
+                local TIMER_MIN = mod(floor(LT_TIMER_TOTAL/60),60);
+                local TIMER_HR = floor(LT_TIMER_TOTAL/3600);
                 
                 local timer_label = getglobal("LT_Main".."Timer".."Label");
+                local info_label = getglobal("LT_Main".."TimerInfo".."Label");
+                
+                if (ticremain < LT_GetInterval()/100) then
+                    info_label:SetTextColor(1,0,0);
+                elseif (ticremain < LT_GetInterval()/10) then
+                    info_label:SetTextColor(1,1,0);
+                else
+                    info_label:SetTextColor(1,1,1);
+                end
+                
                 timer_label:SetTextColor(0, 1, 1);
                 timer_label:SetText(string.format("%02d:%02d:%02d", TIMER_HR, TIMER_MIN, TIMER_SEC));
+                info_label:SetText(string.format("Tic: %02d:%02d; Stop: %02d:%02d:%02d", minRemain, secRemain, LT_GetInterval("durationhr"),LT_GetInterval("durationmin"),LT_GetInterval("durationsec")));
             end
             
             --Reset the interval checker
