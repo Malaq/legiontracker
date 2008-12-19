@@ -61,9 +61,13 @@ function LT_SingleMemberTic(memberIndex,ticfromalt)
     elseif (rank == "Friend") then
             return;
     elseif (rank == "Alt") then
-        local pname = LT_GetPlayerIndexFromName(onote);
-        if (pname ~= nil) then
-            LT_SingleMemberTic(pname,true);
+        if (online ~= nil) or (ticfromalt ~= nil) then
+            local pname = LT_GetPlayerIndexFromName(onote);
+            if (pname ~= nil) then
+                LT_SingleMemberTic(pname,true);
+            end
+        else
+            return;
         end
     else
         if (ticfromalt) then
