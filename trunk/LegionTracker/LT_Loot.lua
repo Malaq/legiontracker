@@ -120,7 +120,13 @@ end
 
 function LT_Loot_GetLoots(player_name)
     local loots = {};
-    if LT_PlayerLootTable[player_name] ~= nil then
+	if (player_name == nil) then
+		for loot_id, loot in pairs(LT_LootTable) do
+            if LT_GetPlayerIndexFromName(loot.player) ~= nil then
+			    table.insert(loots, loot)
+            end
+		end
+	elseif LT_PlayerLootTable[player_name] ~= nil then
         for lootid in pairs(LT_PlayerLootTable[player_name]) do
             LT_LootTable[lootid].lootId = lootid; -- Going to save this value from now on, but in some old stuff it wasn't there.
             table.insert(loots, LT_LootTable[lootid]);
@@ -129,7 +135,7 @@ function LT_Loot_GetLoots(player_name)
     return loots;
 end
 
-function LT_Loot_ToggleSpec(loot_id)
+function LT_Loot_ToggleSpec(loot_id, dir)
     local loot_types = LT_Loot_LootTypes;
     local cur_type = 1;
     for i = 1, #loot_types do
@@ -137,7 +143,11 @@ function LT_Loot_ToggleSpec(loot_id)
             cur_type = i;
         end
     end
-    cur_type = mod(cur_type, #loot_types) + 1;
+	if (dir == 1) then
+    	cur_type = mod(cur_type, #loot_types) + 1;
+	else
+		cur_type = mod(cur_type-2+#loot_types, #loot_types) + 1;
+	end
     LT_LootTable[loot_id].spec = loot_types[cur_type];
 end
 

@@ -47,6 +47,8 @@ function LT_SlashHandler(args)
             LT_Timer_SlashHandler(args);
         elseif string.find(args, "^attendance") ~= nil then
             LT_Attendance_SlashHandler(args);    
+        elseif args == "all" then
+            LT_AllLoot:ToggleShow();
         end
 	end
 end
