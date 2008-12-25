@@ -14,6 +14,7 @@ function LT_Loot_SlashHandler(args)
 		LT_Print("lt loot reset");
 		LT_Print("lt loot print loot");
 		LT_Print("lt loot print players");
+        LT_Print("lt loot filter <filter tags>");
 		return
 	end
 
@@ -110,7 +111,7 @@ function LT_Loot_GetLootCount(loot_type, player_name)
     local num_loots = 0;
     if LT_PlayerLootTable[player_name] ~= nil then
         for lootid in pairs(LT_PlayerLootTable[player_name]) do
-            if LT_LootTable[lootid]["spec"] == loot_types[loot_type] or loot_type == "All" then
+            if (LT_LootTable[lootid]["spec"] == loot_types[loot_type] or loot_type == "All") and LT_Loot_Filter(LT_LootTable[lootid]) then
                 num_loots = num_loots + 1;
             end
         end
@@ -118,18 +119,28 @@ function LT_Loot_GetLootCount(loot_type, player_name)
     return num_loots;
 end
 
+function LT_Loot_Filter(loot)
+	local name, _, rarity = GetItemInfo(loot.itemString);
+	if (string.find(name, "Emblem") or rarity < 4) then
+		return nil;
+	else
+		return 1;
+	end
+end
+
 function LT_Loot_GetLoots(player_name)
     local loots = {};
 	if (player_name == nil) then
 		for loot_id, loot in pairs(LT_LootTable) do
-            if LT_GetPlayerIndexFromName(loot.player) ~= nil then
+            if LT_GetPlayerIndexFromName(loot.player) ~= nil and LT_Loot_Filter(loot) then
 			    table.insert(loots, loot)
             end
 		end
 	elseif LT_PlayerLootTable[player_name] ~= nil then
         for lootid in pairs(LT_PlayerLootTable[player_name]) do
-            LT_LootTable[lootid].lootId = lootid; -- Going to save this value from now on, but in some old stuff it wasn't there.
-            table.insert(loots, LT_LootTable[lootid]);
+			if LT_Loot_Filter(LT_LootTable[lootid]) then
+            	table.insert(loots, LT_LootTable[lootid]);
+			end
         end
     end
     return loots;
