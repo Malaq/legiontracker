@@ -7,6 +7,8 @@
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: LT_LootTable,LT_PlayerLootTable,LT_UniqueLootId,LT_TimerInterval
+embeds.xml
+LT_LootUI.lua
 LT_Main.lua
 LT_Settings.lua
 LT_Attendance.lua
@@ -14,9 +16,11 @@ LT_Loot.lua
 LT_Char.lua
 LT_Timer.lua
 LT_Export.lua
+LT_AllLoot.lua
 LT_Timer_Settings.xml
 LT_Main.xml
 LT_Char.xml
 LT_Settings.xml
 LT_Export.xml
 LT_Timer.xml
+LT_AllLoot.xml
