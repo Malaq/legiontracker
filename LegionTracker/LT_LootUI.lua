@@ -89,6 +89,7 @@ function LT_LootUI:UpdateFrame(player)
 	end
 
 	self.st:SetData(self.data_table);
+	self.st:SortData();
 end
 
 function LT_LootUI:OnClick(row_frame, cell_frame, data, cols, row, realrow, column, mouse_button)
@@ -148,7 +149,7 @@ function LT_LootUI:SetupFrame(parent)
 	local cols = {};
 	table.insert(cols, {name="Item", width=parent:GetWidth()*0.25, align="LEFT"});
 	table.insert(cols, {name="Zone", width=parent:GetWidth()*0.25, align="LEFT"});
-	table.insert(cols, {name="Time", width=parent:GetWidth()*0.13, align="LEFT", comparesort=function(cella, cellb, col)
+	table.insert(cols, {name="Time", width=parent:GetWidth()*0.13, align="LEFT", sort="asc", comparesort=function(cella, cellb, col)
 		return LT_LootUI:CompareDates(cella, cellb, col);
 	end});
 	table.insert(cols, {name="Player", width=parent:GetWidth()*0.13, align="LEFT"});
