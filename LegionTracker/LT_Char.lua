@@ -1,6 +1,5 @@
-﻿LT_Char_CurPlayer = nil;
-LT_Char_Headings = nil;
-LT_Char_HeadingText = nil;
+LT_Char_CurPlayer = nil;
+LT_PrevNumTimelineEntries = -1;
 
 function LT_Char_ShowPlayer(name)
     if (name == LT_Char_CurPlayer and LT_Char:IsShown()) then
@@ -20,15 +19,8 @@ function LT_Char_ShowPlayer(name)
     LT_Char:Show();
     LT_Char_UpdateLootFrame();
 
-end
+end         
 
-LT_Char_NumEntriesShown = 0;
-LT_Char_EntryHeight = 15;
-LT_Char_EntrySpread = 15;
-LT_Char_NumEntries = 200;
-LT_Char_Loots = nil;
-LT_Char_SortIndex = -3;
-LT_PrevNumTimelineEntries = -1;                   
 
 function LT_Char_SortBy(index)
     if math.abs(LT_Char_SortIndex) == index then
@@ -87,7 +79,7 @@ function LT_Char_DrawTimeline()
     for i = 1, num_entries+1 do
         if (i ~= num_entries + 1) then
             local name = "LT_TimelineBlock_"..i;
-            local block = _G[name] or CreateFrame("Frame", name, LT_Timeline);
+            local block = _G[name] or CreateFrame("Button", name, LT_Timeline);
             block:Show();
             block:SetWidth(entry_width-1.5);
             block:SetHeight(LT_Timeline:GetHeight()-10);
@@ -102,6 +94,20 @@ function LT_Char_DrawTimeline()
             end
             block:ClearAllPoints();
             block:SetPoint("TOPLEFT", LT_Timeline, "TOPLEFT", (i - 1) * entry_width + 5, -3);
+            block:SetScript("OnMouseDown", function()
+				local index = LT_GetPlayerIndexFromName(LT_Char_CurPlayer);
+                local attendance = LT_GetRawAttendance(index);
+				local newchar;
+                if (string.char(attendance:byte(i)) == "1") then
+					newchar = "0";
+                else
+                    newchar = "1";
+                end
+				attendance = string.sub(attendance, 1, i-1)..newchar..string.sub(attendance, i+1);
+                GuildRosterSetOfficerNote(LT_GetPlayerIndexFromName(LT_GetMainName(index)), attendance);
+				LT_Char_UpdateLootFrame();
+            end);
+           
         end
         
         local label_name = "LT_TimeLabel_"..i;
