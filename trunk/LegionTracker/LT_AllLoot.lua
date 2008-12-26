@@ -14,7 +14,7 @@ function LT_AllLoot:ToggleShow()
 end
 
 function LT_AllLoot:OnShow()
-    
+    LT_LootSearch:SetText(LT_Loot_FilterString);
 end
 
 function LT_AllLoot:OnLoad()
@@ -23,4 +23,10 @@ function LT_AllLoot:OnLoad()
     tinsert(UISpecialFrames, this:GetName());
     LT_AllLootPanel:SetFrameLevel(100);
 	LT_LootUI:SetupFrame(LT_AllLootTable);
+end
+
+function LT_AllLoot:UpdateSearch()
+    UIDropDownMenu_SetText(LT_LootFilterSelect, "(Custom)");
+    LT_Loot_SetFilter(LT_LootSearch:GetText());
+    LT_LootUI:UpdateFrame();
 end

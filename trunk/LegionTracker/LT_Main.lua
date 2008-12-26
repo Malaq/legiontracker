@@ -65,7 +65,7 @@ end
 function LT_Main_SetupTable()
 	local cols = {};
 	local w = LT_SummaryPanel:GetWidth();
-	table.insert(cols, {name="Name", width=w*0.2, align="LEFT", sort="asc"});
+	table.insert(cols, {name="Name", width=w*0.25, align="LEFT", sort="asc"});
 	table.insert(cols, {name="Class", width=w*0.15, align="LEFT", sortnext=1});
 	table.insert(cols, {name="Attendance", width=w*0.15, align="LEFT", sortnext=1, comparesort=function(a, b, col)
 		local a1 = LT_GetAttendance(a);
@@ -90,11 +90,11 @@ function LT_Main_SetupTable()
 			return a1 < b1;
 		end
 	end});
-	table.insert(cols, {name="Main", width=w*0.08, align="LEFT", sortnext=1});
-	table.insert(cols, {name="Alt", width=w*0.08, align="LEFT", sortnext=1});
-	table.insert(cols, {name="Off", width=w*0.08, align="LEFT", sortnext=1});
-	table.insert(cols, {name="Unassigned", width=w*0.14, align="LEFT", sortnext=1});
-	table.insert(cols, {name="DE'd", width=w*0.05, align="LEFT", sortnext=1});
+	table.insert(cols, {name="Main", width=w*0.06, align="CENTER", sortnext=1});
+	table.insert(cols, {name="Alt", width=w*0.06, align="CENTER", sortnext=1});
+	table.insert(cols, {name="Off", width=w*0.06, align="CENTER", sortnext=1});
+	table.insert(cols, {name="DE'd", width=w*0.06, align="CENTER", sortnext=1});
+	table.insert(cols, {name="Unassigned", width=w*0.14, align="CENTER", sortnext=1});
 
 	local num_rows = math.floor(LT_SummaryPanel:GetHeight() / 15) - 1;
     local st = ScrollingTable:CreateST(cols, num_rows, 15, {r=0.3, g=0.3, b=0.4}, LT_SummaryPanel);
@@ -128,6 +128,7 @@ function LT_Main_DropdownInit()
 	info.func = function()
 		LT_Loot_SetFilter();
 		LT_RedrawPlayerList();
+		UIDropDownMenu_SetText(LT_LootFilterSelect, "All Loot");
 	end
     UIDropDownMenu_AddButton(info, 1);
     
@@ -135,6 +136,7 @@ function LT_Main_DropdownInit()
 	info.func = function()
 		LT_Loot_SetFilter("Epic !Emblem");
 		LT_RedrawPlayerList();
+		UIDropDownMenu_SetText(LT_LootFilterSelect, "Epics (no badges)");
 	end
     UIDropDownMenu_AddButton(info, 1);
 end
@@ -208,14 +210,22 @@ function LT_Main_CreateRow(id)
 						return LT_Loot_GetLootCount(3, GetGuildRosterInfo(id));
 					end
 				},
-				{ -- Unassigned
-					value = function()
-						return LT_Loot_GetLootCount(4, GetGuildRosterInfo(id));
-					end
-				},
 				{ -- DE'd
 					value = function()
 						return LT_Loot_GetLootCount(5, GetGuildRosterInfo(id));
+					end
+				},
+				{ -- Unassigned
+					value = function()
+						return LT_Loot_GetLootCount(4, GetGuildRosterInfo(id));
+					end,
+					color = function()
+						local num = LT_Loot_GetLootCount(4, GetGuildRosterInfo(id));
+						if (num > 0) then
+							return {r=1, g=0, b=0};
+						else
+							return {r=0.8, g=1, b=0.8};
+						end
 					end
 				},
 			}

@@ -142,6 +142,20 @@ function LT_LootUI:CompareItems(cella, cellb, col)
 	end
 end
 
+function LT_LootUI:CompareRarity(cella, cellb, col)
+    local column = self.st.cols[col];
+	local direction = column.sort or column.defaultsort or "asc";
+	local _, _, a1 = GetItemInfo(self.loots[cella].itemString);	
+	local _, _, b1 = GetItemInfo(self.loots[cellb].itemString);
+    if (a1 == b1) then
+        return self.st:CompareSort(cella, cellb, col);
+    elseif direction:lower() == "asc" then
+        return a1 > b1;
+    else
+        return a1 < b1;
+    end
+end
+
 function LT_LootUI:SetParent(parent)
 	if (parent ~= UIParent) then
 		self.st.frame:ClearAllPoints();
@@ -168,7 +182,9 @@ function LT_LootUI:SetupFrame(parent)
 	end});
 	table.insert(cols, {name="Player", width=parent:GetWidth()*0.13, align="LEFT", sortnext=3});
 	table.insert(cols, {name="Spec", width=parent:GetWidth()*0.10, align="LEFT", bgcolor={r=0.2, g=0.2, b=0.25}, sortnext=3});
-	table.insert(cols, {name="Rarity", width=parent:GetWidth()*0.09, align="LEFT", sortnext=3});
+	table.insert(cols, {name="Rarity", width=parent:GetWidth()*0.09, align="LEFT", sortnext=3, comparesort=function(cella, cellb, col)
+        return LT_LootUI:CompareRarity(cella, cellb, col);
+    end});
 	table.insert(cols, {name="", width=parent:GetWidth()*0.05, align="LEFT", sortnext=3});
 	local num_rows = math.floor(parent:GetHeight() / 15) - 1;
 	local st = ScrollingTable:CreateST(cols, num_rows, 15, {r=0.3, g=0.3, b=0.4}, parent);
