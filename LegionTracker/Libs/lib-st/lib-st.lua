@@ -180,7 +180,7 @@ do
 				if not col then 
 					col = CreateFrame("Button", row:GetName().."col"..j, row);
 					col.text = row:CreateFontString(col:GetName().."text", "OVERLAY", "GameFontHighlightSmall");
-					col.text:SetFont("Fonts\\FRIZQT__.TTF", 7);
+					col.text:SetFont("Fonts\\FRIZQT__.TTF", 9);
 					row.cols[j] = col;
 					local align = self.cols[j].align or "LEFT";
 					col.text:SetJustifyH(align); 

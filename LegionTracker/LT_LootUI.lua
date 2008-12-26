@@ -130,6 +130,18 @@ function LT_LootUI:CompareDates(cella, cellb, col)
 	end
 end
 
+function LT_LootUI:CompareItems(cella, cellb, col)
+	local column = self.st.cols[col];
+	local direction = column.sort or column.defaultsort or "asc";
+	local a1 = GetItemInfo(self.loots[cella].itemString);	
+	local b1 = GetItemInfo(self.loots[cellb].itemString);	
+	if direction:lower() == "asc" then
+		return a1 > b1;
+	else
+		return a1 < b1;
+	end
+end
+
 function LT_LootUI:SetParent(parent)
 	if (parent ~= UIParent) then
 		self.st.frame:ClearAllPoints();
@@ -147,17 +159,19 @@ function LT_LootUI:SetupFrame(parent)
         return
     end
 	local cols = {};
-	table.insert(cols, {name="Item", width=parent:GetWidth()*0.25, align="LEFT"});
-	table.insert(cols, {name="Zone", width=parent:GetWidth()*0.25, align="LEFT"});
+	table.insert(cols, {name="Item", width=parent:GetWidth()*0.25, align="LEFT", sortnext=3, comparesort=function(cella, cellb, col)
+		return LT_LootUI:CompareItems(cella, cellb, col);
+	end});
+	table.insert(cols, {name="Zone", width=parent:GetWidth()*0.25, align="LEFT", sortnext=3});
 	table.insert(cols, {name="Time", width=parent:GetWidth()*0.13, align="LEFT", sort="asc", comparesort=function(cella, cellb, col)
 		return LT_LootUI:CompareDates(cella, cellb, col);
 	end});
-	table.insert(cols, {name="Player", width=parent:GetWidth()*0.13, align="LEFT"});
-	table.insert(cols, {name="Spec", width=parent:GetWidth()*0.10, align="LEFT", bgcolor={r=0.2, g=0.2, b=0.25}});
-	table.insert(cols, {name="Rarity", width=parent:GetWidth()*0.09, align="LEFT"});
-	table.insert(cols, {name="", width=parent:GetWidth()*0.05, align="LEFT"});
-	local num_rows = math.floor(parent:GetHeight() / 12) - 1;
-	local st = ScrollingTable:CreateST(cols, num_rows, 12, {r=0.3, g=0.3, b=0.4}, parent);
+	table.insert(cols, {name="Player", width=parent:GetWidth()*0.13, align="LEFT", sortnext=3});
+	table.insert(cols, {name="Spec", width=parent:GetWidth()*0.10, align="LEFT", bgcolor={r=0.2, g=0.2, b=0.25}, sortnext=3});
+	table.insert(cols, {name="Rarity", width=parent:GetWidth()*0.09, align="LEFT", sortnext=3});
+	table.insert(cols, {name="", width=parent:GetWidth()*0.05, align="LEFT", sortnext=3});
+	local num_rows = math.floor(parent:GetHeight() / 15) - 1;
+	local st = ScrollingTable:CreateST(cols, num_rows, 15, {r=0.3, g=0.3, b=0.4}, parent);
 
 	self.data_table = {};
 	st:SetData(self.data_table);

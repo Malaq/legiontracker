@@ -7,11 +7,11 @@ LT_NameLookup = nil;
 LT_Main_ST = nil;
 
 function LT_OnLoad()
+	LT_Main:SetParent(UIParent);
     this:RegisterEvent("VARIABLES_LOADED");
     this:RegisterEvent("GUILD_ROSTER_UPDATE");
     this:RegisterEvent("CHAT_MSG_SYSTEM");
     --this:RegisterForClicks("LeftButtonDown", "RightButtonDown");
-    
     LT_LoadLabels();
     LT_Main_SetupTable();
     this:EnableMouseWheel(true);
@@ -65,9 +65,9 @@ end
 function LT_Main_SetupTable()
 	local cols = {};
 	local w = LT_SummaryPanel:GetWidth();
-	table.insert(cols, {name="Name", width=w*0.2, align="LEFT"});
-	table.insert(cols, {name="Class", width=w*0.1, align="LEFT"});
-	table.insert(cols, {name="Attendance", width=w*0.15, align="LEFT", comparesort=function(a, b, col)
+	table.insert(cols, {name="Name", width=w*0.2, align="LEFT", sort="asc"});
+	table.insert(cols, {name="Class", width=w*0.15, align="LEFT", sortnext=1});
+	table.insert(cols, {name="Attendance", width=w*0.15, align="LEFT", sortnext=1, comparesort=function(a, b, col)
 		local a1 = LT_GetAttendance(a);
 		local b1 = LT_GetAttendance(b);
 
@@ -79,6 +79,10 @@ function LT_Main_SetupTable()
 			b1 = ""..b1;
 		end
 
+		if (a1 == b1) then
+			return LT_Main_ST:CompareSort(a, b, col);
+		end
+
 		local direction = LT_Main_ST.cols[col].sort or LT_Main_ST.cols[col].defaultsort or "asc";
 		if (direction:lower() == "asc") then
 			return a1 > b1;
@@ -86,14 +90,14 @@ function LT_Main_SetupTable()
 			return a1 < b1;
 		end
 	end});
-	table.insert(cols, {name="Main", width=w*0.1, align="LEFT"});
-	table.insert(cols, {name="Alt", width=w*0.1, align="LEFT"});
-	table.insert(cols, {name="Off", width=w*0.1, align="LEFT"});
-	table.insert(cols, {name="Unassigned", width=w*0.15, align="LEFT"});
-	table.insert(cols, {name="DE'd", width=w*0.1, align="LEFT"});
+	table.insert(cols, {name="Main", width=w*0.08, align="LEFT", sortnext=1});
+	table.insert(cols, {name="Alt", width=w*0.08, align="LEFT", sortnext=1});
+	table.insert(cols, {name="Off", width=w*0.08, align="LEFT", sortnext=1});
+	table.insert(cols, {name="Unassigned", width=w*0.14, align="LEFT", sortnext=1});
+	table.insert(cols, {name="DE'd", width=w*0.05, align="LEFT", sortnext=1});
 
-	local num_rows = math.floor(LT_SummaryPanel:GetHeight() / 12) - 1;
-    local st = ScrollingTable:CreateST(cols, num_rows, 12, {r=0.3, g=0.3, b=0.4}, LT_SummaryPanel);
+	local num_rows = math.floor(LT_SummaryPanel:GetHeight() / 15) - 1;
+    local st = ScrollingTable:CreateST(cols, num_rows, 15, {r=0.3, g=0.3, b=0.4}, LT_SummaryPanel);
 	st.frame:ClearAllPoints();
 	st.frame:SetAllPoints(LT_SummaryPanel);
 	LT_Main_ST = st;
@@ -107,9 +111,39 @@ function LT_Main_SetupTable()
 			end
 		end
 	});
+
+	local dropdown = CreateFrame("Frame", "LT_LootFilterSelect", LT_Main, "UIDropDownMenuTemplate");
+	dropdown:ClearAllPoints();
+	dropdown:SetAllPoints(LT_Main_Dropdown);
+    UIDropDownMenu_Initialize(dropdown, LT_Main_DropdownInit);
+	UIDropDownMenu_SetText(dropdown, "All Loot");
+end
+
+function LT_Main_DropdownInit()
+    local info = UIDropDownMenu_CreateInfo();
+    info.text = "All Loot";
+    info.owner = this:GetParent();
+    info.checked = nil;
+    info.icon = nil;
+	info.func = function()
+		LT_Loot_SetFilter();
+		LT_RedrawPlayerList();
+	end
+    UIDropDownMenu_AddButton(info, 1);
+    
+    info.text = "Epics (no badges)"
+	info.func = function()
+		LT_Loot_SetFilter("Epic !Emblem");
+		LT_RedrawPlayerList();
+	end
+    UIDropDownMenu_AddButton(info, 1);
 end
 
 function LT_GetClassColor(class)
+	if (class == nil) then
+		return {r=1, g=1, b=1};
+	end
+
     local color_class = string.upper(class);
     if (color_class == "DEATH KNIGHT") then
         color_class = "DEATHKNIGHT";
