@@ -3,7 +3,7 @@
   <Frame name="LT_AllLootPanel" movable="true" enableMouse="true">
     <!--<FrameSkin skinid="8309da78-006d-4401-9d4f-cbc448d08261" frameid="047a5294-fa59-460b-83cb-0c19711baeb7" />-->
     <Size>
-      <AbsDimension x="589" y="332" />
+      <AbsDimension x="713" y="435" />
     </Size>
     <Anchors>
       <Anchor point="CENTER" relativeTo="UIParent">
@@ -33,12 +33,13 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="544" y="-15" />
+              <AbsDimension x="667" y="-18" />
             </Offset>
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_AllLoot:ToggleShow();</OnClick>
+          <OnClick>LT_AllLoot:ToggleShow();
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -68,39 +69,10 @@
         <HighlightFont style="GameFontHighlight" />
         <DisabledFont style="GameFontDisable" />
       </Button>
-      <EditBox name="$parentEditBox1" autoFocus="false">
-        <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4975-d66d-444e-bb2d-1ad102c87fed" />-->
-        <Size>
-          <AbsDimension x="244" y="21" />
-        </Size>
-        <Anchors>
-          <Anchor point="TOPLEFT">
-            <Offset>
-              <AbsDimension x="16" y="-37" />
-            </Offset>
-          </Anchor>
-        </Anchors>
-        <FontString font="Fonts\ARIALN.TTF">
-          <FontHeight>
-            <AbsValue val="14" />
-          </FontHeight>
-          <Color r="1" g="1" b="1" />
-          <Shadow>
-            <Color r="0" g="0" b="0" />
-            <Offset>
-              <AbsDimension x="1" y="-1" />
-            </Offset>
-          </Shadow>
-        </FontString>
-        <HighlightColor r="1" g="1" b="1" />
-        <TextInsets>
-          <AbsInset left="0" right="0" top="0" bottom="0" />
-        </TextInsets>
-      </EditBox>
       <Frame name="LT_AllLootTable">
         <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4972-d66d-444e-bb2d-1ad102c87fed" />-->
         <Size>
-          <AbsDimension x="561" y="245" />
+          <AbsDimension x="675" y="350" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">

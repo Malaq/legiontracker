@@ -1,4 +1,4 @@
-LT_Char_CurPlayer = nil;
+﻿LT_Char_CurPlayer = nil;
 LT_PrevNumTimelineEntries = -1;
 
 function LT_Char_ShowPlayer(name)
@@ -20,37 +20,6 @@ function LT_Char_ShowPlayer(name)
     LT_Char_UpdateLootFrame();
 
 end         
-
-
-function LT_Char_SortBy(index)
-    if math.abs(LT_Char_SortIndex) == index then
-        LT_Char_SortIndex = -LT_Char_SortIndex;
-    else
-        LT_Char_SortIndex = index;
-    end
-    LT_Char_UpdateLootFrame();
-end
-
-function LT_Char_Compare(l1, l2)
-    local v1 = l1.time;
-    local v2 = l2.time;
-    local index = math.abs(LT_Char_SortIndex);
-    if (index == 1) then
-        v1 = GetItemInfo(l1.itemString);
-        v2 = GetItemInfo(l2.itemString);
-    elseif (index == 2) then
-        v1 = l1.zone..l1.subzone;
-        v2 = l2.zone..l2.subzone;
-    elseif (index == 4) then
-        v1 = LT_Loot_GetSpecId(l1.spec);
-        v2 = LT_Loot_GetSpecId(l2.spec);
-    end
-    if (LT_Char_SortIndex > 0) then
-        return v1 < v2;
-    else
-        return v1 > v2;
-    end
-end
 
 function LT_Char_DrawTimeline()
     local attendance = LT_GetRawAttendance(LT_GetPlayerIndexFromName(LT_Char_CurPlayer))
@@ -119,7 +88,7 @@ function LT_Char_DrawTimeline()
         label:SetPoint("CENTER", LT_Timeline, "TOPLEFT", (i - 1) * entry_width + 5, -LT_Timeline:GetHeight()+3);
 
         local font_string = label:CreateFontString("$parentText", "OVERLAY", "GameFontNormal");
-        font_string:SetFont("Fonts\\FRIZQT__.TTF", 5);
+        font_string:SetFont("Fonts\\FRIZQT__.TTF", 7);
         font_string:SetText(date("%H:%M", LT_TIMER_START + (i-1)*LT_GetInterval()));
         font_string:SetTextColor(0.8, 1.0, 0.8);
         label:SetFontString(font_string);
@@ -161,9 +130,9 @@ function LT_Char_UpdateLootFrame()
 end
 
 function LT_Char_OnLoad()
+	this:SetParent(UIParent);
     this:Hide();
 	LT_LootUI:SetupFrame(LT_LootListPanel);
-    
     -- Makes ESC work
     tinsert(UISpecialFrames, this:GetName());
 end

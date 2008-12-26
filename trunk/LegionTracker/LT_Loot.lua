@@ -119,13 +119,46 @@ function LT_Loot_GetLootCount(loot_type, player_name)
     return num_loots;
 end
 
+LT_Loot_FilterVal = nil;
+LT_Loot_FilterNeg = {};
+
+function LT_Loot_SetFilter(filter)
+	if (filter == nil) then
+		LT_Loot_FilterVal = nil;
+		return;
+	end
+	LT_Loot_FilterVal = { strsplit(filter, " ") };
+	for i=1,#LT_Loot_FilterVal do
+		LT_Loot_FilterNeg[i] = false;
+		if (LT_Loot_FilterVal[i].sub(1, 1) == "!") then
+			LT_Loot_FilterVal[i] = LT_Loot_FilterVal[i].sub(1);
+			LT_Loot_FilterNeg[i] = true;
+		end
+	end
+end
+
 function LT_Loot_Filter(loot)
-	local name, _, rarity = GetItemInfo(loot.itemString);
-	if (string.find(name, "Emblem") or rarity < 4) then
-		return nil;
-	else
+	if (LT_Loot_FilterVal == nil) then
 		return 1;
 	end
+	local filter = LT_Loot_FilterVal;
+	local types = {"Poor", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Artifact"};
+
+	for i=1,#filter do
+		local token = LT_Loot_FilterVal[i];
+		local name, _, rarity = GetItemInfo(loot.itemString);
+		rarity = types[rarity+1];
+		if (string.find(name, token) or rarity == token) then
+			if (LT_Loot_FilterNeg[i] == false) then
+				return nil;
+			end
+		else
+			if (LT_Loot_FilterNeg[i] == true) then
+				return nil;
+			end
+		end
+	end
+	return 1;
 end
 
 function LT_Loot_GetLoots(player_name)

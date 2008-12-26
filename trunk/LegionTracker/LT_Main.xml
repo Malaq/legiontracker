@@ -3,7 +3,7 @@
   <Frame name="LT_Main" movable="true" enableMouse="true">
     <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508883-59c2-4f83-ae10-27aaad48391b" />-->
     <Size>
-      <AbsDimension x="598" y="300" />
+      <AbsDimension x="647" y="388" />
     </Size>
     <Anchors>
       <Anchor point="CENTER" relativeTo="UIParent">
@@ -64,6 +64,19 @@
       </Layer>
     </Layers>
     <Frames>
+      <Frame name="LT_Main_Dropdown">
+        <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4972-d66d-444e-bb2d-1ad102c87fed" />-->
+        <Size>
+          <AbsDimension x="105" y="21" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="367" y="-348" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+      </Frame>
       <Button name="$parentButton1" text="All Loot">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508884-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
@@ -72,12 +85,13 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="481" y="-262" />
+              <AbsDimension x="524" y="-347" />
             </Offset>
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_AllLoot:ToggleShow();</OnClick>
+          <OnClick>LT_AllLoot:ToggleShow();
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -110,7 +124,7 @@
       <Frame name="LT_SummaryPanel">
         <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4972-d66d-444e-bb2d-1ad102c87fed" />-->
         <Size>
-          <AbsDimension x="561" y="187" />
+          <AbsDimension x="604" y="273" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
@@ -128,7 +142,7 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="411" y="-17" />
+              <AbsDimension x="454" y="-17" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -172,7 +186,7 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="126" y="-26" />
+              <AbsDimension x="135" y="-26" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -205,7 +219,7 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="486" y="-17" />
+              <AbsDimension x="529" y="-17" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -249,7 +263,7 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="561" y="-17" />
+              <AbsDimension x="604" y="-17" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -288,12 +302,12 @@
       <Frame name="$parentTimer">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
-          <AbsDimension x="100" y="20" />
+          <AbsDimension x="109" y="20" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="20" y="-17" />
+              <AbsDimension x="20" y="-26" />
             </Offset>
           </Anchor>
         </Anchors>

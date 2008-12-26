@@ -19,6 +19,7 @@ end
 
 function LT_AllLoot:OnLoad()
     LT_AllLootPanel:Hide();
+	LT_AllLootPanel:SetParent(UIParent);
     tinsert(UISpecialFrames, this:GetName());
     LT_AllLootPanel:SetFrameLevel(100);
 	LT_LootUI:SetupFrame(LT_AllLootTable);
