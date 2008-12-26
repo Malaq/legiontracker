@@ -121,20 +121,25 @@ end
 
 LT_Loot_FilterVal = nil;
 LT_Loot_FilterNeg = {};
+LT_Loot_FilterString = "";
 
 function LT_Loot_SetFilter(filter)
-	if (filter == nil) then
+	if (filter == nil or filter == "") then
 		LT_Loot_FilterVal = nil;
+        LT_Loot_FilterString = "";
 		return;
 	end
-	LT_Loot_FilterVal = { strsplit(filter, " ") };
+    LT_Loot_FilterString = filter;
+	LT_Loot_FilterVal = { strsplit(" ", filter) };
 	for i=1,#LT_Loot_FilterVal do
 		LT_Loot_FilterNeg[i] = false;
-		if (LT_Loot_FilterVal[i].sub(1, 1) == "!") then
-			LT_Loot_FilterVal[i] = LT_Loot_FilterVal[i].sub(1);
+		if (string.sub(LT_Loot_FilterVal[i], 1, 1) == "!") then
+			LT_Loot_FilterVal[i] = LT_Loot_FilterVal[i]:sub(2);
 			LT_Loot_FilterNeg[i] = true;
 		end
-	end
+        LT_Loot_FilterVal[i] = LT_Loot_FilterVal[i]:lower();
+    end
+    
 end
 
 function LT_Loot_Filter(loot)
@@ -146,17 +151,20 @@ function LT_Loot_Filter(loot)
 
 	for i=1,#filter do
 		local token = LT_Loot_FilterVal[i];
-		local name, _, rarity = GetItemInfo(loot.itemString);
-		rarity = types[rarity+1];
-		if (string.find(name, token) or rarity == token) then
-			if (LT_Loot_FilterNeg[i] == false) then
-				return nil;
-			end
-		else
-			if (LT_Loot_FilterNeg[i] == true) then
-				return nil;
-			end
-		end
+        if (token ~= "") then -- Catches the case where you've just typed !
+            local name, _, rarity = GetItemInfo(loot.itemString);
+            local ss = name.."|"..types[rarity+1].."|"..loot.player.."|"..loot.spec;
+            rarity = types[rarity+1];
+            if (string.find(ss:lower(), token)) then
+                if (LT_Loot_FilterNeg[i] == true) then
+                    return nil;
+                end
+            else
+                if (LT_Loot_FilterNeg[i] == false) then
+                    return nil;
+                end
+            end
+         end
 	end
 	return 1;
 end

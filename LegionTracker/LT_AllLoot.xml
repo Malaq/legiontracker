@@ -25,6 +25,67 @@
       </EdgeSize>
     </Backdrop>
     <Frames>
+      <EditBox name="LT_LootSearch" enableMouse="true">
+        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508887-59c2-4f83-ae10-27aaad48391b" />-->
+        <Size>
+          <AbsDimension x="297" y="22" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="16" y="-18" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Layers>
+          <Layer level="BACKGROUND">
+            <Texture name="$parentLeft" file="Interface\Common\Common-Input-Border">
+              <Size>
+                <AbsDimension x="8" y="20" />
+              </Size>
+              <Anchors>
+                <Anchor point="LEFT" />
+              </Anchors>
+              <TexCoords left="0" right="0.0625" top="0" bottom="0.625" />
+            </Texture>
+            <Texture name="$parentRight" file="Interface\Common\Common-Input-Border">
+              <Size>
+                <AbsDimension x="8" y="20" />
+              </Size>
+              <Anchors>
+                <Anchor point="RIGHT" />
+              </Anchors>
+              <TexCoords left="0.9375" right="1" top="0" bottom="0.625" />
+            </Texture>
+            <Texture name="$parentMiddle" file="Interface\Common\Common-Input-Border">
+              <Size>
+                <AbsDimension x="10" y="20" />
+              </Size>
+              <Anchors>
+                <Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT" />
+                <Anchor point="RIGHT" relativeTo="$parentRight" relativePoint="LEFT" />
+              </Anchors>
+              <TexCoords left="0.0625" right="0.9375" top="0" bottom="0.625" />
+            </Texture>
+          </Layer>
+        </Layers>
+        <Scripts>
+          <OnEscapePressed>LT_AllLoot:ToggleShow();</OnEscapePressed>
+          <OnTextChanged>LT_AllLoot:UpdateSearch();</OnTextChanged>
+        </Scripts>
+        <FontString font="Fonts\ARIALN.TTF">
+          <FontHeight>
+            <AbsValue val="14" />
+          </FontHeight>
+          <Color r="1" g="1" b="1" />
+          <Shadow>
+            <Color r="0" g="0" b="0" />
+            <Offset>
+              <AbsDimension x="1" y="-1" />
+            </Offset>
+          </Shadow>
+        </FontString>
+      </EditBox>
       <Button name="$parentButton1" text="X">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508884-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
