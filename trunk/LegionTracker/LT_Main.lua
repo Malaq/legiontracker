@@ -127,7 +127,6 @@ function LT_Main_DropdownInit()
     info.icon = nil;
 	info.func = function()
 		LT_Loot_SetFilter();
-		LT_RedrawPlayerList();
 		UIDropDownMenu_SetText(LT_LootFilterSelect, "All Loot");
 	end
     UIDropDownMenu_AddButton(info, 1);
@@ -135,7 +134,6 @@ function LT_Main_DropdownInit()
     info.text = "Epics (no badges)"
 	info.func = function()
 		LT_Loot_SetFilter("Epic !Emblem");
-		LT_RedrawPlayerList();
 		UIDropDownMenu_SetText(LT_LootFilterSelect, "Epics (no badges)");
 	end
     UIDropDownMenu_AddButton(info, 1);
@@ -235,9 +233,9 @@ function LT_Main_CreateRow(id)
 end
 
 function LT_RedrawPlayerList()
-	local st = LT_Main_ST;
-	st:Refresh();
-
+	if (LT_Main:IsShown()) then
+	    LT_Main_ST:Refresh();
+    end
 end
 
 function LT_IsNumber(str)
@@ -255,6 +253,8 @@ end
 function LT_UpdatePlayerList()
     LT_NameLookup = {};
     
+    -- This always needs to be done regardless of whether or not
+    -- we're shown, because attendance and loot depend on the lookup.
     local num_all_members = GetNumGuildMembers(true);
     for i = 1, num_all_members do
         local name = GetGuildRosterInfo(i);
@@ -263,16 +263,18 @@ function LT_UpdatePlayerList()
         end
     end
     
-	local st = LT_Main_ST;
-	local data = {};
-
-    local num_members = GetNumGuildMembers(false);
-    for i = 1, num_members do
-		table.insert(data, LT_Main_CreateRow(i));
+    if (LT_Main:IsShown()) then
+        local st = LT_Main_ST;
+        local data = {};
+    
+        local num_members = GetNumGuildMembers(false);
+        for i = 1, num_members do
+            table.insert(data, LT_Main_CreateRow(i));
+        end
+    
+        st:SetData(data);
+        st:Refresh();
     end
-
-	st:SetData(data);
-	st:Refresh();
 end
 
 function LT_GetMainName(playerIndex)
@@ -324,9 +326,8 @@ function LT_Main_OnEvent(this, event, arg1)
     
     if (event == "GUILD_ROSTER_UPDATE") then
         LT_UpdatePlayerList();
-        if (LT_Char:IsShown()) then
-            LT_Char_UpdateLootFrame();
-        end
+        -- We get guildroster if someone else updates an officer note.
+        LT_Attendance_OnChange();
     elseif (event == "VARIABLES_LOADED") then
         LT_UpdatePlayerList();
     end

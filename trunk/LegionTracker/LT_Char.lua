@@ -17,7 +17,7 @@ function LT_Char_ShowPlayer(name)
     LT_Char:SetFrameLevel(100);
 
     LT_Char:Show();
-    LT_Char_UpdateLootFrame();
+    LT_Char_UpdateFrame();
 
 end         
 
@@ -74,7 +74,7 @@ function LT_Char_DrawTimeline()
                 end
 				attendance = string.sub(attendance, 1, i-1)..newchar..string.sub(attendance, i+1);
                 GuildRosterSetOfficerNote(LT_GetPlayerIndexFromName(LT_GetMainName(index)), attendance);
-				LT_Char_UpdateLootFrame();
+				LT_Attendance_OnChange();
             end);
            
         end
@@ -95,38 +95,39 @@ function LT_Char_DrawTimeline()
     end
 end
 
-function LT_Char_UpdateLootFrame()
-    
-    local name, rank, _, _, class = GetGuildRosterInfo(LT_GetPlayerIndexFromName(LT_Char_CurPlayer));
-    local color = LT_GetClassColor(class);
-    if (rank == "Alt") then
-        local main = LT_GetMainName(LT_GetPlayerIndexFromName(LT_Char_CurPlayer));
-        if (main == name) then
-            LT_CharMainNameLabel:SetText("Main: Fix officer note.");
+function LT_Char_UpdateFrame()
+    if (LT_Char:IsShown()) then
+        local name, rank, _, _, class = GetGuildRosterInfo(LT_GetPlayerIndexFromName(LT_Char_CurPlayer));
+        local color = LT_GetClassColor(class);
+        if (rank == "Alt") then
+            local main = LT_GetMainName(LT_GetPlayerIndexFromName(LT_Char_CurPlayer));
+            if (main == name) then
+                LT_CharMainNameLabel:SetText("Main: Fix officer note.");
+            else
+                LT_CharMainNameLabel:SetText("Main: "..main);
+            end
         else
-            LT_CharMainNameLabel:SetText("Main: "..main);
+            LT_CharMainNameLabel:SetText("");
         end
-    else
-        LT_CharMainNameLabel:SetText("");
-    end
-    LT_CharTitleString:SetTextColor(color.r, color.g, color.b);
-    LT_CharTitleString:SetText(LT_Char_CurPlayer);
-    local temp = LT_GetAttendance(LT_GetPlayerIndexFromName(LT_Char_CurPlayer));
-    if (temp == "") then
-        LT_CharUpperLeftAttendancePercentLabel:SetText("");
-        if (rank == "Friend") then
-            LT_CharUpperLeftAttendancePercentLabel:SetText("Friend");
-        elseif (rank == "Alt") then
-            LT_CharUpperLeftAttendancePercentLabel:SetText("Alt");
+        LT_CharTitleString:SetTextColor(color.r, color.g, color.b);
+        LT_CharTitleString:SetText(LT_Char_CurPlayer);
+        local temp = LT_GetAttendance(LT_GetPlayerIndexFromName(LT_Char_CurPlayer));
+        if (temp == "") then
+            LT_CharUpperLeftAttendancePercentLabel:SetText("");
+            if (rank == "Friend") then
+                LT_CharUpperLeftAttendancePercentLabel:SetText("Friend");
+            elseif (rank == "Alt") then
+                LT_CharUpperLeftAttendancePercentLabel:SetText("Alt");
+            end
+        else
+            LT_CharUpperLeftAttendancePercentLabel:SetText(temp.."%");
         end
-    else
-        LT_CharUpperLeftAttendancePercentLabel:SetText(temp.."%");
-    end
-    LT_CharUpperRightMainSpecTotalLabel:SetText(LT_Loot_GetLootCount(1, LT_Char_CurPlayer).." Items");
+        LT_CharUpperRightMainSpecTotalLabel:SetText(LT_Loot_GetLootCount(1, LT_Char_CurPlayer).." Items");
+        
+        LT_Char_DrawTimeline();
     
-    LT_Char_DrawTimeline();
-
-	LT_LootUI:UpdateFrame(LT_Char_CurPlayer);
+        LT_LootUI:UpdateFrame(LT_Char_CurPlayer);
+    end
 end
 
 function LT_Char_OnLoad()
