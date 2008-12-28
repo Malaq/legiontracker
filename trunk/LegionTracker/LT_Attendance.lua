@@ -11,6 +11,18 @@ function LT_Attendance_SlashHandler(args)
     end
 end
 
+function LT_GetAttendees()
+    local count = 0;
+    local guildCount = GetNumGuildMembers(true);
+    for i = 1, guildCount do 
+        local _, _, _, _, _, _, _, onote = GetGuildRosterInfo(i);
+        if (string.find(onote, "1") ~= nil) then
+            count = count + 1;
+        end
+    end
+    return count;
+end
+
 function LT_AttendanceTic()
     SetGuildRosterShowOffline(false);
     --Do online first

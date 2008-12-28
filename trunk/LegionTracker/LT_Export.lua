@@ -6,7 +6,8 @@
     local count = 0;
     SortGuildRoster("name");
     local guildCount = GetNumGuildMembers(true);
-    export_label:Insert("#Raid Date/Scheduled/Count of attendees - Goes Here. \n");
+    --date("%b %d %H:%M:%S", LT_Char_Loots[i].time);-
+    export_label:Insert("#"..LT_RAID_NAME.."/True/"..LT_GetAttendees().."\n");
     for i = 1, guildCount do 
         local name, rank, _, level, class, _, _, onote = GetGuildRosterInfo(i);
         --export_label:Insert(name..";"..rank..";"..level..";"..class..";"..onote..";");
