@@ -8,7 +8,7 @@ function LT_AllLoot:ToggleShow()
 			LT_Char_ShowPlayer(LT_Char_CurPlayer); -- toggles it off
 		end
         LT_LootUI:SetParent(LT_AllLootTable);
-        LT_LootUI:UpdateFrame();
+        self:UpdateFrame();
         LT_AllLootPanel:Show();
     end
 end
@@ -28,5 +28,10 @@ end
 function LT_AllLoot:UpdateSearch()
     UIDropDownMenu_SetText(LT_LootFilterSelect, "(Custom)");
     LT_Loot_SetFilter(LT_LootSearch:GetText());
-    LT_LootUI:UpdateFrame();
+end
+
+function LT_AllLoot:UpdateFrame()
+    if (LT_AllLootPanel:IsShown()) then
+        LT_LootUI:UpdateFrame();
+    end
 end

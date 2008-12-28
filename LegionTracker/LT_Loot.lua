@@ -7,6 +7,10 @@ LT_UniqueLootId = 0;
 
 LT_VarsLoaded = nil;
 
+LT_Loot_FilterVal = nil;
+LT_Loot_FilterNeg = {};
+LT_Loot_FilterString = "";
+
 
 function LT_Loot_SlashHandler(args)
     LT_Print("Loot with args: "..args);
@@ -76,7 +80,7 @@ function Loot_OnEvent(this, event, arg1)
 		LT_LootTable[lootId]["subzone"] = GetSubZoneText();
         LT_LootTable[lootId]["lootId"] = lootId;
 
-        LT_RedrawPlayerList();
+        LT_Loot_OnChange();
 	end
 end
 LT_Loot_LootTypes = {"Main", "Alt", "Off", "Unassigned", "DE'd"};
@@ -119,27 +123,23 @@ function LT_Loot_GetLootCount(loot_type, player_name)
     return num_loots;
 end
 
-LT_Loot_FilterVal = nil;
-LT_Loot_FilterNeg = {};
-LT_Loot_FilterString = "";
-
 function LT_Loot_SetFilter(filter)
 	if (filter == nil or filter == "") then
 		LT_Loot_FilterVal = nil;
         LT_Loot_FilterString = "";
-		return;
-	end
-    LT_Loot_FilterString = filter;
-	LT_Loot_FilterVal = { strsplit(" ", filter) };
-	for i=1,#LT_Loot_FilterVal do
-		LT_Loot_FilterNeg[i] = false;
-		if (string.sub(LT_Loot_FilterVal[i], 1, 1) == "!") then
-			LT_Loot_FilterVal[i] = LT_Loot_FilterVal[i]:sub(2);
-			LT_Loot_FilterNeg[i] = true;
-		end
-        LT_Loot_FilterVal[i] = LT_Loot_FilterVal[i]:lower();
+	else
+        LT_Loot_FilterString = filter;
+        LT_Loot_FilterVal = { strsplit(" ", filter) };
+        for i=1,#LT_Loot_FilterVal do
+            LT_Loot_FilterNeg[i] = false;
+            if (string.sub(LT_Loot_FilterVal[i], 1, 1) == "!") then
+                LT_Loot_FilterVal[i] = LT_Loot_FilterVal[i]:sub(2);
+                LT_Loot_FilterNeg[i] = true;
+            end
+            LT_Loot_FilterVal[i] = LT_Loot_FilterVal[i]:lower();
+        end
     end
-    
+    LT_Loot_OnChange();
 end
 
 function LT_Loot_Filter(loot)
@@ -201,6 +201,16 @@ function LT_Loot_ToggleSpec(loot_id, dir)
 		cur_type = mod(cur_type-2+#loot_types, #loot_types) + 1;
 	end
     LT_LootTable[loot_id].spec = loot_types[cur_type];
+    
+    LT_Loot_OnChange();
+end
+
+-- This function should be called whenever the list of loot changes.
+-- It will call the appropriate refresh functions.
+function LT_Loot_OnChange()
+    LT_AllLoot:UpdateFrame();
+    LT_Char_UpdateFrame();
+    LT_RedrawPlayerList();
 end
 
 LT_LootFrame:SetScript("OnEvent", Loot_OnEvent);

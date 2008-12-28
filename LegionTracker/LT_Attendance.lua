@@ -26,6 +26,7 @@ function LT_AttendanceTic()
     end
     LT_AttendanceCheckList = {};
     LT_Print("Attendance updated for " ..guildCount.. " players.");
+    LT_Attendance_OnChange();
 end
 
 function LT_ResetAttendance()
@@ -129,4 +130,9 @@ function LT_GetRawAttendance(playerIndex)
         end
     end
     return onote;
+end
+
+function LT_Attendance_OnChange()
+    LT_RedrawPlayerList();
+    LT_Char_UpdateFrame();
 end
