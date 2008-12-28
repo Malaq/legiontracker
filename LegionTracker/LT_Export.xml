@@ -163,8 +163,11 @@
           </Slider>
         </Frames>
         <Scripts>
-          <OnLoad>ScrollFrame_OnLoad(self);</OnLoad>
-          <OnMouseWheel>ScrollFrameTemplate_OnMouseWheel(self, delta);</OnMouseWheel>
+          <OnLoad>ScrollFrame_OnLoad(self);
+</OnLoad>
+          <OnMouseWheel>ScrollFrameTemplate_OnMouseWheel(self, delta);
+</OnMouseWheel>
+          <OnEscapePressed>LT_Export:Hide();</OnEscapePressed>
           <OnVerticalScroll>local scrollbar = getglobal(self:GetName().."ScrollBar");
 scrollbar:SetValue(offset);
 local min;
@@ -181,7 +184,8 @@ else
 getglobal(scrollbar:GetName().."ScrollDownButton"):Enable();
 end
 </OnVerticalScroll>
-          <OnScrollRangeChanged>ScrollFrame_OnScrollRangeChanged(self, yrange);</OnScrollRangeChanged>
+          <OnScrollRangeChanged>ScrollFrame_OnScrollRangeChanged(self, yrange);
+</OnScrollRangeChanged>
         </Scripts>
         <ScrollChild>
           <EditBox name="$parentEdit" enableMouse="true" multiLine="true">
@@ -201,7 +205,7 @@ end
             </Scripts>
             <FontString font="Fonts\ARIALN.TTF">
               <FontHeight>
-                <AbsValue val="10" />
+                <AbsValue val="8" />
               </FontHeight>
               <Color r="1" g="1" b="1" />
               <Shadow>
