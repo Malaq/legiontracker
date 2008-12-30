@@ -16,7 +16,7 @@
         local NumEntries = #LT_Char_Loots;
         for i=1, NumEntries do
             local item = LT_Char_Loots[i]["itemString"];
-            local ltime = date("%b %d %H:%M:%S", LT_Char_Loots[i].time);--LT_Char_Loots[i]["time"];
+            local ltime = date("%Y-%m-%d %H:%M:%S", LT_Char_Loots[i].time);--LT_Char_Loots[i]["time"];
             --local player = LT_LootTable[i]["player"];
             local spec = LT_Char_Loots[i]["spec"];
             local zone = LT_Char_Loots[i]["zone"];
