@@ -8,8 +8,8 @@ function LT_AllLoot:ToggleShow()
 			LT_Char_ShowPlayer(LT_Char_CurPlayer); -- toggles it off
 		end
         LT_LootUI:SetParent(LT_AllLootTable);
-        self:UpdateFrame();
         LT_AllLootPanel:Show();
+        self:UpdateFrame();
     end
 end
 

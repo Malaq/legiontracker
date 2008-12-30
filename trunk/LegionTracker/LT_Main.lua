@@ -256,14 +256,17 @@ function LT_UpdatePlayerList()
     -- This always needs to be done regardless of whether or not
     -- we're shown, because attendance and loot depend on the lookup.
     local num_all_members = GetNumGuildMembers(true);
+    local non_nil = true;
     for i = 1, num_all_members do
         local name = GetGuildRosterInfo(i);
         if (name ~= nil) then
             LT_NameLookup[name] = i;
+        else
+            non_nil = false;
         end
     end
     
-    if (LT_Main:IsShown()) then
+    if (LT_Main:IsShown() and non_nil == true) then
         local st = LT_Main_ST;
         local data = {};
     
