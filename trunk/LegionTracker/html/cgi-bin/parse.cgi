@@ -62,10 +62,10 @@ foreach $line (@lines) {
 
 		
 	} elsif ($type eq '@') { # Attendance info
-		($player, $class, $attendance) = split(/;/, $data);
+		($player, $class, $attendance, $rank) = split(/;/, $data);
 
 		# Debug output
-		print "**Attendance Info**\tPlayer: $player\tClass: $class\tAttendance: $attendance\n";
+		print "**Attendance Info**\tPlayer: $player\tClass: $class\tAttendance: $attendance\tRank: $rank\n";
 
 		my $statement =
 			$dbh->prepare("INSERT INTO `CHARACTER`(`NAME`, `CLASS`, `DATE_JOINED`) " .
@@ -82,6 +82,14 @@ foreach $line (@lines) {
 		$statement->execute() or die $dbh->errstr;
 		$row=$statement->fetchrow_hashref;
 		$char_id = "$row->{CHAR_ID}";
+
+		my $statement =
+			$dbh->prepare("UPDATE `CHARACTER` " .
+					"SET `RANK`=? " .
+					"WHERE CHAR_ID=?;");
+		$statement->bind_param(1, $rank);
+		$statement->bind_param(2, $char_id);
+		$statement->execute or die $dbh->errstr;
 
 		print "CHAR_ID = $char_id\n";
 		
