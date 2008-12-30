@@ -4,7 +4,7 @@ LT_TIME_OF_LAST_TIC = time();
 LT_TIMER_TOTAL = 0;
 LT_Timer_UpdateInterval = 1.0;
 LT_TIME_EXPIRED = false;
-LT_RAID_NAME = date("%b %d %Y", time());
+LT_RAID_NAME = date("%Y-%m-%d ", time());
 
 function LT_TimerOnLoad()
     this:RegisterEvent("VARIABLES_LOADED");
@@ -243,7 +243,7 @@ function LT_TimerToggle()
             LT_ResetAttendance();
             LT_PlayerLootTable = {};
             LT_LootTable = {};
-            LT_RAID_NAME = date("%b %d %Y", time());
+            LT_RAID_NAME = date("%Y-%m-%d ", time());
             LT_TIMER_START = time();
             LT_TIME_OF_LAST_TIC = time();
             local timer_label = getglobal("LT_Main".."Timer".."Label");
