@@ -3,7 +3,7 @@ LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
 LT_PlayerList = nil;
-LT_NameLookup = nil;
+LT_NameLookup = {};
 LT_Main_ST = nil;
 
 function LT_OnLoad()
@@ -321,12 +321,6 @@ function LT_LoadLabels()
 end
 
 function LT_Main_OnEvent(this, event, arg1)
-    -- A hack to get the list working on startup... the guild roster is empty until some
-    -- arbitrary amount of time into the game.
-    if (LT_PlayerList == nil or #LT_PlayerList == 0) then
-        GuildRoster();
-    end
-    
     if (event == "GUILD_ROSTER_UPDATE") then
         LT_UpdatePlayerList();
         -- We get guildroster if someone else updates an officer note.
