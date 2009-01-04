@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.1"
+﻿LT_VERSION = "Legion Tracker 0.2"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
