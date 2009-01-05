@@ -26,7 +26,7 @@ my $input = param('data');
 print "$input";
 
 my $statement =
-	$dbh->prepare("SELECT chr.NAME, it.ITEM_NAME, rc.DATE, il.SPEC, il.ZONE, il.SUBZONE " .
+	$dbh->prepare("SELECT chr.NAME, it.ITEM_ID, it.ITEM_NAME, rc.DATE, il.SPEC, il.ZONE, il.SUBZONE " .
 			"FROM `CHARACTER` chr, ITEMS_LOOTED il, RAID_CALENDAR rc, ITEM it " .
 			"WHERE il.RAID_ID = rc.RAID_ID " .
 			"AND il.CHAR_ID = chr.CHAR_ID " .
@@ -45,6 +45,7 @@ my $statement =
 	print "<input type=\"submit\" value=\"Submit\"></input>\n";
 	print "</form>\n";
 	print "<script src=\"sorttable.js\"></script>\n";
+	print "<script src=\"http://www.wowhead.com/widgets/power.js\"></script>\n";
 	print "<TABLE class=\"sortable\" style=\"filter:alpha(opacity=75);-moz-opacity:.75;opacity:.75;\" BORDER=2 ALIGN=LEFT><TR>";
 	print "<TH WIDTH=155><U><B><font color=black>Name</B></U></TH>";
 	print "<TH WIDTH=100><U><B>Item Name</B></U></TH>";
@@ -56,13 +57,9 @@ my $statement =
 	$statement->execute() or die $dbh->errstr;
 	while (my $row = $statement->fetchrow_hashref()) {
 		print "<TR>";
-		print "<TD>$row->{NAME}</TD><TD>$row->{ITEM_NAME}</TD><TD>$row->{DATE}</TD>";
+		print "<TD>$row->{NAME}</TD><TD><a href=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\">$row->{ITEM_NAME}</a></TD><TD>$row->{DATE}</TD>";
 		print "<TD>$row->{SPEC}</TD><TD>$row->{ZONE}</TD><TD>$row->{SUBZONE}</TD>";
 		print "</TR>\n";
-		#print "$row->{NAME}\t$row->{CLASS}\t$row->{RANK}\t";
-		#print "$row->{'7day'}\t$row->{'7MS'}\t$row->{'7AS'}\t$row->{'7OS'}\t";
-		#print "$row->{'30day'}\t$row->{'30MS'}\t$row->{'30AS'}\t$row->{'30OS'}\t";
-		#print "$row->{'60day'}\t$row->{'60MS'}\t$row->{'60AS'}\t$row->{'60OS'}";
 		print "\n";
 	}
 	print "</TABLE>";

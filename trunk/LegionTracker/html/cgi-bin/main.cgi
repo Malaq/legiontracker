@@ -241,15 +241,12 @@ my $statement =
 	$statement->execute() or die $dbh->errstr;
 	while (my $row = $statement->fetchrow_hashref()) {
 		print "<TR>";
-		print "<TD>$row->{NAME}</TD><TD>$row->{CLASS}</TD><TD>$row->{RANK}</TD>";
+		print "<TD>$row->{NAME}</TD>";
+		print "<TD>$row->{CLASS}</TD><TD>$row->{RANK}</TD>";
 		print "<TD>$row->{'7day'}</TD><TD>$row->{'7MS'}</TD><TD>$row->{'7AS'}</TD><TD>$row->{'7OS'}</TD>";
 		print "<TD>$row->{'30day'}</TD><TD>$row->{'30MS'}</TD><TD>$row->{'30AS'}</TD><TD>$row->{'30OS'}</TD>";
 		print "<TD>$row->{'60day'}</TD><TD>$row->{'60MS'}</TD><TD>$row->{'60AS'}</TD><TD>$row->{'60OS'}</TD>";
 		print "</TR>\n";
-		#print "$row->{NAME}\t$row->{CLASS}\t$row->{RANK}\t";
-		#print "$row->{'7day'}\t$row->{'7MS'}\t$row->{'7AS'}\t$row->{'7OS'}\t";
-		#print "$row->{'30day'}\t$row->{'30MS'}\t$row->{'30AS'}\t$row->{'30OS'}\t";
-		#print "$row->{'60day'}\t$row->{'60MS'}\t$row->{'60AS'}\t$row->{'60OS'}";
 		print "\n";
 	}
 	print "</TABLE>";
