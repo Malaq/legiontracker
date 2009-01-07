@@ -45,7 +45,7 @@ function LT_LootUI:CreateRow(id)
 					end,
 					color = function()
 						if (self.loots[id].spec == "Unassigned") then
-							return { r = 1.0, g = 0.1, b = 0.1};
+							return { r = 0.8, g = 0.1, b = 0.1};
 						elseif (self.loots[id].spec == "Main") then
 							return { r = 0.9, g = 0.9, b = 1.0};
 						elseif (self.loots[id].spec == "DE'd") then
@@ -76,6 +76,7 @@ function LT_LootUI:CreateRow(id)
 				}
 			}
 		};	
+		_G["LT_LootUIRow_"..id] = row;
 	end
 	return row;
 end
@@ -89,7 +90,6 @@ function LT_LootUI:UpdateFrame(player)
 	end
 
 	self.st:SetData(self.data_table);
-	self.st:SortData();
 end
 
 function LT_LootUI:OnClick(row_frame, cell_frame, data, cols, row, realrow, column, mouse_button)
@@ -99,7 +99,9 @@ function LT_LootUI:OnClick(row_frame, cell_frame, data, cols, row, realrow, colu
 		else
 			LT_Loot_ToggleSpec(self.loots[realrow].lootId, -1);
 		end
-	end
+	elseif (column == 4 and realrow) then
+        LT_PlayerSelect:Show(self.loots[realrow].player, self.loots[realrow].lootId);
+    end
 end
 
 function LT_LootUI:OnEnter(row_frame, cell_frame, data, cols, row, realrow, column)
@@ -112,10 +114,23 @@ function LT_LootUI:OnEnter(row_frame, cell_frame, data, cols, row, realrow, colu
 	else
 		GameTooltip:Hide();
 	end
+    
+    if (column == 4 and realrow) then
+        cell_frame.text:SetText(">" .. cell_frame.text:GetText() .. "<");
+        cell_frame.text:SetTextColor(1.0, 0, 1.0);
+    elseif (column == 5 and realrow) then
+        cell_frame.text:SetTextColor(1.0, 0, 1.0);
+    end
 end
 
 function LT_LootUI:OnLeave(row_frame, cell_frame, data, cols, row, realrow, column)
 	GameTooltip:Hide();
+    if (column == 4 and realrow) then
+        self.st:Refresh();
+    end
+    if (column == 5 and realrow) then
+        self.st:Refresh();
+    end
 end
 
 function LT_LootUI:CompareDates(cella, cellb, col)
@@ -123,6 +138,12 @@ function LT_LootUI:CompareDates(cella, cellb, col)
 	local direction = column.sort or column.defaultsort or "asc";
 	local a1 = self.loots[cella].time;
 	local b1 = self.loots[cellb].time;
+    -- The table tends to screw up with non-unique sorts, and everything else relies on unique date sorting
+    -- to fix that... so make sure dates are uniquely sorted.
+    if (a1 == b1) then
+        a1 = self.loots[cella].lootId;
+        b1 = self.loots[cellb].lootId;
+    end
 	if direction:lower() == "asc" then
 		return a1 > b1;
 	else
