@@ -43,6 +43,31 @@ function LT_Loot_SlashHandler(args)
 				LT_Print(string.format("%s", key));
 			end
 		end
+	elseif cmd == "prof getloot" then
+		debugprofilestart();
+		local i;
+		for i = 1, 100 do
+			LT_Loot_GetLoots();
+		end
+		LT_Print("100 getloots: "..(debugprofilestop()/1000));
+	elseif cmd == "prof setfilter" then
+		debugprofilestart();
+		for i = 1, 1000 do
+			LT_Loot_SetFilter("Epic !Emblem");
+		end
+		LT_Print("1000 setfilters: "..(debugprofilestop()/1000));
+	elseif cmd == "prof lootui" then
+		debugprofilestart();
+		for i = 1, 10 do
+			LT_LootUI:UpdateFrame();
+		end
+		LT_Print("10 lootui:update_frames: "..(debugprofilestop()/1000));
+	elseif cmd == "prof sort" then
+		debugprofilestart();
+		for i = 1, 10 do
+			LT_LootUI.st:SortData();
+		end
+		LT_Print("10 lootui:sort: "..(debugprofilestop()/1000));
 	end
 end
 
@@ -79,10 +104,22 @@ function Loot_OnEvent(this, event, arg1)
 		LT_LootTable[lootId]["zone"] = GetRealZoneText();
 		LT_LootTable[lootId]["subzone"] = GetSubZoneText();
         LT_LootTable[lootId]["lootId"] = lootId;
-
+        
         LT_Loot_OnChange();
 	end
 end
+
+function LT_Loot_ChangeOwner(loot_id, new_owner)
+    local loot = LT_LootTable[loot_id];
+    LT_PlayerLootTable[loot.player][loot_id] = nil;
+    loot.player = new_owner;
+    if (LT_PlayerLootTable[loot.player] == nil) then
+        LT_PlayerLootTable[loot.player] = {};
+    end
+    LT_PlayerLootTable[loot.player][loot_id] = 1;
+    LT_Loot_OnChange();
+end
+
 LT_Loot_LootTypes = {"Main", "Alt", "Off", "Unassigned", "DE'd"};
 
 function LT_Loot_GetSpecColor(spec)
@@ -113,12 +150,20 @@ end
 function LT_Loot_GetLootCount(loot_type, player_name)
     local loot_types = LT_Loot_LootTypes;
     local num_loots = 0;
-    if LT_PlayerLootTable[player_name] ~= nil then
+    if player_name ~= nil and LT_PlayerLootTable[player_name] ~= nil then
         for lootid in pairs(LT_PlayerLootTable[player_name]) do
             if (LT_LootTable[lootid]["spec"] == loot_types[loot_type] or loot_type == "All") and LT_Loot_Filter(LT_LootTable[lootid]) then
                 num_loots = num_loots + 1;
             end
         end
+	else
+		if (player_name == nil) then
+			for _, loot in pairs(LT_LootTable) do
+				if (loot["spec"] == loot_types[loot_type] or loot_type == "All") and LT_Loot_Filter(loot) then
+					num_loots = num_loots + 1;
+				end
+			end
+		end
     end
     return num_loots;
 end

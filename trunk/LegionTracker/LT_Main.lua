@@ -107,7 +107,11 @@ function LT_Main_SetupTable()
 	st:RegisterEvents({
 		OnClick = function(row_frame, cell_frame, data, cols, row, realrow, column)
 			if (realrow) then
-				LT_Char_ShowPlayer(GetGuildRosterInfo(realrow));
+                if (data[realrow].is_total ~= true) then
+				    LT_Char_ShowPlayer(GetGuildRosterInfo(realrow));
+                else
+                    LT_AllLoot:ToggleShow();
+                end
 			end
 		end
 	});
@@ -133,7 +137,7 @@ function LT_Main_DropdownInit()
     
     info.text = "Epics (no badges)"
 	info.func = function()
-		LT_Loot_SetFilter("Epic !Emblem");
+		LT_Loot_SetFilter("Epic !Emblem !Abyss");
 		UIDropDownMenu_SetText(LT_LootFilterSelect, "Epics (no badges)");
 	end
     UIDropDownMenu_AddButton(info, 1);
@@ -149,6 +153,66 @@ function LT_GetClassColor(class)
         color_class = "DEATHKNIGHT";
     end
     return RAID_CLASS_COLORS[color_class];
+end
+
+function LT_Main_CreateTotalRow()
+	local row = _G["LT_Main_TotalRow"];
+	if (row == nil) then
+		row = {
+            ["is_total"] = true,
+			["cols"] = {
+				{ -- Name
+					value = "*Totals*",
+				},
+				{ -- Class
+					value = "--";
+				},
+				{ -- Attendance
+					value = "--";
+				},
+				{ -- Main
+					value = function()
+						return LT_Loot_GetLootCount(1, nil);
+					end
+				},
+				{ -- Alt
+					value = function()
+						return LT_Loot_GetLootCount(2, nil);
+					end
+				},
+				{ -- Off
+					value = function()
+						return LT_Loot_GetLootCount(3, nil);
+					end
+				},
+				{ -- DE'd
+					value = function()
+						return LT_Loot_GetLootCount(5, nil);
+					end
+				},
+				{ -- Unassigned
+					value = function()
+						return LT_Loot_GetLootCount(4, nil);
+					end,
+					color = function()
+						local num = LT_Loot_GetLootCount(4, nil);
+						if (num > 0) then
+							return {r=1, g=0, b=0.5};
+						else
+							return {r=0.8, g=1, b=1.0};
+						end
+					end
+				},
+			},
+			["color"] = {
+				r = 0.6,
+				g = 0.6,
+				b = 1.0,
+			}
+		};
+		_G["LT_Main_TotalRow"] = row;
+	end
+	return row;
 end
 
 function LT_Main_CreateRow(id)
@@ -228,6 +292,7 @@ function LT_Main_CreateRow(id)
 				},
 			}
 		};
+		_G["LT_Main_SummaryRow"..id] = row;
 	end
 	return row;
 end
@@ -274,6 +339,8 @@ function LT_UpdatePlayerList()
         for i = 1, num_members do
             table.insert(data, LT_Main_CreateRow(i));
         end
+
+		table.insert(data, LT_Main_CreateTotalRow());
     
         st:SetData(data);
         st:Refresh();
