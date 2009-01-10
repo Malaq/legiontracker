@@ -1,0 +1,8 @@
+<html>
+	<head>
+		<title>Trismegistus Attendance and Loot</title>
+	</head>
+	<body>
+		<!--#include virtual="cgi-bin/main.cgi"-->
+	</body>
+</html>
