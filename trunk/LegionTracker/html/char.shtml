@@ -1,0 +1,32 @@
+<html>
+	<head>
+		<title>Trismegistus Attendance and Loot</title>
+	</head>
+
+	<body bgcolor="C0C0C0">
+		<table border="0">
+		<tr>
+		<td colspan="2" bgcolor="silver">
+		<img src="images/tg_logo.jpg">
+		<A HREF="http://wowwebstats.com/cdxnr4iegef2w">
+		<img src="images/a_logo.gif" align="top" alt="WWS icon">
+		</A>
+		</td>
+		</tr>
+		<tr>
+		<td valign="top" bgcolor="silver">
+		<A HREF="index.shtml"><B>Home</B></A><br>
+		<B>Characters</B><br>
+		<B>Raids</B><br>
+		<B>Items</B><br>
+		<form method=\"GET\" action=\"char.shtml\">
+		Enter a character name:<br>
+		<input type=\"text\" name=\"data\"><br>
+		<input type=\"submit\" value=\"Submit\"><br>
+		</form>
+		</td>
+		<td bgcolor="FFFFFF">
+		<!--#include virtual="cgi-bin/char.cgi?${QUERY_STRING}"-->
+		</td>
+	</body>
+</html>
