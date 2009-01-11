@@ -25,13 +25,6 @@ print "<font size=\"6\" face=\"Monotype Corsiva\"><B>$char_name</B></font>";
 	print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n";
 	print "<HTML>\n";
 
-# Character query form
-print "<form method=\"GET\" action=\"char.shtml\">\n";
-print "Enter a character name:";
-print "<input type=\"text\" name=\"data\"></input>\n";
-print "<input type=\"submit\" value=\"Submit\"></input>\n";
-print "</form>\n";
-
 # Attendance
 print <<STRINGDELIM;
 	<table border=2>
