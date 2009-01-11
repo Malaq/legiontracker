@@ -2,6 +2,7 @@
 	<head>
 		<title>Trismegistus Attendance and Loot</title>
 	</head>
+
 	<body bgcolor="C0C0C0">
 		<table border="0">
 		<tr>
@@ -13,9 +14,8 @@
 		<td valign="top" bgcolor="silver" width="145">
 		<!--#include virtual="cgi-bin/navibar.cgi"-->
 		</td>
-		<td bgcolor="FFFFFF" align="left">
-		<!--#include virtual="cgi-bin/main.cgi"-->
+		<td bgcolor="FFFFFF">
+		<!--#include virtual="cgi-bin/raids.cgi"-->
 		</td>
-
 	</body>
 </html>

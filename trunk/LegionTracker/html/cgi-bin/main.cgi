@@ -222,11 +222,6 @@ my $statement =
 			"AND chr.RANK not like '' " .
 			"ORDER BY chr.NAME;");
   	print "<HTML>\n";
-	print "<form method=\"GET\" action=\"char.shtml\">\n";
-	print "Enter a character name:";
-	print "<input type=\"text\" name=\"data\">";
-	print "<input type=\"submit\" value=\"Submit\"></input>\n";
-	print "</form>\n";
 	print "<script src=\"sorttable.js\"></script>\n";
 	print "<TABLE class=\"sortable\" style=\"filter:alpha(opacity=75);-moz-opacity:.75;opacity:.75;\" BORDER=2 ALIGN=LEFT><TR>";
 	print "<TH WIDTH=90><U><B><font color=black>Name</B></U></TH>";
