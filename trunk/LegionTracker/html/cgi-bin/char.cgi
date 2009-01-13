@@ -26,6 +26,8 @@ print "<font size=\"6\" face=\"Monotype Corsiva\"><B>$char_name</B></font>";
 	print "<HTML>\n";
 
 # Attendance
+print "<fieldset>";
+print "<legend>Attendance Details:</legend>";
 print <<STRINGDELIM;
 	<table border=2>
 	<tr>
@@ -64,12 +66,15 @@ STRINGDELIM
 print <<STRINGDELIM;
 </table>
 STRINGDELIM
+print "</fieldset>";
 
 $attn_statement->finish();
 
 
 
 # Loot table
+print "<fieldset>";
+print "<legend>Loot Details:</legend>";
 my $loot_statement =
 	$dbh->prepare("SELECT chr.NAME, it.ITEM_ID, it.ITEM_NAME, rc.DATE, il.SPEC, il.ZONE, il.SUBZONE " .
 			"FROM `CHARACTER` chr, ITEMS_LOOTED il, RAID_CALENDAR rc, ITEM it " .
@@ -103,6 +108,7 @@ while (my $row = $loot_statement->fetchrow_hashref()) {
 	print "\n";
 }
 print "</TABLE>";
+print "</fieldset>";
 print "</HTML>";
 $loot_statement->finish();
 $dbh->disconnect();

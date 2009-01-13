@@ -30,7 +30,6 @@ my $input = param('data');
 foreach $line (@lines) {
 	$type = substr($line, 0, 1);
 	$data = substr($line, 1);
-	$data =~ s/\r//g;
 	if ($type eq '#') { # Raid info
 		($date, $scheduled, $attendees) = split(/\//, $data);
 
