@@ -268,7 +268,7 @@
       <Frame name="LT_OfficerLoot_Label1">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
-          <AbsDimension x="142" y="18" />
+          <AbsDimension x="229" y="18" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
@@ -304,7 +304,7 @@
       <Frame name="LT_OfficerLoot_Label2">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
-          <AbsDimension x="142" y="18" />
+          <AbsDimension x="229" y="18" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
@@ -340,7 +340,7 @@
       <Frame name="LT_OfficerLoot_Label3">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
-          <AbsDimension x="142" y="18" />
+          <AbsDimension x="229" y="18" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
