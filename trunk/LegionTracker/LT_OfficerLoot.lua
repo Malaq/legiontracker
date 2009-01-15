@@ -2,7 +2,8 @@
 
 function LT_OfficerLoot:OnLoad()
     LT_OfficerLoot_Frame:SetParent(UIParent);
-
+    
+    tinsert(UISpecialFrames, "LT_OfficerLoot_Frame");
     self.slots = 3;
     self.table_frames = {};
     self.table_labels = {};
