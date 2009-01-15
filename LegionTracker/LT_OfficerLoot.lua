@@ -241,8 +241,10 @@ function LT_OfficerLoot:OnEvent(event, arg1, arg2)
             comments = comments .. "," .. msg[i];
         end
         comments = strtrim(comments);
-        self:AddBid(item, player, spec, replacing, comments);
         
+        self:AddBid(item, player, spec, replacing, comments);
+
+        SendChatMessage("Your bid for " .. item .. " was received successfully.", "WHISPER", nil, player);
     end
 end
 
