@@ -17,6 +17,7 @@ LT_Char.lua
 LT_Timer.lua
 LT_Export.lua
 LT_PlayerSelect.lua
+LT_OfficerLoot.lua
 LT_AllLoot.lua
 LT_Timer_Settings.xml
 LT_Main.xml
@@ -26,3 +27,4 @@ LT_Export.xml
 LT_Timer.xml
 LT_AllLoot.xml
 LT_PlayerSelect.xml
+LT_OfficerLoot.xml

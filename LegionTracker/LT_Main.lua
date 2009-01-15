@@ -11,6 +11,7 @@ function LT_OnLoad()
     this:RegisterEvent("VARIABLES_LOADED");
     this:RegisterEvent("GUILD_ROSTER_UPDATE");
     this:RegisterEvent("CHAT_MSG_SYSTEM");
+    this:RegisterEvent("CHAT_MSG_WHISPER");
     --this:RegisterForClicks("LeftButtonDown", "RightButtonDown");
     LT_LoadLabels();
     LT_Main_SetupTable();
@@ -48,7 +49,10 @@ function LT_SlashHandler(args)
 		elseif string.find(args, "^timer") ~= nil then
             LT_Timer_SlashHandler(args);
         elseif string.find(args, "^attendance") ~= nil then
-            LT_Attendance_SlashHandler(args);    
+            LT_Attendance_SlashHandler(args); 
+        elseif args == "olt" then
+            LT_OfficerLoot:OnShow({"Mirror of Truth", "Grim Toll", "Slime Stream Bands", "Totem of Dueling"});
+            LT_OfficerLoot:AddBid("Grim Toll", "Yuzuki", "Main", "Shard of Contempt", "I like hit rating");
         end
 	end
 end
@@ -153,6 +157,11 @@ function LT_GetClassColor(class)
         color_class = "DEATHKNIGHT";
     end
     return RAID_CLASS_COLORS[color_class];
+end
+
+function LT_GetClassColorFromName(name)
+    local _, _, _, _, class = GetGuildRosterInfo(LT_GetPlayerIndexFromName(name));
+    return LT_GetClassColor(class);
 end
 
 function LT_Main_CreateTotalRow()
@@ -387,16 +396,45 @@ function LT_LoadLabels()
     version_label:SetText(LT_VERSION);
 end
 
-function LT_Main_OnEvent(this, event, arg1)
+function LT_Main_OnEvent(this, event, arg1, arg2)
     if (event == "GUILD_ROSTER_UPDATE") then
         LT_UpdatePlayerList();
         -- We get guildroster if someone else updates an officer note.
         LT_Attendance_OnChange();
     elseif (event == "VARIABLES_LOADED") then
         LT_UpdatePlayerList();
+    elseif (event == "CHAT_MSG_WHISPER") then
+        LT_OfficerLoot:OnEvent(event, arg1, arg2);
     end
 end
 
 function LT_ExportButton()
     LT_Export:Show();
+end
+
+function LT_Main_StartLootWhispers()
+    if (GetNumLootItems() == 0) then
+        LT_Print("Error: must have the loot window open.");
+        return;
+    end
+    
+    local items = {};
+    for i = 1, GetNumLootItems() do
+        local item, link = GetItemInfo(GetLootSlotLink(i));
+        if (string.find(item, "Emblem of") == nil) then
+            table.insert(items, link);
+        end
+    end
+    LT_OfficerLoot:BroadcastNewItems(items);
+    LT_OfficerLoot:OnShow();
+    
+    LT_OfficerLoot:SendInstructions("RAID");
+    SendChatMessage("Items are:", "RAID");
+    for i = 1, GetNumLootItems() do
+        SendChatMessage(items[i]);
+    end
+end
+
+function LT_Main_ViewVotes()
+    LT_OfficerLoot:OnShow();
 end
