@@ -201,10 +201,6 @@ end
 
 function LT_OfficerLoot:OnEvent(event, arg1, arg2)
     if (event == "CHAT_MSG_WHISPER" and self.mode == "Master") then
-        if (arg2 ~= "Happyduude") then
-            -- Take this out.
-            return
-        end
         local player = arg2;
         local msg = { strsplit(",", arg1) };
         -- Format: [item], [replacing], spec, comments
@@ -257,9 +253,7 @@ function LT_OfficerLoot:StartNewItems(item_links)
     self.items = {}
     self.bids = {};
     for i = 1, #item_links do
-        LT_Print("Link: " .. item_links[i]);
         local name = GetItemInfo(item_links[i]);
-        LT_Print("Item info for it is: " .. name);
         table.insert(self.items, name);
         self.bids[self.items[i]] = {};
     end
