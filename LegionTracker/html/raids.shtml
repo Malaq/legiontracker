@@ -14,8 +14,10 @@
 		<td valign="top" bgcolor="silver" width="145">
 		<!--#include virtual="cgi-bin/navibar.cgi"-->
 		</td>
-		<td bgcolor="FFFFFF">
+		<td bgcolor="FFFFFF" align="left" width="100%">
 		<!--#include virtual="cgi-bin/raids.cgi"-->
 		</td>
+		</tr>
+		</table>
 	</body>
 </html>

@@ -26,18 +26,73 @@ print "<font size=\"6\" face=\"Monotype Corsiva\"><B>$char_name</B></font>";
 	print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n";
 	print "<HTML>\n";
 
-# Raid info
+# Raid Summary
 my $raid_query =
-	$dbh->prepare("SELECT DATE, SCHEDULED, ATTENDANCE_COUNT " .
-			"FROM RAID_CALENDAR " .
-			"WHERE RAID_ID = ?;");
+	$dbh->prepare("SELECT rc.DATE, rc.SCHEDULED, rc.ATTENDANCE_COUNT, ALL_LOOT.numb ALN, MAIN_LOOT.numb MLN, ALT_LOOT.numb TLN, OFF_LOOT.numb OLN, DE_LOOT.numb DLN, DURATION.tic " .
+			"FROM RAID_CALENDAR rc " .
+			"LEFT JOIN " .
+			"(" .
+			"SELECT raid_id, count(item_id) numb " .
+			"FROM ITEMS_LOOTED " .
+			"where spec <> 'Unassigned' " .
+			"GROUP BY raid_id " .
+			") ALL_LOOT " .
+			"ON ALL_LOOT.raid_id = rc.raid_id " .
+			"LEFT JOIN " .
+			"(" .
+			"SELECT raid_id, count(item_id) numb " .
+			"FROM ITEMS_LOOTED " .
+			"where spec <> 'Unassigned' " .
+			"AND spec = 'Main' " .
+			"GROUP BY raid_id " .
+			") MAIN_LOOT " .
+			"ON MAIN_LOOT.raid_id = rc.raid_id " .
+			"LEFT JOIN " .
+			"(" .
+			"SELECT raid_id, count(item_id) numb " .
+			"FROM ITEMS_LOOTED " .
+			"where spec <> 'Unassigned' " .
+			"AND spec = 'Alt' " .
+			"GROUP BY raid_id " .
+			") ALT_LOOT " .
+			"ON ALT_LOOT.raid_id = rc.raid_id " .
+			"LEFT JOIN " .
+			"(" .
+			"SELECT raid_id, count(item_id) numb " .
+			"FROM ITEMS_LOOTED " .
+			"where spec <> 'Unassigned' " .
+			"AND spec = 'Off' " .
+			"GROUP BY raid_id " .
+			") OFF_LOOT " .
+			"ON OFF_LOOT.raid_id = rc.raid_id " .
+			"LEFT JOIN " .
+			"(" .
+			"SELECT raid_id, count(item_id) numb " .
+			"FROM ITEMS_LOOTED " .
+			"where spec <> 'Unassigned' " .
+			"AND spec = 'Off' " .
+			"GROUP BY raid_id " .
+			") DE_LOOT " .
+			"ON DE_LOOT.raid_id = rc.raid_id " .
+			"LEFT JOIN " .
+			"(" .
+			#Change this multiplier if you start extracting tics
+			"SELECT raid_id, SEC_TO_TIME((max(length(ATTENDANCE))-1)*600) tic " .
+			"FROM RAID_ATTENDANCE ra " .
+			"where ra.raid_id = ? " .
+			"GROUP BY raid_id " .
+			") DURATION " .
+			"ON ALL_LOOT.raid_id = rc.raid_id " .
+			"WHERE rc.RAID_ID = ? " .
+			"GROUP BY rc.RAID_ID;");
 
 $raid_query->bind_param(1, $raid_id);
+$raid_query->bind_param(2, $raid_id);
 $raid_query->execute() or die $dbh->errstr;
 my $row = $raid_query->fetchrow_hashref();
 print "<fieldset style=\"width: 200px;\">";
 print "<legend>Raid Summary:</legend>";
-print "<p>Raid ID: <B>$raid_id</B><br>";
+#print "Raid ID: <B>$raid_id</B><br>";
 print "Date: <B>$row->{DATE}</B><br>";
 if ($row->{SCHEDULED} == "1") {
 	$sched = "True";
@@ -45,7 +100,16 @@ if ($row->{SCHEDULED} == "1") {
 	$sched = "False";
 }
 print "Scheduled: <B>$sched</B><br>";
-print "Raiders Available: <B>$row->{ATTENDANCE_COUNT}</B><br></p>";
+print "Raiders Available: <B>$row->{ATTENDANCE_COUNT}</B><br>";
+print "Raid Duration: <B>$row->{tic}</B><br>";
+#print "Epics Dropped: <B>$row->{TOTAL_LOOT}</B><br>";
+print "<fieldset>";
+print "<legend>Epics Dropped: <B>$row->{ALN}</B></legend>";
+print "Main Spec: <B>$row->{MLN}</B><br>";
+print "Alt Spec: <B>$row->{TLN}</B><br>";
+print "Off Spec: <B>$row->{OLN}</B><br>";
+print "Disenchanted: <B>$row->{DLN}</B><br>";
+print "</fieldset>";
 print "</fieldset>";
 print "<br>";
 
@@ -109,20 +173,22 @@ print "<TABLE class=\"sortable\" style=\"filter:alpha(opacity=75);-moz-opacity:.
 print "<TH WIDTH=100><U><B><font color=black>Name</B></U></TH>";
 print "<TH WIDTH=100><U><B><font color=black>Class</B></U></TH>";
 print "<TH WIDTH=50><U><B>Pct</B></U></TH>";
-print "<TH WIDTH=500 colspan=100><U><B>Attendance</B>(10 min increments)</U></TH>";
+print "<TH WIDTH=500><U><B>Attendance</B>(10 min increments)</U></TH>";
 print "</TR>\n";
 while (my $row = $attendance_stmt->fetchrow_hashref()) {
 	my $attn = $row->{ATTENDANCE};
 	$attn =~ s|0|~|g;
 	#$attn =~ s|1|<div style='width:10px;height:10px;background-color:green;display:inline-block'></div>|g;
 	#$attn =~ s|~|<div style='width:10px;height:10px;background-color:red;display:inline-block'></div>|g;
-	$attn =~ s|1|<td style='background-color:green;'></td>|g;
-	$attn =~ s|~|<td style='background-color:red;'></td>|g;
+	#$attn =~ s|1|<td style='background-color:green;'></td>|g;
+	#$attn =~ s|~|<td style='background-color:red;'></td>|g;
+	$attn =~ s|1|<img src=\"images/greenbox.JPG\">|g;
+	$attn =~ s|~|<img src=\"images/redbox.JPG\">|g;
 	print "<tr>";
-	print "<td><B>$row->{NAME}</B></td>";
+	print "<td><A HREF=\"char.shtml?data=$row->{NAME}\"><B>$row->{NAME}</B></A></td>";
 	print "<td>$row->{CLASS}</td>";
 	print "<td>$row->{PERCENT}</td>";
-	print "$attn ";
+	print "<td>$attn</td> ";
 	print "</tr>";
 	}
 print "</TABLE>";

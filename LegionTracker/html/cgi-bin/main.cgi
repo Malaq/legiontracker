@@ -9,7 +9,7 @@ use DBI;
 print "Content-type: text/html\n\n";
 
 # For debug output
-print "<pre>";
+#print "<pre>";
 
 # Setup our DB connection
 my $database = 'legiontracker_tg';
@@ -20,6 +20,9 @@ my $dbport = '3306';
 
 # Database handle
 my $dbh = DBI->connect("dbi:mysql:database=$database;host=$hostname;port=$dbport", $username, $password) or print $DBI::errstr;
+
+print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n";
+print "<HTML>\n";
 
 my $statement =
 	$dbh->prepare("SELECT chr.NAME, chr.CLASS, chr.RANK, ".
@@ -46,7 +49,7 @@ my $statement =
 			"AND b.ATTENDANCE NOT LIKE 'Friend%' ".
 			"AND LOCATE( '1', b.ATTENDANCE ) <>0 ".
 			"AND f.SCHEDULED = 1 ".
-			"AND f.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 7  ".
+			"AND f.DATE >= DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 8  ".
 			"DAY ) )  ".
 			"UNION  ".
 			"SELECT c.CHAR_ID, d.ATTENDANCE ".
@@ -56,7 +59,7 @@ my $statement =
 			"AND d.ATTENDANCE NOT LIKE 'Friend%' ".
 			"AND LOCATE( '0', d.ATTENDANCE ) <>0 ".
 			"AND g.SCHEDULED = 1 ".
-			"AND g.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 7  ".
+			"AND g.DATE >= DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 8  ".
 			"DAY ) )  ".
 			")e ".
 			"GROUP BY e.CHAR_ID) 7da  ".
@@ -70,7 +73,7 @@ my $statement =
 			"FROM ITEMS_LOOTED ilm7, RAID_CALENDAR rci7 ".
 			"WHERE ilm7.RAID_ID = rci7.RAID_ID ".
 			"AND ilm7.SPEC = 'Main' ".
-			"AND rci7.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 7 DAY ) )  ".
+			"AND rci7.DATE >= DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 8 DAY ) )  ".
 			"GROUP BY ilm7.CHAR_ID ".
 			")main_spec ON main_spec.CHAR_ID = chr7dl.CHAR_ID ".
 			"LEFT JOIN (  ".
@@ -78,7 +81,7 @@ my $statement =
 			"FROM ITEMS_LOOTED ila7, RAID_CALENDAR rci7 ".
 			"WHERE ila7.RAID_ID = rci7.RAID_ID ".
 			"AND ila7.SPEC = 'Alt' ".
-			"AND rci7.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 7 DAY ) )  ".
+			"AND rci7.DATE >= DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 8 DAY ) )  ".
 			"GROUP BY ila7.CHAR_ID ".
 			")alt_spec ON alt_spec.CHAR_ID = chr7dl.CHAR_ID ".
 			"LEFT JOIN (  ".
@@ -86,7 +89,7 @@ my $statement =
 			"FROM ITEMS_LOOTED ilo7, RAID_CALENDAR rci7 ".
 			"WHERE ilo7.RAID_ID = rci7.RAID_ID ".
 			"AND ilo7.SPEC = 'Off' ".
-			"AND rci7.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 7 DAY ) )  ".
+			"AND rci7.DATE >= DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 8 DAY ) )  ".
 			"GROUP BY ilo7.CHAR_ID ".
 			")off_spec ON off_spec.CHAR_ID = chr7dl.CHAR_ID) 7dl  ".
 			"ON 7dl.CHAR_ID = chr.CHAR_ID ".
@@ -109,7 +112,7 @@ my $statement =
 			"AND b.ATTENDANCE NOT LIKE 'Friend%' ".
 			"AND LOCATE( '1', b.ATTENDANCE ) <>0 ".
 			"AND f.SCHEDULED = 1 ".
-			"AND f.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 30  ".
+			"AND f.DATE >= DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 31  ".
 			"DAY ) )  ".
 			"UNION  ".
 			"SELECT c.CHAR_ID, d.ATTENDANCE ".
@@ -119,7 +122,7 @@ my $statement =
 			"AND d.ATTENDANCE NOT LIKE 'Friend%' ".
 			"AND LOCATE( '0', d.ATTENDANCE ) <>0 ".
 			"AND g.SCHEDULED = 1 ".
-			"AND g.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 30  ".
+			"AND g.DATE >= DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 31  ".
 			"DAY ) )  ".
 			")e ".
 			"GROUP BY e.CHAR_ID) 30da ".
@@ -133,7 +136,7 @@ my $statement =
 			"FROM ITEMS_LOOTED ilm30, RAID_CALENDAR rci30 ".
 			"WHERE ilm30.RAID_ID = rci30.RAID_ID ".
 			"AND ilm30.SPEC = 'Main' ".
-			"AND rci30.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 30 DAY ) )  ".
+			"AND rci30.DATE >= DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 31 DAY ) )  ".
 			"GROUP BY ilm30.CHAR_ID ".
 			")main_spec ON main_spec.CHAR_ID = chr30dl.CHAR_ID ".
 			"LEFT JOIN (  ".
@@ -141,7 +144,7 @@ my $statement =
 			"FROM ITEMS_LOOTED ila30, RAID_CALENDAR rci30 ".
 			"WHERE ila30.RAID_ID = rci30.RAID_ID ".
 			"AND ila30.SPEC = 'Alt' ".
-			"AND rci30.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 30 DAY ) )  ".
+			"AND rci30.DATE >= DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 31 DAY ) )  ".
 			"GROUP BY ila30.CHAR_ID ".
 			")alt_spec ON alt_spec.CHAR_ID = chr30dl.CHAR_ID ".
 			"LEFT JOIN (  ".
@@ -149,7 +152,7 @@ my $statement =
 			"FROM ITEMS_LOOTED ilo30, RAID_CALENDAR rci30 ".
 			"WHERE ilo30.RAID_ID = rci30.RAID_ID ".
 			"AND ilo30.SPEC = 'Off' ".
-			"AND rci30.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 30 DAY ) )  ".
+			"AND rci30.DATE >= DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 31 DAY ) )  ".
 			"GROUP BY ilo30.CHAR_ID ".
 			")off_spec ON off_spec.CHAR_ID = chr30dl.CHAR_ID) 30dl ".
 			"ON 30dl.CHAR_ID = chr.CHAR_ID ".
@@ -173,7 +176,7 @@ my $statement =
 			"AND b.ATTENDANCE NOT LIKE 'Friend%' ".
 			"AND LOCATE( '1', b.ATTENDANCE ) <>0 ".
 			"AND f.SCHEDULED = 1 ".
-			"AND f.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 60  ".
+			"AND f.DATE >= DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 61  ".
 			"DAY ) )  ".
 			"UNION  ".
 			"SELECT c.CHAR_ID, d.ATTENDANCE ".
@@ -183,7 +186,7 @@ my $statement =
 			"AND d.ATTENDANCE NOT LIKE 'Friend%' ".
 			"AND LOCATE( '0', d.ATTENDANCE ) <>0 ".
 			"AND g.SCHEDULED = 1 ".
-			"AND g.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 60  ".
+			"AND g.DATE >= DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 61  ".
 			"DAY ) )  ".
 			")e ".
 			"GROUP BY e.CHAR_ID) 60da ".
@@ -197,7 +200,7 @@ my $statement =
 			"FROM ITEMS_LOOTED ilm60, RAID_CALENDAR rci60 ".
 			"WHERE ilm60.RAID_ID = rci60.RAID_ID ".
 			"AND ilm60.SPEC = 'Main' ".
-			"AND rci60.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 60 DAY ) )  ".
+			"AND rci60.DATE >= DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 61 DAY ) )  ".
 			"GROUP BY ilm60.CHAR_ID ".
 			")main_spec ON main_spec.CHAR_ID = chr60dl.CHAR_ID ".
 			"LEFT JOIN (  ".
@@ -205,7 +208,7 @@ my $statement =
 			"FROM ITEMS_LOOTED ila60, RAID_CALENDAR rci60 ".
 			"WHERE ila60.RAID_ID = rci60.RAID_ID ".
 			"AND ila60.SPEC = 'Alt' ".
-			"AND rci60.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 60 DAY ) )  ".
+			"AND rci60.DATE >= DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 61 DAY ) )  ".
 			"GROUP BY ila60.CHAR_ID ".
 			")alt_spec ON alt_spec.CHAR_ID = chr60dl.CHAR_ID ".
 			"LEFT JOIN (  ".
@@ -213,7 +216,7 @@ my $statement =
 			"FROM ITEMS_LOOTED ilo60, RAID_CALENDAR rci60 ".
 			"WHERE ilo60.RAID_ID = rci60.RAID_ID ".
 			"AND ilo60.SPEC = 'Off' ".
-			"AND rci60.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 60 DAY ) )  ".
+			"AND rci60.DATE >= DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 61 DAY ) )  ".
 			"GROUP BY ilo60.CHAR_ID ".
 			")off_spec ON off_spec.CHAR_ID = chr60dl.CHAR_ID) 60dl ".
 			"ON 60dl.CHAR_ID = chr.CHAR_ID ".
@@ -221,7 +224,8 @@ my $statement =
 			"AND chr.RANK not like 'Friend%' " .
 			"AND chr.RANK not like '' " .
 			"ORDER BY chr.NAME;");
-  	print "<HTML>\n";
+	print "<fieldset>";
+	print "<legend>Raiding Members</legend>";
 	print "<script src=\"sorttable.js\"></script>\n";
 	print "<TABLE class=\"sortable\" style=\"filter:alpha(opacity=75);-moz-opacity:.75;opacity:.75;\" BORDER=2 ALIGN=LEFT><TR>";
 	print "<TH WIDTH=90><U><B><font color=black>Name</B></U></TH>";
@@ -250,8 +254,9 @@ my $statement =
 		print "</TR>\n";
 		print "\n";
 	}
+	print "</fieldset>";
 	print "</TABLE>";
 	print "</HTML>";
 	$statement->finish();
 $dbh->disconnect();
-print "</pre>";
+#print "</pre>";
