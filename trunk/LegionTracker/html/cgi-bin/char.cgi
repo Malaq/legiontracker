@@ -32,12 +32,12 @@ print <<STRINGDELIM;
 	<table border=2>
 	<tr>
 		<th width=100>Date</th>
-		<th width=500 colspan=100>Attendance</th>
+		<th width=500>Attendance (10 min increments)</th>
 	</tr>
 STRINGDELIM
 
 my $sql_text = <<STRINGDELIM;
-SELECT rc.DATE, ra.ATTENDANCE
+SELECT rc.RAID_ID, rc.DATE, ra.ATTENDANCE
 from `CHARACTER` chr, RAID_ATTENDANCE ra, RAID_CALENDAR rc
 where ra.RAID_ID = rc.RAID_ID
 and chr.CHAR_ID = ra.CHAR_ID
@@ -55,11 +55,13 @@ while (my $row = $attn_statement->fetchrow_hashref()) {
 	$attn =~ s|0|~|g;
 	#$attn =~ s|1|<div style='width:10px;height:10px;background-color:green;display:inline-block'></div>|g;
 	#$attn =~ s|~|<div style='width:10px;height:10px;background-color:red;display:inline-block'></div>|g;
-	$attn =~ s|1|<td style='background-color:green;'></td>|g;
-	$attn =~ s|~|<td style='background-color:red;'></td>|g;
+	#$attn =~ s|1|<td style='background-color:green;'></td>|g;
+	#$attn =~ s|~|<td style='background-color:red;'></td>|g;
+	$attn =~ s|1|<img src=\"images/greenbox.JPG\">|g;
+	$attn =~ s|~|<img src=\"images/redbox.JPG\">|g;
 	print <<STRINGDELIM;
 		<tr>
-			<td>$row->{DATE}</td>$attn
+			<td><A HREF=\"raiddetail.shtml?data=$row->{RAID_ID}\">$row->{DATE}</A></td><td>$attn</td>
 		</tr>
 STRINGDELIM
 }

@@ -32,6 +32,8 @@ my $list_statement =
 			"ORDER BY NAME;");
 
 $list_statement->execute() or die $dbh->errstr;
+print "<fieldset>";
+print "<legend>All Guilded Characters</legend>";
 print "<script src=\"sorttable.js\"></script>\n";
 print "<TABLE class=\"sortable\" style=\"filter:alpha(opacity=75);-moz-opacity:.75;opacity:.75;\" BORDER=2 ALIGN=LEFT><TR>";
 print "<TH WIDTH=155><U><B><font color=black>Name</B></U></TH>";
@@ -46,6 +48,7 @@ while (my $row = $list_statement->fetchrow_hashref()) {
 	print "</TR>\n";
 	print "\n";
 }
+print "</fieldset>";
 print "</TABLE>";
 print "</HTML>";
 $list_statement->finish();
