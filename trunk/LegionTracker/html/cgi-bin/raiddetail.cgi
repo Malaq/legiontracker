@@ -70,7 +70,7 @@ my $raid_query =
 			"SELECT raid_id, count(item_id) numb " .
 			"FROM ITEMS_LOOTED " .
 			"where spec <> 'Unassigned' " .
-			"AND spec = 'Off' " .
+			"AND spec = 'DE\\'d' " .
 			"GROUP BY raid_id " .
 			") DE_LOOT " .
 			"ON DE_LOOT.raid_id = rc.raid_id " .
@@ -78,8 +78,10 @@ my $raid_query =
 			"(" .
 			#Change this multiplier if you start extracting tics
 			"SELECT raid_id, SEC_TO_TIME((max(length(ATTENDANCE))-1)*600) tic " .
-			"FROM RAID_ATTENDANCE ra " .
+			"FROM RAID_ATTENDANCE ra, `CHARACTER` chr " .
 			"where ra.raid_id = ? " .
+			"and ra.CHAR_ID = chr.CHAR_ID " .
+			"and chr.rank not in ('Friend','Alt') " .
 			"GROUP BY raid_id " .
 			") DURATION " .
 			"ON ALL_LOOT.raid_id = rc.raid_id " .
