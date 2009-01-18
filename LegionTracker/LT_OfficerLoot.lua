@@ -1,11 +1,8 @@
 ﻿LT_OfficerLoot = LibStub("AceAddon-3.0"):NewAddon("LT_OfficerLoot", "AceComm-3.0", "AceSerializer-3.0");
 
 -- TODO:
--- - Manual adding of items
 -- - Handle dust?
 -- - Restrict to officers
--- - Handle multiples?
--- - Handle someone showing up in the middle of a loot whisper session
 
 -- Interesting data structures:
 -- self.bids: Map from item names to a list of bid info tables
@@ -15,6 +12,10 @@ function LT_OfficerLoot:OnLoad()
     LT_OfficerLoot_Frame:SetParent(UIParent);
     
     tinsert(UISpecialFrames, "LT_OfficerLoot_Frame");
+    
+    self.vote_tooltip = CreateFrame("GameTooltip", "LT_VoteTooltip", UIParent, "GameTooltipTemplate");
+    self.vote_tooltip:Hide();
+    
     self.slots = 3;
     self.table_frames = {};
     self.table_labels = {};
@@ -88,7 +89,14 @@ function LT_OfficerLoot:OnLoad()
 end
 
 function LT_OfficerLoot:SendOfficerMessage(prefix, msg)
-    self:SendCommMessage(prefix, msg, "GUILD");
+    -- A hack to add whisper ids in...
+    local _, cmd = self:Deserialize(msg);
+    if (cmd.whisper_id == nil) then
+        cmd.whisper_id = self.whisper_id;
+    end
+    msg = self:Serialize(cmd);
+    
+    self:SendCommMessage(prefix, msg, "RAID");
 end
 
 function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
@@ -99,8 +107,15 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
     end
     
     if (cmd.type == "Start") then
+        self.whisper_id = cmd.whisper_id;
         self:StartNewItems(cmd.items);
-    elseif (cmd.type == "Popup") then
+    end
+    
+    if (self.whisper_id ~= cmd.whisper_id) then
+        return
+    end
+    
+    if (cmd.type == "Popup") then
         self:OnShow();
     elseif (cmd.type == "Remove") then
         for i = 1, #self.items do
@@ -111,11 +126,18 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
                 break;
             end
         end
+    elseif (cmd.type == "Add") then
+        local _, link = GetItemInfo(cmd.name);
+        if (link) then
+            table.insert(self.item_links, link);
+            self:StartNewItems(self.item_links, true);
+            self:Display();
+        end
     end
 end
 
 function LT_OfficerLoot:BroadcastNewItems(items)
-    local cmd = {["type"] = "Start", ["items"] = items};
+    local cmd = {["type"] = "Start", ["items"] = items, ["whisper_id"] = time()};
     self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
 end
 
@@ -132,6 +154,12 @@ function LT_OfficerLoot:Remove(id)
     self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
 end
 
+function LT_OfficerLoot:Add(item)
+    LT_Print("Adding "..item);
+    local cmd = {type = "Add", name = item};
+    self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
+end
+
 function LT_OfficerLoot:CanAward(id)
     local real_id = id + self.cur_id - 1;
     local item = self.items[real_id];
@@ -140,7 +168,6 @@ function LT_OfficerLoot:CanAward(id)
     local best_votes = -1;
     for i = 1, #bids do
         local num_votes = LT_TableSize(bids[i].votes);
-        LT_Print(" have " .. num_votes .. " for " .. i);
         if (num_votes > best_votes) then
             best_votes = num_votes;
             bid = bids[i];
@@ -159,14 +186,15 @@ function LT_OfficerLoot:Award(id)
     local bid; -- winner
     local best_votes = -1;
     for i = 1, #bids do
-        local num_votes = LT_TableSize(bids[i]);
+        local num_votes = LT_TableSize(bids[i].votes);
         if (num_votes > best_votes) then
             best_votes = num_votes;
             bid = bids[i];
         end
     end
     
-    SendChatMessage("Grats to " .. bid.player .. " on " .. bid.item .. " (" .. bid.spec .. " spec)", "RAID");
+    local _, link = GetItemInfo(bid.item);
+    SendChatMessage("Grats to " .. bid.player .. " on " .. link .. " (" .. bid.spec .. " spec)", "RAID");
     self:Remove(id);
 end
 
@@ -175,6 +203,10 @@ function LT_OfficerLoot:OnReceiveVote(prefix, message, distr, sender)
     if (success == false) then
         LT_Print("Error: received a bad vote.  This shouldn't happen.");
         return;
+    end
+    
+    if (self.whisper_id ~= vote.whisper_id) then
+        return
     end
     
     if (self.bids[vote.item] == nil) then
@@ -224,9 +256,20 @@ function LT_OfficerLoot:OnEnter(table_id, row_frame, cell_frame, data, cols, row
         local _, link = GetItemInfo(bids[realrow].replacing);
 		GameTooltip:SetHyperlink(link);
 		GameTooltip:Show();
-	else
-		GameTooltip:Hide();
-	end
+	elseif (column == 1 and realrow ~= nil) then
+        self.vote_tooltip:ClearAllPoints();
+        self.vote_tooltip:SetPoint("CENTER", UIParent);
+        self.vote_tooltip:SetOwner(row_frame, "ANCHOR_CURSOR");
+        self.vote_tooltip:ClearLines();
+        self.vote_tooltip:AddLine("Click to vote");
+        self.vote_tooltip:AddLine("Current votes:", 1, 1, 1);
+        for person in pairs(bids[realrow].votes) do
+            local color = LT_GetClassColorFromName(person);
+            self.vote_tooltip:AddLine(person, color.r, color.g, color.b);
+        end
+        self.vote_tooltip:Show();
+    end
+    
     
     if (column == 1 and realrow ~= nil) then
         cell_frame.text:SetText("+ " .. cell_frame.text:GetText());
@@ -236,6 +279,7 @@ end
 
 function LT_OfficerLoot:OnLeave(table_id, row_frame, cell_frame, data, cols, row, realrow, column)
     GameTooltip:Hide();
+    self.vote_tooltip:Hide();
     
     if (column == 1 and realrow ~= nil) then
         self.tables[table_id]:Refresh();
@@ -261,6 +305,11 @@ function LT_OfficerLoot:OnReceiveBid(prefix, message, distr, sender)
         LT_Print("Error: received a bad bid.  This shouldn't happy.");
         return;
     end
+    
+    if (self.whisper_id ~= bid.whisper_id) then
+        return
+    end
+    
     local bids = self.bids[GetItemInfo(bid.item)];
     local repeated = false;
     for i = 1, #bids do
@@ -283,11 +332,11 @@ function LT_OfficerLoot:AddBid(item, player, spec, replacing, comments)
     bid.spec = spec;
     bid.votes = {};
     bid.item = item;
-    self:SendCommMessage("LT_OfficerLoot_Bid", self:Serialize(bid), "GUILD");
+    self:SendOfficerMessage("LT_OfficerLoot_Bid", self:Serialize(bid));
 end
 
 function LT_OfficerLoot:OnEvent(event, arg1, arg2)
-    if (event == "CHAT_MSG_WHISPER" and self.mode == "Master") then
+    if (event == "CHAT_MSG_WHISPER" and self.mode == "Master" and #self.items > 0) then
         local player = arg2;
         local msg = { strsplit(",", arg1) };
         -- Format: [item], [replacing], spec, comments
@@ -337,31 +386,31 @@ end
 
 
 function LT_OfficerLoot:StartNewItems(item_links, dont_clear_bids)
-    if (self.cur_id == nil or dont_clear_bids ~= nil) then
+    if (self.cur_id == nil or dont_clear_bids == nil) then
         self.cur_id = 1;
     end
     self.item_links = item_links;
     self.items = {}
     
-    if (self.bids == nil or dont_clear_bids ~= nil) then
+    if (self.bids == nil or dont_clear_bids == nil) then
         self.bids = {};
     end
     
     for i = 1, #item_links do
         local name = GetItemInfo(item_links[i]);
         table.insert(self.items, name);
-        if (self.bids[self.items[i]] == nil or dont_clear_bids ~= nil) then
+        if (self.bids[self.items[i]] == nil or dont_clear_bids == nil) then
             self.bids[self.items[i]] = {};
         end
     end
     
     if (#item_links > self.slots) then
         LT_OfficerLoot_Slider:SetMinMaxValues(1, #item_links - self.slots + 1);
-        LT_OfficerLoot_Slider:SetValue(1);
         LT_OfficerLoot_Slider:Show();
         LT_OfficerLoot_Up:Show();
         LT_OfficerLoot_Down:Show();
     else
+        LT_OfficerLoot_Slider:SetValue(1);
         LT_OfficerLoot_Slider:Hide();
         LT_OfficerLoot_Up:Hide();
         LT_OfficerLoot_Down:Hide();

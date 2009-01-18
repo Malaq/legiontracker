@@ -50,10 +50,23 @@ function LT_SlashHandler(args)
             LT_Timer_SlashHandler(args);
         elseif string.find(args, "^attendance") ~= nil then
             LT_Attendance_SlashHandler(args); 
-        elseif args == "olt" then
-            LT_OfficerLoot:StartNewItems({"Mirror of Truth", "Grim Toll", "Slime Stream Bands", "Totem of Dueling"});
+        elseif string.find(args, "^add") ~= nil then
+            LT_OfficerLoot:Add(string.sub(args, 4));
+        elseif args == "olt1" then
+            LT_OfficerLoot:BroadcastNewItems({"Mirror of Truth", "Grim Toll", "Slime Stream Bands", "Totem of Dueling", "Aged Winter Cloak", "Favor of the Dragon Queen", "Ring of Invincibility", "Ring of Invincibility"});
             LT_OfficerLoot:OnShow();
-          --  LT_OfficerLoot:AddBid("Grim Toll", "Yuzuki", "Main", "Shard of Contempt", "I like hit rating");
+        elseif args == "olt2" then
+            LT_OfficerLoot:AddBid("Grim Toll", "Yuzuki", "main", "Shard of Contempt", "Shouldn't see this");
+            LT_OfficerLoot:AddBid("Grim Toll", "Yuzuki", "main", "Shard of Contempt", "I like hit rating");
+            LT_OfficerLoot:AddBid("Grim Toll", "Happyduude", "main", "", "Wooo");
+            LT_OfficerLoot:AddBid("Grim Toll", "Vaulk", "alt", "Mirror of Truth", "I also like hit rating");
+            
+            LT_OfficerLoot:AddBid("Ring of Invincibility", "Yuzuki", "main", "Shard of Contempt", "I like hit rating");
+            LT_OfficerLoot:AddBid("Ring of Invincibility", "Happyduude", "main", "Shard of Contempt", "I like hit rating");
+            LT_OfficerLoot:AddBid("Ring of Invincibility", "Sindaga", "main", "Shard of Contempt", "I like hit rating");
+            LT_OfficerLoot:AddBid("Ring of Invincibility", "Cahrin", "main", "Shard of Contempt", "I like hit rating");
+            LT_OfficerLoot:AddBid("Ring of Invincibility", "Nobunaga", "main", "Shard of Contempt", "I like hit rating");
+            LT_OfficerLoot:AddBid("Aged Winter Cloak", "Threelibra", "main", "Shard of Contempt", "I like hit rating");
         end
 	end
 end
