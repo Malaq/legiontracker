@@ -51,8 +51,9 @@ function LT_SlashHandler(args)
         elseif string.find(args, "^attendance") ~= nil then
             LT_Attendance_SlashHandler(args); 
         elseif args == "olt" then
-            LT_OfficerLoot:OnShow({"Mirror of Truth", "Grim Toll", "Slime Stream Bands", "Totem of Dueling"});
-            LT_OfficerLoot:AddBid("Grim Toll", "Yuzuki", "Main", "Shard of Contempt", "I like hit rating");
+            LT_OfficerLoot:StartNewItems({"Mirror of Truth", "Grim Toll", "Slime Stream Bands", "Totem of Dueling"});
+            LT_OfficerLoot:OnShow();
+          --  LT_OfficerLoot:AddBid("Grim Toll", "Yuzuki", "Main", "Shard of Contempt", "I like hit rating");
         end
 	end
 end
@@ -160,6 +161,10 @@ function LT_GetClassColor(class)
 end
 
 function LT_GetClassColorFromName(name)
+    if (LT_GetPlayerIndexFromName(name) == nil) then
+        return {r=0.5, g=0.5, b=0.5};
+    end
+    
     local _, _, _, _, class = GetGuildRosterInfo(LT_GetPlayerIndexFromName(name));
     return LT_GetClassColor(class);
 end
@@ -439,4 +444,12 @@ end
 
 function LT_Main_ViewVotes()
     LT_OfficerLoot:OnShow();
+end
+
+function LT_TableSize(table)
+    local num = 0;
+    for a in pairs(table) do
+        num = num+1;
+    end
+    return num;
 end

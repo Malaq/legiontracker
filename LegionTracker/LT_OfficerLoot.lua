@@ -1,5 +1,16 @@
 ﻿LT_OfficerLoot = LibStub("AceAddon-3.0"):NewAddon("LT_OfficerLoot", "AceComm-3.0", "AceSerializer-3.0");
 
+-- TODO:
+-- - Manual adding of items
+-- - Handle dust?
+-- - Restrict to officers
+-- - Handle multiples?
+-- - Handle someone showing up in the middle of a loot whisper session
+
+-- Interesting data structures:
+-- self.bids: Map from item names to a list of bid info tables
+-- self.items: List of item (names) currently being bid for
+
 function LT_OfficerLoot:OnLoad()
     LT_OfficerLoot_Frame:SetParent(UIParent);
     
@@ -9,10 +20,16 @@ function LT_OfficerLoot:OnLoad()
     self.table_labels = {};
     self.table_ids = {};
     self.tables = {};
+    self.remove_buttons = {};
+    self.award_buttons = {};
     for i = 1, self.slots do
         table.insert(self.table_frames, _G["LT_OfficerLoot_TableFrame"..i]);
         table.insert(self.table_labels, _G["LT_OfficerLoot_Label"..i.."Label"]);
         table.insert(self.table_ids, _G["LT_OfficerLoot_TableId"..i.."Label"]);
+        table.insert(self.remove_buttons, _G["LT_OfficerLoot_Remove"..i]);
+        table.insert(self.award_buttons, _G["LT_OfficerLoot_Award"..i]);
+        self.remove_buttons[i]:SetParent(self.table_frames[i]);
+        self.award_buttons[i]:SetParent(self.table_frames[i]);
         
         _G["LT_OfficerLoot_Label"..i]:SetScript("OnEnter", function()
             local _, link = GetItemInfo(self.table_labels[i]:GetText() or "");
@@ -32,7 +49,7 @@ function LT_OfficerLoot:OnLoad()
         -- Setup the tables
         local parent = self.table_frames[i];
         local cols = {}
-        table.insert(cols, {name="Votes", width=parent:GetWidth()*0.1, align="LEFT"});
+        table.insert(cols, {name="Votes", width=parent:GetWidth()*0.1, align="LEFT", bgcolor = {r=0.12, g=0.12, b=0.15}});
         table.insert(cols, {name="Player", width=parent:GetWidth()*0.15, align="LEFT"});
         table.insert(cols, {name="Spec", width=parent:GetWidth()*0.1, align="LEFT"});
         table.insert(cols, {name="Replacing", width=parent:GetWidth()*0.25, align="LEFT"});
@@ -70,6 +87,10 @@ function LT_OfficerLoot:OnLoad()
     self:RegisterComm("LT_OfficerLoot_Command", "OnReceiveCommand");
 end
 
+function LT_OfficerLoot:SendOfficerMessage(prefix, msg)
+    self:SendCommMessage(prefix, msg, "GUILD");
+end
+
 function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
     local success, cmd = self:Deserialize(message);
     if (success == false) then
@@ -81,17 +102,72 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
         self:StartNewItems(cmd.items);
     elseif (cmd.type == "Popup") then
         self:OnShow();
+    elseif (cmd.type == "Remove") then
+        for i = 1, #self.items do
+            if (self.items[i] == cmd.name) then
+                table.remove(self.item_links, i);
+                self:StartNewItems(self.item_links, true);
+                self:Display();
+                break;
+            end
+        end
     end
 end
 
 function LT_OfficerLoot:BroadcastNewItems(items)
     local cmd = {["type"] = "Start", ["items"] = items};
-    self:SendCommMessage("LT_OfficerLoot_Command", self:Serialize(cmd), "RAID");
+    self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
 end
 
 function LT_OfficerLoot:ForcePopup()
     local cmd = {type = "Popup"};
-    self:SendCommMessage("LT_OfficerLoot_Command", self:Serialize(cmd), "RAID");
+    self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
+end
+
+
+function LT_OfficerLoot:Remove(id)
+    local real_id = id + self.cur_id - 1;
+    local item = self.items[real_id];
+    local cmd = {type = "Remove", name = item}; 
+    self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
+end
+
+function LT_OfficerLoot:CanAward(id)
+    local real_id = id + self.cur_id - 1;
+    local item = self.items[real_id];
+    local bids = self.bids[item];
+    local bid; -- winner
+    local best_votes = -1;
+    for i = 1, #bids do
+        local num_votes = LT_TableSize(bids[i].votes);
+        LT_Print(" have " .. num_votes .. " for " .. i);
+        if (num_votes > best_votes) then
+            best_votes = num_votes;
+            bid = bids[i];
+        elseif (num_votes == best_votes) then
+            bid = nil;
+        end
+    end
+    
+    return bid ~= nil;
+end
+
+function LT_OfficerLoot:Award(id)
+    local real_id = id + self.cur_id - 1;
+    local item = self.items[real_id];
+    local bids = self.bids[item];
+    local bid; -- winner
+    local best_votes = -1;
+    for i = 1, #bids do
+        local num_votes = LT_TableSize(bids[i]);
+        if (num_votes > best_votes) then
+            best_votes = num_votes;
+            bid = bids[i];
+        end
+    end
+    
+    SendChatMessage("Grats to " .. bid.player .. " on " .. bid.item .. " (" .. bid.spec .. " spec)", "RAID");
+    self:Remove(id);
 end
 
 function LT_OfficerLoot:OnReceiveVote(prefix, message, distr, sender)
@@ -127,7 +203,7 @@ function LT_OfficerLoot:BroadcastVote(item, player)
     local vote = {};
     vote.item = item;
     vote.player = player;
-    self:SendCommMessage("LT_OfficerLoot_Vote", self:Serialize(vote), "RAID");
+    self:SendOfficerMessage("LT_OfficerLoot_Vote", self:Serialize(vote));
 end
 
 
@@ -185,7 +261,17 @@ function LT_OfficerLoot:OnReceiveBid(prefix, message, distr, sender)
         LT_Print("Error: received a bad bid.  This shouldn't happy.");
         return;
     end
-    table.insert(self.bids[GetItemInfo(bid.item)], bid);
+    local bids = self.bids[GetItemInfo(bid.item)];
+    local repeated = false;
+    for i = 1, #bids do
+        if (bids[i].player == bid.player) then
+            bids[i] = bid;
+            repeated = true;
+        end
+    end
+    if (repeated ~= true) then
+        table.insert(self.bids[GetItemInfo(bid.item)], bid);
+    end
     self:Display();
 end
 
@@ -250,17 +336,36 @@ function LT_OfficerLoot:OnEvent(event, arg1, arg2)
 end
 
 
-function LT_OfficerLoot:StartNewItems(item_links)
-    self.cur_id = 1;
+function LT_OfficerLoot:StartNewItems(item_links, dont_clear_bids)
+    if (self.cur_id == nil or dont_clear_bids ~= nil) then
+        self.cur_id = 1;
+    end
     self.item_links = item_links;
     self.items = {}
-    self.bids = {};
+    
+    if (self.bids == nil or dont_clear_bids ~= nil) then
+        self.bids = {};
+    end
+    
     for i = 1, #item_links do
         local name = GetItemInfo(item_links[i]);
         table.insert(self.items, name);
-        self.bids[self.items[i]] = {};
+        if (self.bids[self.items[i]] == nil or dont_clear_bids ~= nil) then
+            self.bids[self.items[i]] = {};
+        end
     end
     
+    if (#item_links > self.slots) then
+        LT_OfficerLoot_Slider:SetMinMaxValues(1, #item_links - self.slots + 1);
+        LT_OfficerLoot_Slider:SetValue(1);
+        LT_OfficerLoot_Slider:Show();
+        LT_OfficerLoot_Up:Show();
+        LT_OfficerLoot_Down:Show();
+    else
+        LT_OfficerLoot_Slider:Hide();
+        LT_OfficerLoot_Up:Hide();
+        LT_OfficerLoot_Down:Hide();
+    end
     self:Display();
 end
 
@@ -316,25 +421,45 @@ function LT_OfficerLoot:Display()
             self.table_labels[i]:SetText("");
             self.table_frames[i]:Hide();
         else
-            self.table_ids[i]:SetText(string.format("%d/%d", id, #self.items));
+            self.table_ids[i]:SetText(string.format("Loot %d of %d", id, #self.items));
             local _, link = GetItemInfo(self.item_links[id]);
             self.table_labels[i]:SetText(link);
             self.table_frames[i]:Show();
             self.tables[i]:SetData(self:GetTable(id));
+            
+            if (self:CanAward(i)) then
+                self.award_buttons[i]:Enable();
+            else
+                self.award_buttons[i]:Disable();
+            end
         end
+    end
+end
+
+function LT_OfficerLoot:ScrollChanged()
+    -- Check for self.slots to make sure we're initialized.
+    if (self.slots) then
+        self.cur_id = LT_OfficerLoot_Slider:GetValue();
+        self:Display();
     end
 end
 
 function LT_OfficerLoot:ScrollDown()
     if (self.cur_id + self.slots <= #self.items) then
-        self.cur_id = self.cur_id + 1;
-        self:Display();
+        LT_OfficerLoot_Slider:SetValue(LT_OfficerLoot_Slider:GetValue()+1);
     end
 end
 
 function LT_OfficerLoot:ScrollUp()
     if (self.cur_id > 1) then
-        self.cur_id = self.cur_id - 1;
-        self:Display();
+        LT_OfficerLoot_Slider:SetValue(LT_OfficerLoot_Slider:GetValue()-1);
+    end
+end
+
+function LT_OfficerLoot:ScrollWheel(dir)
+    if (dir == -1) then
+        LT_OfficerLoot:ScrollDown();
+    else
+        LT_OfficerLoot:ScrollUp();
     end
 end

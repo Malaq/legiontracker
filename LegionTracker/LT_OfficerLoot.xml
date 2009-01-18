@@ -3,7 +3,7 @@
   <Frame name="LT_OfficerLoot_Frame" movable="true" enableMouse="true">
     <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508883-59c2-4f83-ae10-27aaad48391b" />-->
     <Size>
-      <AbsDimension x="668" y="531" />
+      <AbsDimension x="620" y="545" />
     </Size>
     <Anchors>
       <Anchor point="CENTER" relativeTo="UIParent">
@@ -64,6 +64,117 @@
       </Layer>
     </Layers>
     <Frames>
+      <Slider name="LT_OfficerLoot_Slider" enableMouse="true" minValue="0" maxValue="1" defaultValue="1" valueStep="1">
+        <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4976-d66d-444e-bb2d-1ad102c87fed" />-->
+        <Size>
+          <AbsDimension x="17" y="451" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="583" y="-68" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Backdrop bgFile="Interface\Buttons\UI-SliderBar-Background" edgeFile="Interface\Buttons\UI-SliderBar-Border" tile="true">
+          <BackgroundInsets>
+            <AbsInset left="3" right="3" top="6" bottom="6" />
+          </BackgroundInsets>
+          <TileSize>
+            <AbsValue val="8" />
+          </TileSize>
+          <EdgeSize>
+            <AbsValue val="8" />
+          </EdgeSize>
+        </Backdrop>
+        <HitRectInsets>
+          <AbsInset left="0" right="0" top="-10" bottom="-10" />
+        </HitRectInsets>
+        <Scripts>
+          <OnValueChanged>LT_OfficerLoot:ScrollChanged();</OnValueChanged>
+        </Scripts>
+        <ThumbTexture name="$parentThumb" file="interface\buttons\ui-scrollbar-knob">
+          <Size>
+            <AbsDimension x="32" y="32" />
+          </Size>
+        </ThumbTexture>
+      </Slider>
+      <Button name="LT_OfficerLoot_Down">
+        <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4973-d66d-444e-bb2d-1ad102c87fed" />-->
+        <Size>
+          <AbsDimension x="17" y="17" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="583" y="-515" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnClick>LT_OfficerLoot:ScrollDown();</OnClick>
+        </Scripts>
+        <NormalTexture file="interface\buttons\ui-scrollbar-scrolldownbutton-up">
+          <TexCoords left="0.2" right="0.75" top="0.2" bottom="0.75" />
+        </NormalTexture>
+        <PushedTexture file="interface\buttons\ui-scrollbar-scrolldownbutton-down">
+          <TexCoords left="0.2" right="0.75" top="0.2" bottom="0.75" />
+        </PushedTexture>
+        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </DisabledTexture>
+        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </HighlightTexture>
+        <NormalFont style="GameFontNormal" />
+        <HighlightFont style="GameFontHighlight" />
+        <DisabledFont style="GameFontDisable" />
+        <PushedTextOffset x="0" y="0" />
+      </Button>
+      <Button name="LT_OfficerLoot_Remove1" text="Remove">
+        <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4973-d66d-444e-bb2d-1ad102c87fed" />-->
+        <Size>
+          <AbsDimension x="67" y="22" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="438" y="-170" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnClick>LT_OfficerLoot:Remove(1);</OnClick>
+        </Scripts>
+        <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </NormalTexture>
+        <PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </PushedTexture>
+        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </DisabledTexture>
+        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </HighlightTexture>
+        <ButtonText name="$parentText">
+          <Anchors>
+            <Anchor point="CENTER">
+              <Offset>
+                <AbsDimension x="0" y="1" />
+              </Offset>
+            </Anchor>
+          </Anchors>
+          <FontHeight>
+            <AbsValue val="10" />
+          </FontHeight>
+        </ButtonText>
+        <NormalFont style="GameFontNormal" />
+        <HighlightFont style="GameFontHighlight" />
+        <DisabledFont style="GameFontDisable" />
+        <PushedTextOffset x="0" y="0" />
+      </Button>
       <Button name="$parentButton2" text="Force Popup">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508884-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
@@ -77,7 +188,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_OfficerLoot:ForcePopup();</OnClick>
+          <OnClick>LT_OfficerLoot:ForcePopup();
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -110,12 +222,12 @@
       <Frame name="LT_OfficerLoot_TableId1">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
-          <AbsDimension x="32" y="24" />
+          <AbsDimension x="99" y="22" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="583" y="-84" />
+              <AbsDimension x="333" y="-170" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -187,55 +299,13 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="630" y="-22" />
+              <AbsDimension x="580" y="-22" />
             </Offset>
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_OfficerLoot_Frame:Hide();</OnClick>
-        </Scripts>
-        <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
-        </NormalTexture>
-        <PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
-        </PushedTexture>
-        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
-        </DisabledTexture>
-        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
-          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
-        </HighlightTexture>
-        <ButtonText name="$parentText">
-          <Anchors>
-            <Anchor point="CENTER">
-              <Offset>
-                <AbsDimension x="0" y="1" />
-              </Offset>
-            </Anchor>
-          </Anchors>
-          <FontHeight>
-            <AbsValue val="10" />
-          </FontHeight>
-        </ButtonText>
-        <NormalFont style="GameFontNormal" />
-        <HighlightFont style="GameFontHighlight" />
-        <DisabledFont style="GameFontDisable" />
-      </Button>
-      <Button name="LT_OfficerLoot_Up" text="Up">
-        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508884-59c2-4f83-ae10-27aaad48391b" />-->
-        <Size>
-          <AbsDimension x="37" y="23" />
-        </Size>
-        <Anchors>
-          <Anchor point="TOPLEFT">
-            <Offset>
-              <AbsDimension x="613" y="-55" />
-            </Offset>
-          </Anchor>
-        </Anchors>
-        <Scripts>
-          <OnClick>LT_OfficerLoot:ScrollUp();</OnClick>
+          <OnClick>LT_OfficerLoot_Frame:Hide();
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -298,7 +368,8 @@
           </Layer>
         </Layers>
         <Scripts>
-          <OnEnter>local a = 1;</OnEnter>
+          <OnEnter>local a = 1;
+</OnEnter>
         </Scripts>
       </Frame>
       <Frame name="LT_OfficerLoot_Label2">
@@ -309,7 +380,7 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="18" y="-186" />
+              <AbsDimension x="18" y="-187" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -334,7 +405,8 @@
           </Layer>
         </Layers>
         <Scripts>
-          <OnEnter>local a = 1;</OnEnter>
+          <OnEnter>local a = 1;
+</OnEnter>
         </Scripts>
       </Frame>
       <Frame name="LT_OfficerLoot_Label3">
@@ -370,23 +442,90 @@
           </Layer>
         </Layers>
         <Scripts>
-          <OnEnter>local a = 1;</OnEnter>
+          <OnEnter>local a = 1;
+</OnEnter>
         </Scripts>
       </Frame>
-      <Button name="LT_OfficerLoot_Down" text="Down">
-        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508884-59c2-4f83-ae10-27aaad48391b" />-->
+      <Frame name="LT_OfficerLoot_TableId2">
+        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
-          <AbsDimension x="49" y="23" />
+          <AbsDimension x="99" y="22" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="601" y="-488" />
+              <AbsDimension x="333" y="-335" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Layers>
+          <Layer>
+            <FontString name="$parentLabel" font="Fonts\FRIZQT__.TTF" text="$parentLabel1">
+              <Anchors>
+                <Anchor point="TOPLEFT" />
+                <Anchor point="BOTTOMRIGHT" />
+              </Anchors>
+              <FontHeight>
+                <AbsValue val="12" />
+              </FontHeight>
+              <Color r="1" g="0.8196079" b="0" />
+              <Shadow>
+                <Color r="0" g="0" b="0" />
+                <Offset>
+                  <AbsDimension x="1" y="-1" />
+                </Offset>
+              </Shadow>
+            </FontString>
+          </Layer>
+        </Layers>
+      </Frame>
+      <Frame name="LT_OfficerLoot_TableId3">
+        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
+        <Size>
+          <AbsDimension x="99" y="22" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="333" y="-501" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Layers>
+          <Layer>
+            <FontString name="$parentLabel" font="Fonts\FRIZQT__.TTF" text="$parentLabel1">
+              <Anchors>
+                <Anchor point="TOPLEFT" />
+                <Anchor point="BOTTOMRIGHT" />
+              </Anchors>
+              <FontHeight>
+                <AbsValue val="12" />
+              </FontHeight>
+              <Color r="1" g="0.8196079" b="0" />
+              <Shadow>
+                <Color r="0" g="0" b="0" />
+                <Offset>
+                  <AbsDimension x="1" y="-1" />
+                </Offset>
+              </Shadow>
+            </FontString>
+          </Layer>
+        </Layers>
+      </Frame>
+      <Button name="LT_OfficerLoot_Award1" text="Award">
+        <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4973-d66d-444e-bb2d-1ad102c87fed" />-->
+        <Size>
+          <AbsDimension x="67" y="22" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="510" y="-170" />
             </Offset>
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_OfficerLoot:ScrollDown();</OnClick>
+          <OnClick>LT_OfficerLoot:Award(1);</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -415,76 +554,221 @@
         <NormalFont style="GameFontNormal" />
         <HighlightFont style="GameFontHighlight" />
         <DisabledFont style="GameFontDisable" />
+        <PushedTextOffset x="0" y="0" />
       </Button>
-      <Frame name="LT_OfficerLoot_TableId2">
-        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
+      <Button name="LT_OfficerLoot_Remove2" text="Remove">
+        <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4973-d66d-444e-bb2d-1ad102c87fed" />-->
         <Size>
-          <AbsDimension x="32" y="24" />
+          <AbsDimension x="67" y="22" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="583" y="-248" />
+              <AbsDimension x="438" y="-335" />
             </Offset>
           </Anchor>
         </Anchors>
-        <Layers>
-          <Layer>
-            <FontString name="$parentLabel" font="Fonts\FRIZQT__.TTF" text="$parentLabel1">
-              <Anchors>
-                <Anchor point="TOPLEFT" />
-                <Anchor point="BOTTOMRIGHT" />
-              </Anchors>
-              <FontHeight>
-                <AbsValue val="12" />
-              </FontHeight>
-              <Color r="1" g="0.8196079" b="0" />
-              <Shadow>
-                <Color r="0" g="0" b="0" />
-                <Offset>
-                  <AbsDimension x="1" y="-1" />
-                </Offset>
-              </Shadow>
-            </FontString>
-          </Layer>
-        </Layers>
-      </Frame>
-      <Frame name="LT_OfficerLoot_TableId3">
-        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
+        <Scripts>
+          <OnClick>LT_OfficerLoot:Remove(2);</OnClick>
+        </Scripts>
+        <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </NormalTexture>
+        <PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </PushedTexture>
+        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </DisabledTexture>
+        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </HighlightTexture>
+        <ButtonText name="$parentText">
+          <Anchors>
+            <Anchor point="CENTER">
+              <Offset>
+                <AbsDimension x="0" y="1" />
+              </Offset>
+            </Anchor>
+          </Anchors>
+          <FontHeight>
+            <AbsValue val="10" />
+          </FontHeight>
+        </ButtonText>
+        <NormalFont style="GameFontNormal" />
+        <HighlightFont style="GameFontHighlight" />
+        <DisabledFont style="GameFontDisable" />
+        <PushedTextOffset x="0" y="0" />
+      </Button>
+      <Button name="LT_OfficerLoot_Award2" text="Award">
+        <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4973-d66d-444e-bb2d-1ad102c87fed" />-->
         <Size>
-          <AbsDimension x="32" y="24" />
+          <AbsDimension x="67" y="22" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="583" y="-425" />
+              <AbsDimension x="510" y="-335" />
             </Offset>
           </Anchor>
         </Anchors>
-        <Layers>
-          <Layer>
-            <FontString name="$parentLabel" font="Fonts\FRIZQT__.TTF" text="$parentLabel1">
-              <Anchors>
-                <Anchor point="TOPLEFT" />
-                <Anchor point="BOTTOMRIGHT" />
-              </Anchors>
-              <FontHeight>
-                <AbsValue val="12" />
-              </FontHeight>
-              <Color r="1" g="0.8196079" b="0" />
-              <Shadow>
-                <Color r="0" g="0" b="0" />
-                <Offset>
-                  <AbsDimension x="1" y="-1" />
-                </Offset>
-              </Shadow>
-            </FontString>
-          </Layer>
-        </Layers>
-      </Frame>
+        <Scripts>
+          <OnClick>LT_OfficerLoot:Award(2);</OnClick>
+        </Scripts>
+        <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </NormalTexture>
+        <PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </PushedTexture>
+        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </DisabledTexture>
+        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </HighlightTexture>
+        <ButtonText name="$parentText">
+          <Anchors>
+            <Anchor point="CENTER">
+              <Offset>
+                <AbsDimension x="0" y="1" />
+              </Offset>
+            </Anchor>
+          </Anchors>
+          <FontHeight>
+            <AbsValue val="10" />
+          </FontHeight>
+        </ButtonText>
+        <NormalFont style="GameFontNormal" />
+        <HighlightFont style="GameFontHighlight" />
+        <DisabledFont style="GameFontDisable" />
+        <PushedTextOffset x="0" y="0" />
+      </Button>
+      <Button name="LT_OfficerLoot_Remove3" text="Remove">
+        <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4973-d66d-444e-bb2d-1ad102c87fed" />-->
+        <Size>
+          <AbsDimension x="67" y="22" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="438" y="-501" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnClick>LT_OfficerLoot:Remove(3);</OnClick>
+        </Scripts>
+        <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </NormalTexture>
+        <PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </PushedTexture>
+        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </DisabledTexture>
+        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </HighlightTexture>
+        <ButtonText name="$parentText">
+          <Anchors>
+            <Anchor point="CENTER">
+              <Offset>
+                <AbsDimension x="0" y="1" />
+              </Offset>
+            </Anchor>
+          </Anchors>
+          <FontHeight>
+            <AbsValue val="10" />
+          </FontHeight>
+        </ButtonText>
+        <NormalFont style="GameFontNormal" />
+        <HighlightFont style="GameFontHighlight" />
+        <DisabledFont style="GameFontDisable" />
+        <PushedTextOffset x="0" y="0" />
+      </Button>
+      <Button name="LT_OfficerLoot_Award3" text="Award">
+        <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4973-d66d-444e-bb2d-1ad102c87fed" />-->
+        <Size>
+          <AbsDimension x="67" y="22" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="510" y="-501" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnClick>LT_OfficerLoot:Award(3);</OnClick>
+        </Scripts>
+        <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </NormalTexture>
+        <PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </PushedTexture>
+        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </DisabledTexture>
+        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </HighlightTexture>
+        <ButtonText name="$parentText">
+          <Anchors>
+            <Anchor point="CENTER">
+              <Offset>
+                <AbsDimension x="0" y="1" />
+              </Offset>
+            </Anchor>
+          </Anchors>
+          <FontHeight>
+            <AbsValue val="10" />
+          </FontHeight>
+        </ButtonText>
+        <NormalFont style="GameFontNormal" />
+        <HighlightFont style="GameFontHighlight" />
+        <DisabledFont style="GameFontDisable" />
+        <PushedTextOffset x="0" y="0" />
+      </Button>
+      <Button name="LT_OfficerLoot_Up">
+        <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4973-d66d-444e-bb2d-1ad102c87fed" />-->
+        <Size>
+          <AbsDimension x="17" y="17" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="583" y="-55" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnClick>LT_OfficerLoot:ScrollUp();</OnClick>
+        </Scripts>
+        <NormalTexture file="interface\buttons\ui-scrollbar-scrollupbutton-up">
+          <TexCoords left="0.2" right="0.75" top="0.2" bottom="0.75" />
+        </NormalTexture>
+        <PushedTexture file="interface\buttons\ui-scrollbar-scrollupbutton-down">
+          <TexCoords left="0.2" right="0.75" top="0.2" bottom="0.75" />
+        </PushedTexture>
+        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </DisabledTexture>
+        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </HighlightTexture>
+        <NormalFont style="GameFontNormal" />
+        <HighlightFont style="GameFontHighlight" />
+        <DisabledFont style="GameFontDisable" />
+        <PushedTextOffset x="0" y="0" />
+      </Button>
     </Frames>
     <Scripts>
-      <OnLoad>LT_OfficerLoot:OnLoad();</OnLoad>
+      <OnLoad>LT_OfficerLoot:OnLoad();
+</OnLoad>
+      <OnMouseWheel>LT_OfficerLoot:ScrollWheel(arg1);</OnMouseWheel>
     </Scripts>
   </Frame>
 </Ui>
