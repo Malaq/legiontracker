@@ -86,6 +86,28 @@ function LT_OfficerLoot:OnLoad()
     self:RegisterComm("LT_OfficerLoot_Vote", "OnReceiveVote");
     self:RegisterComm("LT_OfficerLoot_Bid", "OnReceiveBid");
     self:RegisterComm("LT_OfficerLoot_Command", "OnReceiveCommand");
+    
+    self.inc_msg_ignore = {};
+    self.out_msg_ignore = {};
+    -- Hook into whispers so that we can hide things...
+    ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", function(...)
+        return LT_OfficerLoot:WhisperFilter(...);
+    end);
+    ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(...)
+        return LT_OfficerLoot:OutgoingWhisperFilter(...);
+    end);
+end
+
+function LT_OfficerLoot:WhisperFilter(msg)
+    if (self.inc_msg_ignore[msg]) then
+        return true;
+    end
+end
+
+function LT_OfficerLoot:OutgoingWhisperFilter(msg)
+    if (self.out_msg_ignore[msg]) then
+        return true;
+    end
 end
 
 function LT_OfficerLoot:SendOfficerMessage(prefix, msg)
@@ -379,9 +401,14 @@ function LT_OfficerLoot:OnEvent(event, arg1, arg2)
         comments = strtrim(comments);
         
         self:AddBid(item, player, spec, replacing, comments);
-
-        SendChatMessage("Your bid for " .. item .. " was received successfully.", "WHISPER", nil, player);
+        self.inc_msg_ignore[arg1] = 1;
+        self:SendInvisChatMessage("Your bid for " .. item .. " was received successfully.", "WHISPER", nil, player);
     end
+end
+
+function LT_OfficerLoot:SendInvisChatMessage(msg, dist, lang, targ)
+    self.out_msg_ignore[msg] = 1;
+    SendChatMessage(msg, dist, lang, targ);
 end
 
 
@@ -394,6 +421,8 @@ function LT_OfficerLoot:StartNewItems(item_links, dont_clear_bids)
     
     if (self.bids == nil or dont_clear_bids == nil) then
         self.bids = {};
+        self.inc_msg_ignore = {};
+        self.out_msg_ignore = {};
     end
     
     for i = 1, #item_links do
