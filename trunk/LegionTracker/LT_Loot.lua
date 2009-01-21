@@ -11,6 +11,7 @@ LT_Loot_FilterVal = nil;
 LT_Loot_FilterNeg = {};
 LT_Loot_FilterString = "";
 
+LT_Loot_SavedSpecs = {};
 
 function LT_Loot_SlashHandler(args)
     LT_Print("Loot with args: "..args);
@@ -104,6 +105,10 @@ function Loot_OnEvent(this, event, arg1)
 		LT_LootTable[lootId]["zone"] = GetRealZoneText();
 		LT_LootTable[lootId]["subzone"] = GetSubZoneText();
         LT_LootTable[lootId]["lootId"] = lootId;
+        
+        if (LT_Loot_SavedSpecs[player] and LT_Loot_SavedSpecs[player][GetItemInfo(itemString)]) then
+            LT_LootTable[lootId]["spec"] = LT_Loot_SavedSpecs[player][GetItemInfo(itemString)];
+        end
         
         LT_Loot_OnChange();
 	end
@@ -256,6 +261,22 @@ function LT_Loot_OnChange()
     LT_AllLoot:UpdateFrame();
     LT_Char_UpdateFrame();
     LT_RedrawPlayerList();
+end
+
+function LT_Loot_SaveSpec(player, item, spec)
+
+    if (LT_Loot_SavedSpecs[player] == nil) then
+        LT_Loot_SavedSpecs[player] = {};
+    end
+    if (string.lower(spec) == "main") then
+        spec = "Main";
+    elseif (string.lower(spec) == "alt") then
+        spec = "Alt";
+    elseif (string.lower(spec) == "off") then
+        spec = "Off";
+    end
+    
+    LT_Loot_SavedSpecs[player][item] = spec;
 end
 
 LT_LootFrame:SetScript("OnEvent", Loot_OnEvent);
