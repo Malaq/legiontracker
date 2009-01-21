@@ -437,21 +437,22 @@ function LT_Main_StartLootWhispers()
     end
     
     local items = {};
+    local item_links = {};
     for i = 1, GetNumLootItems() do
         if (GetLootSlotLink(i)) then -- money returns nil
             local item, link = GetItemInfo(GetLootSlotLink(i));
             if (item and string.find(item, "Emblem of") == nil) then
-                table.insert(items, link);
+                table.insert(item_links, link);
+                table.insert(items, item);
             end
         end
     end
-    LT_OfficerLoot:BroadcastNewItems(items);
+    LT_OfficerLoot:BroadcastNewItems(items, item_links);
     LT_OfficerLoot:OnShow();
     
-    LT_OfficerLoot:SendInstructions("RAID");
     SendChatMessage("Items are:", "RAID");
-    for i = 1, #items do
-        SendChatMessage(items[i], "RAID");
+    for i = 1, #item_links do
+        SendChatMessage(item_links[i], "RAID");
     end
 end
 

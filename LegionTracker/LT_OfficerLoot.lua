@@ -33,8 +33,8 @@ function LT_OfficerLoot:OnLoad()
         self.award_buttons[i]:SetParent(self.table_frames[i]);
         
         _G["LT_OfficerLoot_Label"..i]:SetScript("OnEnter", function()
-            local _, link = GetItemInfo(self.table_labels[i]:GetText() or "");
-            if (link) then
+            local link = self.table_labels[i]:GetText();
+            if (link and link ~= "") then
                 GameTooltip:ClearAllPoints();
                 GameTooltip:SetPoint("CENTER", UIParent);
                 GameTooltip:SetOwner(LT_OfficerLoot_Frame, "ANCHOR_CURSOR");
@@ -77,7 +77,7 @@ function LT_OfficerLoot:OnLoad()
         
     end
     
-    self:StartNewItems({});
+    self:StartNewItems({}, {});
     LT_OfficerLoot_Frame:Hide();
     
     self.last_instructed = {};
@@ -130,7 +130,7 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
     
     if (cmd.type == "Start") then
         self.whisper_id = cmd.whisper_id;
-        self:StartNewItems(cmd.items);
+        self:StartNewItems(cmd.items, cmd.item_links);
     end
     
     if (self.whisper_id ~= cmd.whisper_id) then
@@ -143,23 +143,25 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
         for i = 1, #self.items do
             if (self.items[i] == cmd.name) then
                 table.remove(self.item_links, i);
-                self:StartNewItems(self.item_links, true);
+                table.remove(self.items, i);
+                self:StartNewItems(self.items, self.item_links, true);
                 self:Display();
                 break;
             end
         end
     elseif (cmd.type == "Add") then
-        local _, link = GetItemInfo(cmd.name);
+        local item, link = GetItemInfo(cmd.name);
         if (link) then
+            table.insert(self.items, item);
             table.insert(self.item_links, link);
-            self:StartNewItems(self.item_links, true);
+            self:StartNewItems(self.items, self.item_links, true);
             self:Display();
         end
     end
 end
 
-function LT_OfficerLoot:BroadcastNewItems(items)
-    local cmd = {["type"] = "Start", ["items"] = items, ["whisper_id"] = time()};
+function LT_OfficerLoot:BroadcastNewItems(items, item_links)
+    local cmd = {["type"] = "Start", ["items"] = items, ["item_links"] = item_links, ["whisper_id"] = time()};
     self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
 end
 
@@ -182,7 +184,7 @@ function LT_OfficerLoot:Add(item)
     self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
 end
 
-function LT_OfficerLoot:CanAward(id)
+function LT_OfficerLoot:GetBestBid(id)
     local real_id = id + self.cur_id - 1;
     local item = self.items[real_id];
     local bids = self.bids[item];
@@ -198,23 +200,15 @@ function LT_OfficerLoot:CanAward(id)
         end
     end
     
-    return bid ~= nil;
+    return bid
+end
+
+function LT_OfficerLoot:CanAward(id)
+    return self:GetBestBid(id) ~= nil;
 end
 
 function LT_OfficerLoot:Award(id)
-    local real_id = id + self.cur_id - 1;
-    local item = self.items[real_id];
-    local bids = self.bids[item];
-    local bid; -- winner
-    local best_votes = -1;
-    for i = 1, #bids do
-        local num_votes = LT_TableSize(bids[i].votes);
-        if (num_votes > best_votes) then
-            best_votes = num_votes;
-            bid = bids[i];
-        end
-    end
-    
+    local bid = self:GetBestBid(id);
     local _, link = GetItemInfo(bid.item);
     SendChatMessage("Grats to " .. bid.player .. " on " .. link .. " (" .. bid.spec .. " spec)", "RAID");
     self:Remove(id);
@@ -313,11 +307,11 @@ function LT_OfficerLoot:SendInstructions(channel, player)
         "To bid for an item, send a tell in the following format:",
         "[Item], [Replacing], spec (main/alt/off), (short) comments",
         "For example, if you want to bid for a Grim Toll, you could send: ",
-        "\124cffa335ee\124Hitem:40256:0:0:0:0:0:0:0:0\124h[Grim Toll]\124h\124r,  \124cffa335ee\124Hitem:34472:0:0:0:0:0:0:0:0\124h[Shard of Contempt]\124h\124r, Main, best in slot"
+        " \124cffa335ee\124Hitem:40256:0:0:0:0:0:0:0:0\124h[Grim Toll]\124h\124r,  \124cffa335ee\124Hitem:34472:0:0:0:0:0:0:0:0\124h[Shard of Contempt]\124h\124r, Main, best in slot"
     };
     
     for i = 1, #instructions do
-        SendChatMessage(instructions[i], channel, nil, player);
+        self:SendInvisChatMessage(instructions[i], channel, nil, player);
     end
 end
 
@@ -343,6 +337,8 @@ function LT_OfficerLoot:OnReceiveBid(prefix, message, distr, sender)
     if (repeated ~= true) then
         table.insert(self.bids[GetItemInfo(bid.item)], bid);
     end
+    
+    LT_Loot_SaveSpec(bid.player, GetItemInfo(bid.item), bid.spec);
     self:Display();
 end
 
@@ -359,6 +355,12 @@ end
 
 function LT_OfficerLoot:OnEvent(event, arg1, arg2)
     if (event == "CHAT_MSG_WHISPER" and self.mode == "Master" and #self.items > 0) then
+        if (arg1 == "!bid") then
+            self:SendInstructions("WHISPER", arg2);
+            LT_Print("Sent instructions to "..arg2);
+            return;
+        end
+        
         local player = arg2;
         local msg = { strsplit(",", arg1) };
         -- Format: [item], [replacing], spec, comments
@@ -412,12 +414,14 @@ function LT_OfficerLoot:SendInvisChatMessage(msg, dist, lang, targ)
 end
 
 
-function LT_OfficerLoot:StartNewItems(item_links, dont_clear_bids)
+function LT_OfficerLoot:StartNewItems(items, item_links, dont_clear_bids)
+
+    -- Setup the data structures
     if (self.cur_id == nil or dont_clear_bids == nil) then
         self.cur_id = 1;
     end
     self.item_links = item_links;
-    self.items = {}
+    self.items = items;
     
     if (self.bids == nil or dont_clear_bids == nil) then
         self.bids = {};
@@ -426,13 +430,16 @@ function LT_OfficerLoot:StartNewItems(item_links, dont_clear_bids)
     end
     
     for i = 1, #item_links do
-        local name = GetItemInfo(item_links[i]);
-        table.insert(self.items, name);
+        -- Do this to put everything into the local cache, so that all GetItemInfo calls work.
+        GameTooltip:SetHyperlink(item_links[i]);
+        GameTooltip:Hide();
+        
         if (self.bids[self.items[i]] == nil or dont_clear_bids == nil) then
             self.bids[self.items[i]] = {};
         end
     end
     
+    -- Setup the UI
     if (#item_links > self.slots) then
         LT_OfficerLoot_Slider:SetMinMaxValues(1, #item_links - self.slots + 1);
         LT_OfficerLoot_Slider:Show();
@@ -444,6 +451,17 @@ function LT_OfficerLoot:StartNewItems(item_links, dont_clear_bids)
         LT_OfficerLoot_Up:Hide();
         LT_OfficerLoot_Down:Hide();
     end
+    
+    -- Deal with the loot timer
+    if (dont_clear_bids == nil and #item_links > 0) then
+        self.LootStartTime = time();
+    end
+    
+    if (dont_clear_bids ~= nil and #item_links == 0 and self.LootStartTime) then
+        local chg = time() - self.LootStartTime;
+        LT_Print("Time spent dealing with loot: "..math.floor(chg/60).." minutes, "..(chg%60).." seconds");
+    end
+    
     self:Display();
 end
 
