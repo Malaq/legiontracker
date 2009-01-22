@@ -6,7 +6,7 @@
 ## URL: n/a
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
-## SavedVariables: LT_LootTable,LT_PlayerLootTable,LT_UniqueLootId,LT_TimerInterval
+## SavedVariables: LT_LootTable,LT_PlayerLootTable,LT_UniqueLootId,LT_TimerInterval,LT_LastRunVersion
 embeds.xml
 LT_LootUI.lua
 LT_Main.lua
