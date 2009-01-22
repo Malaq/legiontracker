@@ -111,6 +111,12 @@ function Loot_OnEvent(this, event, arg1)
         end
         
         LT_Loot_OnChange();
+    elseif event == "VARIABLES_LOADED" then
+        if (LT_LastRunVersion ~= LT_VERSION) then
+            LT_LastRunVersion = LT_VERSION;
+            LT_PlayerLootTable = {};
+		    LT_LootTable = {};
+        end
 	end
 end
 
@@ -201,7 +207,7 @@ function LT_Loot_Filter(loot)
 
 	for i=1,#filter do
 		local token = LT_Loot_FilterVal[i];
-        if (token ~= "") then -- Catches the case where you've just typed !
+        if (token ~= "" and GetItemInfo(loot.itemString)) then -- Catches the case where you've just typed !
             local name, _, rarity = GetItemInfo(loot.itemString);
             local ss = name.."|"..types[rarity+1].."|"..loot.player.."|"..loot.spec;
             rarity = types[rarity+1];
