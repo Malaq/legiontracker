@@ -28,7 +28,7 @@ print "<font size=\"6\" face=\"Monotype Corsiva\"><B>$char_name</B></font>";
 
 # Raid Summary
 my $raid_query =
-	$dbh->prepare("SELECT rc.DATE, rc.SCHEDULED, rc.ATTENDANCE_COUNT, ALL_LOOT.numb ALN, MAIN_LOOT.numb MLN, ALT_LOOT.numb TLN, OFF_LOOT.numb OLN, DE_LOOT.numb DLN, DURATION.tic " .
+	$dbh->prepare("SELECT rc.DATE, rc.SCHEDULED, rc.ATTENDANCE_COUNT, IFNULL(ALL_LOOT.numb,0) ALN, IFNULL(MAIN_LOOT.numb,0) MLN, IFNULL(ALT_LOOT.numb,0) TLN, IFNULL(OFF_LOOT.numb,0) OLN, IFNULL(DE_LOOT.numb,0) DLN, DURATION.tic " .
 			"FROM RAID_CALENDAR rc " .
 			"LEFT JOIN " .
 			"(" .
@@ -104,14 +104,14 @@ if ($row->{SCHEDULED} == "1") {
 print "Scheduled: <B>$sched</B><br>";
 print "Raiders Available: <B>$row->{ATTENDANCE_COUNT}</B><br>";
 print "Raid Duration: <B>$row->{tic}</B><br>";
+print "</fieldset>";
 #print "Epics Dropped: <B>$row->{TOTAL_LOOT}</B><br>";
-print "<fieldset>";
+print "<fieldset style=\"width: 200px;\">";
 print "<legend>Epics Dropped: <B>$row->{ALN}</B></legend>";
 print "Main Spec: <B>$row->{MLN}</B><br>";
 print "Alt Spec: <B>$row->{TLN}</B><br>";
 print "Off Spec: <B>$row->{OLN}</B><br>";
 print "Disenchanted: <B>$row->{DLN}</B><br>";
-print "</fieldset>";
 print "</fieldset>";
 print "<br>";
 
@@ -122,7 +122,7 @@ $raid_query->finish();
 print "<fieldset>";
 print "<legend>Loot Details:</legend>";
 my $loot_statement =
-	$dbh->prepare("SELECT chr.NAME, it.ITEM_ID, it.ITEM_NAME, il.TIMESTAMP, il.SPEC, il.ZONE, il.SUBZONE " .
+	$dbh->prepare("SELECT chr.NAME, it.ITEM_ID, it.ITEM_NAME, DATE_FORMAT(il.TIMESTAMP, '<font size=\"2\">%m/%d/%Y (%r)</font>') TIMESTAMP, il.SPEC, il.ZONE, il.SUBZONE " .
 			"FROM `CHARACTER` chr, ITEMS_LOOTED il, RAID_CALENDAR rc, ITEM it " .
 			"WHERE il.RAID_ID = rc.RAID_ID " .
 			"AND il.CHAR_ID = chr.CHAR_ID " .
@@ -136,16 +136,17 @@ $loot_statement->execute() or die $dbh->errstr;
 print "<script src=\"sorttable.js\"></script>\n";
 print "<script src=\"http://www.wowhead.com/widgets/power.js\"></script>\n";
 print "<TABLE class=\"sortable\" style=\"filter:alpha(opacity=75);-moz-opacity:.75;opacity:.75;\" BORDER=2 ALIGN=LEFT><TR>";
-print "<TH WIDTH=155><U><B><font color=black>Name</B></U></TH>";
-print "<TH WIDTH=100><U><B>Item Name</B></U></TH>";
-print "<TH WIDTH=100><U><B>Date</B></U></TH>";
-print "<TH WIDTH=100><U><B>Spec</B></U></TH>";
-print "<TH WIDTH=155><U><B>Zone</B></U></TH>";
-print "<TH WIDTH=40><U><B>SubZone</B></U></TH>";
+print "<TH><U><B><font color=black>Name</B></U></TH>";
+print "<TH><U><B>Item Name</B></U></TH>";
+print "<TH><U><B>Date</B></U></TH>";
+print "<TH><U><B>Spec</B></U></TH>";
+print "<TH><U><B>Zone</B></U></TH>";
+print "<TH><U><B>SubZone</B></U></TH>";
 print "</TR>\n";
 while (my $row = $loot_statement->fetchrow_hashref()) {
 	print "<TR>";
-	print "<TD><B>$row->{NAME}</B></TD><TD><a href=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\">$row->{ITEM_NAME}</a></TD><TD>$row->{TIMESTAMP}</TD>";
+        print "<td><A HREF=\"char.shtml?data=$row->{NAME}\"><B>$row->{NAME}</B></A></td>";
+	print "<TD><a href=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\">$row->{ITEM_NAME}</a></TD><TD>$row->{TIMESTAMP}</TD>";
 	print "<TD>$row->{SPEC}</TD><TD>$row->{ZONE}</TD><TD>$row->{SUBZONE}</TD>";
 	print "</TR>\n";
 	print "\n";
@@ -172,10 +173,10 @@ $attendance_stmt->bind_param(1, $raid_id);
 $attendance_stmt->execute() or die $dbh->errstr;
 print "<script src=\"sorttable.js\"></script>\n";
 print "<TABLE class=\"sortable\" style=\"filter:alpha(opacity=75);-moz-opacity:.75;opacity:.75;\" BORDER=2 ALIGN=LEFT><TR>";
-print "<TH WIDTH=100><U><B><font color=black>Name</B></U></TH>";
-print "<TH WIDTH=100><U><B><font color=black>Class</B></U></TH>";
-print "<TH WIDTH=50><U><B>Pct</B></U></TH>";
-print "<TH WIDTH=500><U><B>Attendance</B>(10 min increments)</U></TH>";
+print "<TH><U><B><font color=black>Name</B></U></TH>";
+print "<TH><U><B><font color=black>Class</B></U></TH>";
+print "<TH><U><B>Pct</B></U></TH>";
+print "<TH><U><B>Attendance</B>(10 min increments)</U></TH>";
 print "</TR>\n";
 while (my $row = $attendance_stmt->fetchrow_hashref()) {
 	my $attn = $row->{ATTENDANCE};
