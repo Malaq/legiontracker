@@ -20,20 +20,41 @@ my $dbh = DBI->connect("dbi:mysql:database=$database;host=$hostname;port=$dbport
 
 my $char_name = param('data');
 
-print "<font size=\"6\" face=\"Monotype Corsiva\"><B>$char_name</B></font>";
+#print "<font size=\"6\" face=\"Monotype Corsiva\"><B>$char_name</B></font>";
 
-	print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n";
-	print "<HTML>\n";
+#print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n";
+#print "<HTML>\n";
+
+# Overview
+print "<fieldset>";
+print "<legend>Character Details:</legend>";
+my $sql_text = 
+my $summary_statement =
+	$dbh->prepare("SELECT char_id, name, class, rank, date_joined " .
+			"from `CHARACTER` " .
+			"where name = ? ;");
+$summary_statement->bind_param(1, $char_name);
+$summary_statement->execute() or die $dbh->errstr;
+my $row = $summary_statement->fetchrow_hashref();
+print "<B>Name:</B> <A HREF=\"char.shtml?data=$row->{name}\" TITLE=\"CHAR_ID=$row->{char_id}\">$row->{name}</A><BR>";
+print "<B>Class:</B> $row->{class} <BR>";
+print "<B>Rank:</B> $row->{rank} <BR>";
+print "<B>Date Joined:</B> $row->{date_joined} <BR>";
+print "</fieldset>";
+
+$summary_statement->finish();
 
 # Attendance
 print "<fieldset>";
 print "<legend>Attendance Details:</legend>";
 print <<STRINGDELIM;
-	<table border=2>
+	<table cellspacing="1" cellpadding="2" class="" id="attnDetail">
+	<thead>
 	<tr>
 		<th>Date</th>
 		<th>Attendance (10 min increments)</th>
 	</tr>
+	</thead>	
 STRINGDELIM
 
 my $sql_text = <<STRINGDELIM;
@@ -50,6 +71,7 @@ my $attn_statement = $dbh->prepare( $sql_text );
 $attn_statement->bind_param(1, $char_name);
 $attn_statement->execute() or die $dbh->errstr;
 
+print "<TBODY>";
 while (my $row = $attn_statement->fetchrow_hashref()) {
 	my $attn = $row->{ATTENDANCE};
 	$attn =~ s|0|~|g;
@@ -66,6 +88,7 @@ while (my $row = $attn_statement->fetchrow_hashref()) {
 STRINGDELIM
 }
 print <<STRINGDELIM;
+</TBODY>
 </table>
 STRINGDELIM
 print "</fieldset>";
@@ -94,14 +117,18 @@ $loot_statement->bind_param(1, $char_name);
 $loot_statement->execute() or die $dbh->errstr;
 print "<script src=\"sorttable.js\"></script>\n";
 print "<script src=\"http://www.wowhead.com/widgets/power.js\"></script>\n";
-print "<TABLE class=\"sortable\" style=\"filter:alpha(opacity=75);-moz-opacity:.75;opacity:.75;\" BORDER=2 ALIGN=LEFT><TR>";
+print "<table cellspacing=\"1\" cellpadding=\"2\" class=\"sortable\" id=\"lootDetail\">";
+print "<THEAD>";
+print "<TR>";
 print "<TH><U><B><font color=black>Name</B></U></TH>";
 print "<TH><U><B>Item Name</B></U></TH>";
 print "<TH><U><B>Date</B></U></TH>";
 print "<TH><U><B>Spec</B></U></TH>";
 print "<TH><U><B>Zone</B></U></TH>";
 print "<TH><U><B>SubZone</B></U></TH>";
-print "</TR>\n";
+print "</TR>";
+print "</THEAD>\n";
+print "<TBODY>";
 while (my $row = $loot_statement->fetchrow_hashref()) {
 	print "<TR>";
 	print "<TD>$row->{NAME}</TD><TD><a href=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\">$row->{ITEM_NAME}</a></TD><TD>$row->{TIMESTAMP}</TD>";
@@ -109,8 +136,12 @@ while (my $row = $loot_statement->fetchrow_hashref()) {
 	print "</TR>\n";
 	print "\n";
 }
+print "</TBODY>";
 print "</TABLE>";
+#print "<script type=\"text/javascript\">";
+#print "var t = new ScrollableTable(document.getElementById('lootDetail'), 500);";
+#print "</script>";
 print "</fieldset>";
-print "</HTML>";
+#print "</HTML>";
 $loot_statement->finish();
 $dbh->disconnect();
