@@ -23,8 +23,8 @@ my $raid_id = param('data');
 
 print "<font size=\"6\" face=\"Monotype Corsiva\"><B>$char_name</B></font>";
 
-	print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n";
-	print "<HTML>\n";
+#print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n";
+	#print "<HTML>\n";
 
 # Raid Summary
 my $raid_query =
@@ -81,7 +81,7 @@ my $raid_query =
 			"FROM RAID_ATTENDANCE ra, `CHARACTER` chr " .
 			"where ra.raid_id = ? " .
 			"and ra.CHAR_ID = chr.CHAR_ID " .
-			"and chr.rank not in ('Friend','Alt') " .
+			"and chr.rank not in ('Friend','Alt','Officer Alt') " .
 			"GROUP BY raid_id " .
 			") DURATION " .
 			"ON ALL_LOOT.raid_id = rc.raid_id " .
@@ -135,14 +135,18 @@ $loot_statement->bind_param(1, $raid_id);
 $loot_statement->execute() or die $dbh->errstr;
 print "<script src=\"sorttable.js\"></script>\n";
 print "<script src=\"http://www.wowhead.com/widgets/power.js\"></script>\n";
-print "<TABLE class=\"sortable\" style=\"filter:alpha(opacity=75);-moz-opacity:.75;opacity:.75;\" BORDER=2 ALIGN=LEFT><TR>";
+print "<TABLE class=\"sortable\" BORDER=2 ALIGN=LEFT>";
+print "<THEAD>";
+print "<TR>";
 print "<TH><U><B><font color=black>Name</B></U></TH>";
 print "<TH><U><B>Item Name</B></U></TH>";
 print "<TH><U><B>Date</B></U></TH>";
 print "<TH><U><B>Spec</B></U></TH>";
 print "<TH><U><B>Zone</B></U></TH>";
 print "<TH><U><B>SubZone</B></U></TH>";
-print "</TR>\n";
+print "</TR>";
+print "</THEAD>\n";
+print "<TBODY>";
 while (my $row = $loot_statement->fetchrow_hashref()) {
 	print "<TR>";
         print "<td><A HREF=\"char.shtml?data=$row->{NAME}\"><B>$row->{NAME}</B></A></td>";
@@ -151,6 +155,7 @@ while (my $row = $loot_statement->fetchrow_hashref()) {
 	print "</TR>\n";
 	print "\n";
 }
+print "</TBODY>";
 print "</TABLE>";
 print "</fieldset>";
 $loot_statement->finish();
@@ -172,12 +177,16 @@ my $attendance_stmt =
 $attendance_stmt->bind_param(1, $raid_id);
 $attendance_stmt->execute() or die $dbh->errstr;
 print "<script src=\"sorttable.js\"></script>\n";
-print "<TABLE class=\"sortable\" style=\"filter:alpha(opacity=75);-moz-opacity:.75;opacity:.75;\" BORDER=2 ALIGN=LEFT><TR>";
+print "<TABLE class=\"sortable\" BORDER=2 ALIGN=LEFT>";
+print "<THEAD>";
+print "<TR>";
 print "<TH><U><B><font color=black>Name</B></U></TH>";
 print "<TH><U><B><font color=black>Class</B></U></TH>";
 print "<TH><U><B>Pct</B></U></TH>";
 print "<TH><U><B>Attendance</B>(10 min increments)</U></TH>";
-print "</TR>\n";
+print "</TR>";
+print "</THEAD>\n";
+print "<TBODY>";
 while (my $row = $attendance_stmt->fetchrow_hashref()) {
 	my $attn = $row->{ATTENDANCE};
 	$attn =~ s|0|~|g;
@@ -194,9 +203,10 @@ while (my $row = $attendance_stmt->fetchrow_hashref()) {
 	print "<td>$attn</td> ";
 	print "</tr>";
 	}
+print "</TBODY>";
 print "</TABLE>";
 print "</fieldset>";
-print "</HTML>";
+#print "</HTML>";
 $attendance_stmt->finish();
 
 $dbh->disconnect();

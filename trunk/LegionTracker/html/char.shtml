@@ -1,6 +1,35 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
 		<title>Trismegistus Attendance and Loot</title>
+		<meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+		<script type="text/javascript" src="webtoolkit.scrollabletable.js"></script>
+		<script type="text/javascript" src="webtoolkit.sortabletable.js"></script>
+
+    	    <style>
+	        table {
+	            text-align: left;
+	            font-size: 12px;
+	            font-family: verdana;
+	        }
+	
+	        table thead  {
+	            cursor: pointer;
+	        }
+	
+	        table thead tr,
+	        table tfoot tr {
+	            background: #c0c0c0;
+	        }
+	
+	        table tbody tr {
+	            background: #f0f0f0;
+	        }
+	
+	        td, th {
+	            border: 1px solid #c0c0c0;
+	        }
+	    </style>		
 	</head>
 
 	<body bgcolor="C0C0C0">
@@ -17,5 +46,6 @@
 		<td bgcolor="FFFFFF">
 		<!--#include virtual="cgi-bin/char.cgi?${QUERY_STRING}"-->
 		</td>
+		</table>
 	</body>
 </html>

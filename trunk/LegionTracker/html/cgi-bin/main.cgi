@@ -10,6 +10,64 @@ print "Content-type: text/html\n\n";
 
 # For debug output
 #print "<pre>";
+#my $rowcolor = '888888';
+my $rowcolor = 'silver';
+
+#Class Coloring
+sub classColor {
+	my $tempclass = shift;
+	my $classclr = 'black';
+	if ($tempclass eq 'Druid') {
+		$classclr='orange';
+	} elsif ($tempclass eq 'Hunter') {
+		$classclr='green';
+	} elsif ($tempclass eq 'Mage') {
+		$classclr='blue';
+	} elsif ($tempclass eq 'Paladin') {
+		$classclr='pink';
+	} elsif ($tempclass eq 'Priest') {
+		$classclr='white';
+	} elsif ($tempclass eq 'Rogue') {
+		$classclr='yellow';
+	} elsif ($tempclass eq 'Shaman') {
+		$classclr='royalblue';
+	} elsif ($tempclass eq 'Warlock') {
+		$classclr='purple';
+	} elsif ($tempclass eq 'Warrior') {
+		$classclr='brown';
+	} elsif ($tempclass eq 'Death Knight') {
+		$classclr='red';
+	}
+	print "<B><font color=$classclr>$tempclass</font></B>";
+}
+
+#Attendance Coloring
+sub attendanceColor {
+	my $tempattn = shift;
+	my $attnclr = 'black';
+	if ($tempattn > 85) {
+		$attnclr='green';
+	} elsif ($tempattn > 60) {
+		$attnclr='yellow';
+	} else {
+		$attnclr='red';
+	}
+	print "<TD BGCOLOR=$rowcolor>";
+	print "<font color=$attnclr>$tempattn</font>";
+	print "</TD>";
+}
+
+#Loot Coloring
+sub lootColor {
+	my $temploot = shift;
+	my $lootclr = 'black';
+	if ($temploot > 0) {
+		$lootclr='purple';
+	} else {
+		$lootclr='red';
+	}
+	print "<font color=$lootclr>$temploot</font>";
+}
 
 # Setup our DB connection
 my $database = 'legiontracker_tg';
@@ -220,14 +278,14 @@ my $statement =
 			"GROUP BY ilo60.CHAR_ID ".
 			")off_spec ON off_spec.CHAR_ID = chr60dl.CHAR_ID) 60dl ".
 			"ON 60dl.CHAR_ID = chr.CHAR_ID ".
-			"WHERE chr.RANK not like 'Alt%' " .
-			"AND chr.RANK not like 'Friend%' " .
-			"AND chr.RANK not like '' " .
+			"WHERE chr.RANK not in ('Friend','Alt','Officer Alt', '') " .
 			"ORDER BY chr.NAME;");
 	print "<fieldset>";
 	print "<legend>Raiding Members</legend>";
 	print "<script src=\"sorttable.js\"></script>\n";
-	print "<TABLE class=\"sortable\" style=\"filter:alpha(opacity=75);-moz-opacity:.75;opacity:.75;\" BORDER=2 ALIGN=LEFT><TR>";
+	print "<TABLE class=\"sortable\" style=\"filter:alpha(opacity=75);-moz-opacity:.75;opacity:.75;\" BORDER=2 ALIGN=LEFT>";
+	#print "<TR><TH colspan=\"3\">Char Info</TH><TH colspan=\"4\">7 Day Info</TH><TH colspan=\"4\">30 Day Info</TH><TH colspan=\"4\">60 Day Info</TH></TR>";
+	print "<TR>";
 	print "<TH WIDTH=90><U><B><font color=black>Name</B></U></TH>";
 	print "<TH WIDTH=100><U><B>Class</B></U></TH>";
 	print "<TH WIDTH=100><U><B>Rank</B></U></TH>";
@@ -247,10 +305,43 @@ my $statement =
 	while (my $row = $statement->fetchrow_hashref()) {
 		print "<TR>";
 		print "<TD><B><A HREF=\"char.shtml?data=$row->{NAME}\"> $row->{NAME} </A></B></TD>";
-		print "<TD>$row->{CLASS}</TD><TD>$row->{RANK}</TD>";
-		print "<TD>$row->{'7day'}</TD><TD>$row->{'7MS'}</TD><TD>$row->{'7AS'}</TD><TD>$row->{'7OS'}</TD>";
-		print "<TD>$row->{'30day'}</TD><TD>$row->{'30MS'}</TD><TD>$row->{'30AS'}</TD><TD>$row->{'30OS'}</TD>";
-		print "<TD>$row->{'60day'}</TD><TD>$row->{'60MS'}</TD><TD>$row->{'60AS'}</TD><TD>$row->{'60OS'}</TD>";
+		print "<TD BGCOLOR=black>";
+		classColor($row->{CLASS});
+		print "</TD>";
+		print "<TD>$row->{RANK}</TD>";
+		#7 day stats
+		attendanceColor($row->{'7day'});
+		print "<TD>";
+		lootColor($row->{'7MS'});
+		print "</TD>";
+		print "<TD>";
+		lootColor($row->{'7AS'});
+		print "</TD>";
+		print "<TD>";
+		lootColor($row->{'7OS'});
+		print "</TD>";
+		#30 day stats
+		attendanceColor($row->{'30day'});
+		print "<TD>";
+		lootColor($row->{'30MS'});
+		print "</TD>";
+		print "<TD>";
+		lootColor($row->{'30AS'});
+		print "</TD>";
+		print "<TD>";
+		lootColor($row->{'30OS'});
+		print "</TD>";
+		#60 day stats
+		attendanceColor($row->{'60day'});
+		print "<TD>";
+		lootColor($row->{'60MS'});
+		print "</TD>";
+		print "<TD>";
+		lootColor($row->{'60AS'});
+		print "</TD>";
+		print "<TD>";
+		lootColor($row->{'60OS'});
+		print "</TD>";
 		print "</TR>\n";
 		print "\n";
 	}
