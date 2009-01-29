@@ -13,6 +13,9 @@ function LT_OfficerLoot:OnLoad()
     
     tinsert(UISpecialFrames, "LT_OfficerLoot_Frame");
     
+    self.msg_channel = "RAID";
+    self.msg_target = nil;
+    
     self.vote_tooltip = CreateFrame("GameTooltip", "LT_VoteTooltip", UIParent, "GameTooltipTemplate");
     self.vote_tooltip:Hide();
     
@@ -118,7 +121,7 @@ function LT_OfficerLoot:SendOfficerMessage(prefix, msg)
     end
     msg = self:Serialize(cmd);
     
-    self:SendCommMessage(prefix, msg, "RAID");
+    self:SendCommMessage(prefix, msg, self.msg_channel, self.msg_target);
 end
 
 function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
@@ -256,10 +259,14 @@ end
 
 
 
-function LT_OfficerLoot:OnClick(table_id, row_frame, cell_frame, data, cols, row, realrow, column)
+function LT_OfficerLoot:OnClick(table_id, row_frame, cell_frame, data, cols, row, realrow, column, btn)
     local bids = self.bids[self.items[table_id + self.cur_id - 1]];
     if (column == 1 and realrow ~= nil and bids[realrow] ~= nil) then
-        LT_OfficerLoot:BroadcastVote(self.items[table_id + self.cur_id - 1], bids[realrow].player);
+        if (btn == "LeftButton") then
+            LT_OfficerLoot:BroadcastVote(self.items[table_id + self.cur_id - 1], bids[realrow].player);
+        else
+            LT_OfficerLoot:BroadcastVote(self.items[table_id + self.cur_id - 1], "");
+        end
     end
 end
 
@@ -277,7 +284,7 @@ function LT_OfficerLoot:OnEnter(table_id, row_frame, cell_frame, data, cols, row
         self.vote_tooltip:SetPoint("CENTER", UIParent);
         self.vote_tooltip:SetOwner(row_frame, "ANCHOR_CURSOR");
         self.vote_tooltip:ClearLines();
-        self.vote_tooltip:AddLine("Click to vote");
+        self.vote_tooltip:AddLine("Click to vote.  Right click to remove vote.");
         self.vote_tooltip:AddLine("Current votes:", 1, 1, 1);
         for person in pairs(bids[realrow].votes) do
             local color = LT_GetClassColorFromName(person);

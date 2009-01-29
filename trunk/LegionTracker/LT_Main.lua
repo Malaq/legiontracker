@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.4"
+﻿LT_VERSION = "Legion Tracker 0.5"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -22,7 +22,7 @@ function LT_OnLoad()
 	SlashCmdList['LEGIONTRACKER'] = function(msg)
 		LT_SlashHandler(msg)
 	end
-    this:Show();
+    this:Hide();
 end
 
 function LT_Main_OnShow()
@@ -53,7 +53,15 @@ function LT_SlashHandler(args)
         elseif string.find(args, "^add") ~= nil then
             LT_OfficerLoot:Add(string.sub(args, 4));
         elseif args == "olt1" then
-            LT_OfficerLoot:BroadcastNewItems({"Mirror of Truth", "Grim Toll", "Slime Stream Bands", "Totem of Dueling", "Aged Winter Cloak", "Favor of the Dragon Queen", "Ring of Invincibility", "Ring of Invincibility"});
+            LT_OfficerLoot.msg_channel = "WHISPER";
+            LT_OfficerLoot.msg_target = "Happyduude";
+            local items = {"Mirror of Truth", "Grim Toll", "Slime Stream Bands", "Totem of Dueling", "Aged Winter Cloak", "Favor of the Dragon Queen", "Ring of Invincibility", "Ring of Invincibility"};
+            local item_links = {};
+            for i = 1, #items do 
+                local _, link = GetItemInfo(items[i]);
+                table.insert(item_links, link);
+            end
+            LT_OfficerLoot:BroadcastNewItems(items, item_links);
             LT_OfficerLoot:OnShow();
         elseif args == "olt2" then
             LT_OfficerLoot:AddBid("Grim Toll", "Yuzuki", "main", "Shard of Contempt", "Shouldn't see this");
@@ -394,8 +402,7 @@ function LT_ResetAll()
     button2 = "No",
     OnAccept = function()
         LT_ResetAttendance();
-        LT_PlayerLootTable = {};
-		LT_LootTable = {};
+        LT_ResetLoot();
     end,
     timeout = 0,
     whileDead = 1,
@@ -450,6 +457,7 @@ function LT_Main_StartLootWhispers()
     LT_OfficerLoot:BroadcastNewItems(items, item_links);
     LT_OfficerLoot:OnShow();
     
+    SendChatMessage("Whisper !bid to an officer for instructions");
     SendChatMessage("Items are:", "RAID");
     for i = 1, #item_links do
         SendChatMessage(item_links[i], "RAID");

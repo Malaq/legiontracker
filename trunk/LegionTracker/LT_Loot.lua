@@ -13,6 +13,12 @@ LT_Loot_FilterString = "";
 
 LT_Loot_SavedSpecs = {};
 
+function LT_ResetLoot()
+    LT_PlayerLootTable = {};
+    LT_LootTable = {};
+    LT_Loot_OnChange();
+end
+
 function LT_Loot_SlashHandler(args)
     LT_Print("Loot with args: "..args);
     if (string.find(args, " ") == nil) then
@@ -26,8 +32,7 @@ function LT_Loot_SlashHandler(args)
 	local cmd = string.sub(args, string.find(args, " ")+1);
 	LT_Print("Got command "..cmd);
 	if cmd == "reset" then
-		LT_PlayerLootTable = {};
-		LT_LootTable = {};
+		LT_ResetLoot();
 	elseif cmd == "print loot" then
 		LT_Print("Loots:");
 		for k1, v1 in pairs(LT_LootTable) do
@@ -114,8 +119,6 @@ function Loot_OnEvent(this, event, arg1)
     elseif event == "VARIABLES_LOADED" then
         if (LT_LastRunVersion ~= LT_VERSION) then
             LT_LastRunVersion = LT_VERSION;
-            LT_PlayerLootTable = {};
-		    LT_LootTable = {};
         end
 	end
 end

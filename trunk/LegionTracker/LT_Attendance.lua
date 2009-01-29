@@ -106,6 +106,9 @@ end
 function LT_GetAttendance(playerIndex)
     local counter = 0;
     local name, rank, _, _, _, _, _, onote = GetGuildRosterInfo(playerIndex);
+    if (name == nil) then
+        return playerIndex;
+    end
     --If their onote is empty return nothing.
     if (rank == "Alt") then
         local pname = LT_GetPlayerIndexFromName(onote);
@@ -117,6 +120,7 @@ function LT_GetAttendance(playerIndex)
     if (onote == "") then
         return "";
     end
+    
     local total = string.len(onote);
     
     --Test if the o-note is valid.  Just 1's and 0's.
