@@ -77,7 +77,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_Main_ViewVotes();</OnClick>
+          <OnClick>LT_Main_ViewVotes();
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -120,7 +121,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_Main_StartLootWhispers();</OnClick>
+          <OnClick>LT_Main_StartLootWhispers();
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -215,7 +217,7 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="20" y="-69" />
+              <AbsDimension x="20" y="-71" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -228,7 +230,7 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="403" y="-17" />
+              <AbsDimension x="357" y="-26" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -300,12 +302,12 @@
       <Button name="$parentExport" text="Export">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508884-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
-          <AbsDimension x="69" y="20" />
+          <AbsDimension x="56" y="20" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="478" y="-17" />
+              <AbsDimension x="513" y="-26" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -349,7 +351,7 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="578" y="-17" />
+              <AbsDimension x="575" y="-26" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -422,6 +424,50 @@
 </OnMouseDown>
         </Scripts>
       </Frame>
+      <Button name="$parentComponent1" text="Reset Loot">
+        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508884-59c2-4f83-ae10-27aaad48391b" />-->
+        <Size>
+          <AbsDimension x="75" y="20" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="432" y="-26" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnClick>LT_ResetLoot();
+</OnClick>
+        </Scripts>
+        <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </NormalTexture>
+        <PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </PushedTexture>
+        <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </DisabledTexture>
+        <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+          <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+        </HighlightTexture>
+        <ButtonText name="$parentText">
+          <Anchors>
+            <Anchor point="CENTER">
+              <Offset>
+                <AbsDimension x="0" y="1" />
+              </Offset>
+            </Anchor>
+          </Anchors>
+          <FontHeight>
+            <AbsValue val="10" />
+          </FontHeight>
+        </ButtonText>
+        <NormalFont style="GameFontNormal" />
+        <HighlightFont style="GameFontHighlight" />
+        <DisabledFont style="GameFontDisable" />
+      </Button>
     </Frames>
     <Scripts>
       <OnLoad>LT_OnLoad();
