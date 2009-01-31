@@ -36,7 +36,7 @@ my $summary_statement =
 $summary_statement->bind_param(1, $char_name);
 $summary_statement->execute() or die $dbh->errstr;
 my $row = $summary_statement->fetchrow_hashref();
-print "<B>Name:</B> <A HREF=\"char.shtml?data=$row->{name}\" TITLE=\"CHAR_ID=$row->{char_id}\">$row->{name}</A><BR>";
+print "<B>Name:</B> <A HREF=\"http://www.wowarmory.com/character-sheet.xml?r=Medivh&n=$row->{name}\" TITLE=\"CHAR_ID=$row->{char_id}\">$row->{name}</A><BR>";
 print "<B>Class:</B> $row->{class} <BR>";
 print "<B>Rank:</B> $row->{rank} <BR>";
 print "<B>Date Joined:</B> $row->{date_joined} <BR>";
@@ -53,12 +53,13 @@ print <<STRINGDELIM;
 	<tr>
 		<th>Date</th>
 		<th>Attendance (10 min increments)</th>
+		<th>Percent</th>
 	</tr>
 	</thead>	
 STRINGDELIM
 
 my $sql_text = <<STRINGDELIM;
-SELECT rc.RAID_ID, rc.DATE, ra.ATTENDANCE
+SELECT rc.RAID_ID, rc.DATE, ra.ATTENDANCE, concat(FLOOR(IFNULL(length(REPLACE(ra.ATTENDANCE, '0', ''))*100/length(ra.ATTENDANCE),'0')),'%') PERCENT
 from `CHARACTER` chr, RAID_ATTENDANCE ra, RAID_CALENDAR rc
 where ra.RAID_ID = rc.RAID_ID
 and chr.CHAR_ID = ra.CHAR_ID
@@ -83,7 +84,7 @@ while (my $row = $attn_statement->fetchrow_hashref()) {
 	$attn =~ s|~|<img src=\"images/redbox.JPG\">|g;
 	print <<STRINGDELIM;
 		<tr>
-			<td><A HREF=\"raiddetail.shtml?data=$row->{RAID_ID}\">$row->{DATE}</A></td><td>$attn</td>
+			<td><A HREF=\"raiddetail.shtml?data=$row->{RAID_ID}\" TITLE=\"RAID_ID=$row->{RAID_ID}\">$row->{DATE}</A></td><td>$attn</td><td>$row->{PERCENT}</td>
 		</tr>
 STRINGDELIM
 }
