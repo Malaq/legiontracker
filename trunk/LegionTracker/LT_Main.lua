@@ -37,6 +37,7 @@ function LT_SlashHandler(args)
 		LT_Print("loot - Loot commands.");
         LT_Print("timer - Timer commands.", "yellow");
         LT_Print("attendance - Attendance Commands.", "yellow");
+        LT_Print("vote - Show vote window.", "yellow");
 	else
 		if args == "show" then
 		    LT_Main:Show();
@@ -50,6 +51,8 @@ function LT_SlashHandler(args)
             LT_Timer_SlashHandler(args);
         elseif string.find(args, "^attendance") ~= nil then
             LT_Attendance_SlashHandler(args); 
+        elseif string.find(args, "^vote") ~= nil then
+            LT_Main_ViewVotes();
         elseif string.find(args, "^add") ~= nil then
             LT_OfficerLoot:Add(string.sub(args, 4));
         elseif args == "olt1" then
@@ -412,6 +415,22 @@ function LT_ResetAll()
     StaticPopup_Show("Reset Warning");
 end
 
+function LT_ResetLootButton()
+    StaticPopupDialogs["Reset Warning"] = {
+    text = "You are about to reset all loot data, are you sure?  This process can not be reversed.",
+    button1 = "Yes",
+    button2 = "No",
+    OnAccept = function()
+        LT_ResetLoot();
+    end,
+    timeout = 0,
+    whileDead = 1,
+    hideOnEscape = 1
+    };
+    
+    StaticPopup_Show("Reset Warning");
+end
+
 function LT_LoadLabels()
     local timer_label = getglobal("LT_Main".."Timer".."Label");
     timer_label:SetTextColor(0, 1, 1);
@@ -457,11 +476,12 @@ function LT_Main_StartLootWhispers()
     LT_OfficerLoot:BroadcastNewItems(items, item_links);
     LT_OfficerLoot:OnShow();
     
-    SendChatMessage("Whisper !bid to an officer for instructions");
+    SendChatMessage("Whisper !bid to an officer for instructions", "RAID");
     SendChatMessage("Items are:", "RAID");
     for i = 1, #item_links do
         SendChatMessage(item_links[i], "RAID");
     end
+    LT_OfficerLoot:ForcePopup();
 end
 
 function LT_Main_ViewVotes()
