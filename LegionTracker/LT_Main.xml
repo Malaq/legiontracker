@@ -437,7 +437,7 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_ResetLoot();
+          <OnClick>LT_ResetLootButton()
 </OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
