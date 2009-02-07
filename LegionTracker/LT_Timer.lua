@@ -246,6 +246,7 @@ function LT_TimerToggle()
             LT_RAID_NAME = date("%Y-%m-%d ", time());
             LT_TIMER_START = time();
             LT_TIME_OF_LAST_TIC = time();
+            --This is happening before the ResetAttendance finishes.
             LT_AttendanceTic();
             local timer_label = getglobal("LT_Main".."Timer".."Label");
             timer_label:SetTextColor(0, 1, 1);
