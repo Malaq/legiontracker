@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.51"
+﻿LT_VERSION = "Legion Tracker 0.52"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -38,6 +38,7 @@ function LT_SlashHandler(args)
         LT_Print("timer - Timer commands.", "yellow");
         LT_Print("attendance - Attendance Commands.", "yellow");
         LT_Print("vote - Show vote window.", "yellow");
+        LT_Print("startloot - Starts loot whispers.", "yellow");
 	else
 		if args == "show" then
 		    LT_Main:Show();
@@ -53,6 +54,8 @@ function LT_SlashHandler(args)
             LT_Attendance_SlashHandler(args); 
         elseif string.find(args, "^vote") ~= nil then
             LT_Main_ViewVotes();
+        elseif string.find(args, "^startloot") ~= nil then
+            LT_Main_StartLootWhispers();
         elseif string.find(args, "^add") ~= nil then
             LT_OfficerLoot:Add(string.sub(args, 4));
         elseif args == "olt1" then
@@ -462,6 +465,7 @@ function LT_Main_StartLootWhispers()
         return;
     end
     
+    LT_OfficerLoot:ForcePopup();
     local items = {};
     local item_links = {};
     for i = 1, GetNumLootItems() do
@@ -481,7 +485,6 @@ function LT_Main_StartLootWhispers()
     for i = 1, #item_links do
         SendChatMessage(item_links[i], "RAID");
     end
-    LT_OfficerLoot:ForcePopup();
 end
 
 function LT_Main_ViewVotes()

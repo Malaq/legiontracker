@@ -291,6 +291,16 @@ function LT_OfficerLoot:OnEnter(table_id, row_frame, cell_frame, data, cols, row
             self.vote_tooltip:AddLine(person, color.r, color.g, color.b);
         end
         self.vote_tooltip:Show();
+    elseif (column == 5 and realrow ~= nil) then
+        --Hyjacking your vote_tooltip for use on comments
+        self.vote_tooltip:ClearAllPoints();
+        self.vote_tooltip:SetPoint("CENTER", UIParent);
+        self.vote_tooltip:SetOwner(row_frame, "ANCHOR_CURSOR");
+        self.vote_tooltip:ClearLines();
+        local temp_comment = bids[realrow].comments;
+        self.vote_tooltip:AddLine("Comment:");
+        self.vote_tooltip:AddLine(temp_comment,1,1,1);
+        self.vote_tooltip:Show();
     end
     
     
