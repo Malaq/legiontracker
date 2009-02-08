@@ -8,6 +8,8 @@ LT_Main_ST = nil;
 
 function LT_OnLoad()
 	LT_Main:SetParent(UIParent);
+    --Makes Esc Work?
+    tinsert(UISpecialFrames, this:GetName());
     this:RegisterEvent("VARIABLES_LOADED");
     this:RegisterEvent("GUILD_ROSTER_UPDATE");
     this:RegisterEvent("CHAT_MSG_SYSTEM");
@@ -390,7 +392,7 @@ end
 
 function LT_GetMainName(playerIndex)
     local name, rank, _, _, _, _, _, onote = GetGuildRosterInfo(playerIndex);
-    if (rank == "Alt") then
+    if (rank == "Alt") or (rank == "Officer Alt") then
         local pindex = LT_GetPlayerIndexFromName(onote);
         if (pindex ~= nil) then
             return LT_GetMainName(pindex);

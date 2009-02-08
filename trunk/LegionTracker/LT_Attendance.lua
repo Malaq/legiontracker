@@ -47,7 +47,7 @@ function LT_ResetAttendance()
     for i = 1, guildCount do 
         --temp = GetGuildRosterSelection();
         _, rank, _, _, _, _, _, onote = GetGuildRosterInfo(i);
-        if (rank == "Alt") then
+        if (rank == "Alt") or (rank == "Officer Alt") then
             local pname = LT_GetPlayerIndexFromName(onote);
             if (pname == nil) then
                 GuildRosterSetOfficerNote(i, "<Enter Main Name>");
@@ -73,7 +73,7 @@ function LT_SingleMemberTic(memberIndex,ticfromalt)
         GuildRosterSetOfficerNote(memberIndex,"Friend"); 
     elseif (rank == "Friend") then
             return;
-    elseif (rank == "Alt") then
+    elseif (rank == "Alt") or (rank == "Officer Alt") then
         if (online ~= nil) or (ticfromalt ~= nil) then
             local pname = LT_GetPlayerIndexFromName(onote);
             if (pname ~= nil) then
@@ -110,7 +110,7 @@ function LT_GetAttendance(playerIndex)
         return playerIndex;
     end
     --If their onote is empty return nothing.
-    if (rank == "Alt") then
+    if (rank == "Alt") or (rank == "Officer Alt") then
         local pname = LT_GetPlayerIndexFromName(onote);
         if (pname ~= nil) then
             return LT_GetAttendance(pname);
@@ -139,7 +139,7 @@ end
 --For export and drawing timelines
 function LT_GetRawAttendance(playerIndex)
     local _, rank, _, _, _, _, _, onote = GetGuildRosterInfo(playerIndex);
-    if (rank == "Alt") then
+    if (rank == "Alt") or (rank == "Officer Alt") then
         local pname = LT_GetPlayerIndexFromName(onote);
         if (pname ~= nil) then
             return LT_GetRawAttendance(pname);
