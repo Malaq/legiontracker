@@ -279,6 +279,7 @@ my $statement =
 			")off_spec ON off_spec.CHAR_ID = chr60dl.CHAR_ID) 60dl ".
 			"ON 60dl.CHAR_ID = chr.CHAR_ID ".
 			"WHERE chr.RANK not in ('Friend','Alt','Officer Alt', '') " .
+			"AND chr.DATE_REMOVED IS NULL " .
 			"ORDER BY chr.NAME;");
 	print "<fieldset>";
 	print "<legend>Raiding Members</legend>";

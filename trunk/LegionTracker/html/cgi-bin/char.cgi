@@ -30,7 +30,7 @@ print "<fieldset>";
 print "<legend>Character Details:</legend>";
 my $sql_text = 
 my $summary_statement =
-	$dbh->prepare("SELECT char_id, name, class, rank, date_joined " .
+	$dbh->prepare("SELECT char_id, name, class, rank, date_joined, date_removed " .
 			"from `CHARACTER` " .
 			"where name = ? ;");
 $summary_statement->bind_param(1, $char_name);
@@ -40,6 +40,10 @@ print "<B>Name:</B> <A HREF=\"http://www.wowarmory.com/character-sheet.xml?r=Med
 print "<B>Class:</B> $row->{class} <BR>";
 print "<B>Rank:</B> $row->{rank} <BR>";
 print "<B>Date Joined:</B> $row->{date_joined} <BR>";
+if ( $row->{date_removed} ne "" )
+{
+print "<B>Date Removed (estimated):</B> $row->{date_removed} <BR>";
+}
 print "</fieldset>";
 
 $summary_statement->finish();
