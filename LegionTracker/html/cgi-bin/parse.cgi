@@ -137,5 +137,30 @@ foreach $line (@lines) {
 		$statement->execute() or die $dbh->errstr;
 	}
 }
+my $statement =
+        $dbh->prepare("select chr1.CHAR_ID, removed.DATE " .
+		      "from `CHARACTER` chr1 " .
+		      "LEFT JOIN ( " .
+		      "select raidmax.CHAR_ID, rc.DATE " .
+		      "from (select ra.CHAR_ID, max(ra.RAID_ID) raid_id " .
+		      "from RAID_ATTENDANCE ra " .
+		      "group by ra.CHAR_ID) raidmax, `CHARACTER` chr, RAID_CALENDAR rc " .
+		      "where raidmax.raid_id <> (select max(RAID_ID) from RAID_CALENDAR) " .
+		      "and chr.CHAR_ID = raidmax.CHAR_ID " .
+		      "and raidmax.RAID_ID = rc.RAID_ID " .
+		      ") removed ON removed.CHAR_ID = chr1.CHAR_ID;");
+$statement->execute() or die $dbh->errstr;
+while (my $row = $statement->fetchrow_hashref()) {
+	print "Updating $row->{CHAR_ID} setting removed_date to $row->{DATE}.\n";
+	my $insert_statement =
+		$dbh->prepare("UPDATE `CHARACTER` " .
+			      "SET DATE_REMOVED = ? " .
+			      "WHERE CHAR_ID=?;");
+	$insert_statement->bind_param(1, $row->{DATE});
+	$insert_statement->bind_param(2, $row->{CHAR_ID});
+	$insert_statement->execute or die $dbh->errstr;
+}
+print "Parse Complete.\n";
+		
 $dbh->disconnect();
 print "</pre>";
