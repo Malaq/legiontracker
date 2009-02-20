@@ -46,7 +46,7 @@ print "<TH WIDTH=100><U><B>Last Looted</B></U></TH>";
 print "</TR>\n";
 while (my $row = $list_statement->fetchrow_hashref()) {
 	print "<TR>";
-	print "<TD><A HREF=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\">$row->{ITEM_NAME}</A></TD><TD>$row->{First_Loot}</TD><TD>$row->{Last_Looted}</TD>";
+	print "<TD><A HREF=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\" TARGET=\"_blank\">$row->{ITEM_NAME}</A></TD><TD>$row->{First_Loot}</TD><TD>$row->{Last_Looted}</TD>";
 	print "</TR>\n";
 	print "\n";
 }

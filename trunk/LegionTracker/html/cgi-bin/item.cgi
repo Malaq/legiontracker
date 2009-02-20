@@ -48,7 +48,7 @@ $summary_statement->bind_param(1, '%'.$item_name.'%');
 $summary_statement->execute() or die $dbh->errstr;
 my $row = $summary_statement->fetchrow_hashref();
 if ( $row->{ITEM_ID} ne "" ) {
-	print "<B>Name:</B><a href=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\">$row->{ITEM_NAME}</a><BR>";
+	print "<B>Name:</B><a href=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\" TARGET=\"_blank\">$row->{ITEM_NAME}</a><BR>";
 	print "<B>First Time Looted:</B> $row->{TIMESTAMP} <BR>";
 	print "<B>Who First Looted:</B> $row->{NAME} <BR>";
 	print "<B>Percent Dusted:</B> n/a <BR>";
@@ -89,7 +89,7 @@ print "</THEAD>\n";
 print "<TBODY>";
 while (my $row = $loot_statement->fetchrow_hashref()) {
 	print "<TR>";
-	print "<TD>$row->{NAME}</TD><TD><a href=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\">$row->{ITEM_NAME}</a></TD>";
+	print "<TD><B><A HREF=\"char.shtml?data=$row->{NAME}\">$row->{NAME}</A></B></TD><TD><a href=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\" TARGET=\"_blank\">$row->{ITEM_NAME}</a></TD>";
 	print "<TD>$row->{SPEC}</TD><TD>$row->{TIMESTAMP}</TD><TD>$row->{ZONE}</TD><TD>$row->{SUBZONE}</TD>";
 	print "</TR>\n";
 	print "\n";

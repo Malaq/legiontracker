@@ -27,7 +27,7 @@ print "<font size=\"6\" face=\"Monotype Corsiva\"><B>$char_name</B></font>";
 
 # Loot table
 my $list_statement =
-	$dbh->prepare("SELECT NAME, CLASS, RANK, DATE_JOINED " .
+	$dbh->prepare("SELECT NAME, CLASS, RANK, DATE_JOINED, DATE_REMOVED " .
 			"FROM `CHARACTER` " .
 			"ORDER BY NAME;");
 
@@ -40,11 +40,17 @@ print "<TH WIDTH=155><U><B><font color=black>Name</B></U></TH>";
 print "<TH WIDTH=100><U><B>Class</B></U></TH>";
 print "<TH WIDTH=100><U><B>Rank</B></U></TH>";
 print "<TH WIDTH=100><U><B>Date Joined</B></U></TH>";
+print "<TH WIDTH=100><U><B>Date Removed</B></U></TH>";
 print "</TR>\n";
 while (my $row = $list_statement->fetchrow_hashref()) {
-	print "<TR>";
+	if ( $row->{DATE_REMOVED} eq "" ) {
+		print "<TR>";
+	} else {
+		print "<TR BGCOLOR=\"RED\">";
+	}
 	print "<TD><A HREF=\"char.shtml?data=$row->{NAME}\">$row->{NAME}</A></TD><TD>$row->{CLASS}</TD><TD>$row->{RANK}</TD>";
 	print "<TD>$row->{DATE_JOINED}</TD>";
+	print "<TD>$row->{DATE_REMOVED}</TD>";
 	print "</TR>\n";
 	print "\n";
 }
