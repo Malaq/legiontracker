@@ -16,7 +16,7 @@ print "Content-type: text/html\n\n";
 print "<A HREF=\"index.shtml\" STYLE=\"text-decoration:none\">";
 #print "<img src=\"images/tg_logo.jpg\">";
 #print "</A>";
-print "<font size=\"6\" face=\"Ariel\">LegionTracker - Trismegistus</font>";
+print "LegionTracker - Trismegistus";
 #print "<A HREF=\"http://wowwebstats.com/cdxnr4iegef2w\"> ";
 #print "<img src=\"images/a_logo.gif\" align=\"top\" alt=\"WWS icon\">";
 print "</A>";

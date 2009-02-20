@@ -52,38 +52,30 @@ sub classColor {
 
 #Attendance Coloring
 sub attendanceColor {
-	my $tempattn = shift;
-	my $attnclr = 'black';
-	if ($tempattn > 85) {
-		$attnclr='green';
-		#$attnclr='#ABD473';
-	} elsif ($tempattn > 60) {
-		$attnclr='yellow';
+	my $attendance = shift;
+	my $attendance_type = '';
+	if ($attendance > 85) {
+		$attendance_type = 'high_attendance';
+	} elsif ($attendance > 60) {
+		$attendance_type = 'medium_attendance';
 	} else {
-		$attnclr='red';
+		$attendance_type = 'low_attendance';
 	}
-	#print "<TD BGCOLOR=$rowcolor>";
-	print "<TD>";
-	print "<font color=$attnclr>$tempattn</font>";
-	print "</TD>";
+	print "<TD class='$attendance_type'>$attendance</TD>";
 }
 
 #Loot Coloring
 sub lootColor {
 	my $temploot = shift;
-	my $lootclr = 'black';
+	my $loot_type = '';
 	my $bold1 = '';
 	my $bold2 = '';
 	if ($temploot > 0) {
-		$lootclr='violet';
-		$bold1='';
-		$bold2='';
+		$loot_type='loot';
 	} else {
-		$lootclr='red';
-		$bold1='';
-		$bold2='';
+		$loot_type='no_loot';
 	}
-	print "<font color=$lootclr>$bold1$temploot$bold2</font>";
+	print "<TD class='$loot_type'>$temploot</TD>";
 }
 
 # Setup our DB connection
@@ -95,9 +87,6 @@ my $dbport = '3306';
 
 # Database handle
 my $dbh = DBI->connect("dbi:mysql:database=$database;host=$hostname;port=$dbport", $username, $password) or print $DBI::errstr;
-
-print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n";
-print "<HTML>\n";
 
 my $statement =
 	$dbh->prepare("SELECT chr.NAME, chr.CLASS, chr.RANK, ".
@@ -298,71 +287,55 @@ my $statement =
 			"WHERE chr.RANK not in ('Friend','Alt','Officer Alt', '') " .
 			"AND chr.DATE_REMOVED IS NULL " .
 			"ORDER BY chr.NAME;");
-	print "<fieldset>";
-	print "<legend><font color=white>Raiding Members</font></legend>";
-	print "<script src=\"sorttable.js\"></script>\n";
-	print "<TABLE class=\"sortable\" ALIGN=LEFT id=\"mainScrollTable\">";
-	#print "<TR><TH colspan=\"3\">Char Info</TH><TH colspan=\"4\">7 Day Info</TH><TH colspan=\"4\">30 Day Info</TH><TH colspan=\"4\">60 Day Info</TH></TR>";
-	print "<thead>";
-	print "<TR>";
-	print "<TD WIDTH=90><U><B><font color=#C5BCAC>Name</font></B></U></TD>";
-	print "<TD WIDTH=100><U><B><font color=#C5BCAC>Class</font></B></U></TD>";
-	print "<TD WIDTH=100><U><B><font color=#C5BCAC>Rank</font></B></U></TD>";
-	print "<TD WIDTH=120><U><B><font color=#C5BCAC>7 Day Attn</font></B></U></TD>";
-	print "<TD WIDTH=40><U><B><font color=#C5BCAC>MS</font></B></U></TD>";
-	print "<TD WIDTH=40><U><B><font color=#C5BCAC>AS</font></B></U></TD>";
-	print "<TD WIDTH=40><U><B><font color=#C5BCAC>OS</font></B></U></TD>";
-	print "<TD WIDTH=120><U><B><font color=#C5BCAC>30 Day Attn</font></B></U></TD>";
-	print "<TD WIDTH=40><U><B><font color=#C5BCAC>MS</font></B></U></TD>";
-	print "<TD WIDTH=40><U><B><font color=#C5BCAC>AS</font></B></U></TD>";
-	print "<TD WIDTH=40><U><B><font color=#C5BCAC>OS</font></B></U></TD>";
-	print "<TD WIDTH=120><U><B><font color=#C5BCAC>60 Day Attn</font></B></U></TD>";
-	print "<TD WIDTH=40><U><B><font color=#C5BCAC>MS</font></B></U></TD>";
-	print "<TD WIDTH=40><U><B><font color=#C5BCAC>AS</font></B></U></TD>";
-	print "<TD WIDTH=40><U><B><font color=#C5BCAC>OS</font></B></U></TD></TR>\n";
-	print "</thead>";
+
+	print <<DELIMETER;
+<fieldset>
+<legend><font color=white>Raiding Members</font></legend>
+<script src=\"sorttable.js\"></script>\n
+<TABLE class=\"sortable\" ALIGN=LEFT id=\"mainScrollTable\">
+<thead>
+<TR>
+<TD WIDTH=90><U><B>Name</B></U></TD>
+<TD WIDTH=100><U><B>Class</B></U></TD>
+<TD WIDTH=100><U><B>Rank</B></U></TD>
+<TD WIDTH=120><U><B>7 Day Attn</B></U></TD>
+<TD WIDTH=40><U><B>MS</B></U></TD>
+<TD WIDTH=40><U><B>AS</B></U></TD>
+<TD WIDTH=40><U><B>OS</B></U></TD>
+<TD WIDTH=120><U><B>30 Day Attn</B></U></TD>
+<TD WIDTH=40><U><B>MS</B></U></TD>
+<TD WIDTH=40><U><B>AS</B></U></TD>
+<TD WIDTH=40><U><B>OS</B></U></TD>
+<TD WIDTH=120><U><B>60 Day Attn</B></U></TD>
+<TD WIDTH=40><U><B>MS</B></U></TD>
+<TD WIDTH=40><U><B>AS</B></U></TD>
+<TD WIDTH=40><U><B>OS</B></U></TD></TR>\n
+</thead>
+DELIMETER
+
 	$statement->execute() or die $dbh->errstr;
 	while (my $row = $statement->fetchrow_hashref()) {
 		print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\">";
 		#print "<TR>";
-		print "<TD><B><A HREF=\"char.shtml?data=$row->{NAME}\" STYLE=\"text-decoration:none\"> $row->{NAME} </A></B></TD>";
+		print "<TD><B><A HREF=\"char.shtml?data=$row->{NAME}\" STYLE=\"text-decoration:none\" class='member_name'> $row->{NAME} </A></B></TD>";
 		classColor($row->{CLASS});
-		print "<TD><font color=#FFFFFF>$row->{RANK}</font></TD>";
+		print "<TD class='rank'>$row->{RANK}</TD>";
 		#7 day stats
 		attendanceColor($row->{'7day'});
-		print "<TD>";
 		lootColor($row->{'7MS'});
-		print "</TD>";
-		print "<TD>";
 		lootColor($row->{'7AS'});
-		print "</TD>";
-		print "<TD>";
 		lootColor($row->{'7OS'});
-		print "</TD>";
 		#30 day stats
 		attendanceColor($row->{'30day'});
-		print "<TD>";
 		lootColor($row->{'30MS'});
-		print "</TD>";
-		print "<TD>";
 		lootColor($row->{'30AS'});
-		print "</TD>";
-		print "<TD>";
 		lootColor($row->{'30OS'});
-		print "</TD>";
 		#60 day stats
 		attendanceColor($row->{'60day'});
-		print "<TD>";
 		lootColor($row->{'60MS'});
-		print "</TD>";
-		print "<TD>";
 		lootColor($row->{'60AS'});
-		print "</TD>";
-		print "<TD>";
 		lootColor($row->{'60OS'});
-		print "</TD>";
 		print "</TR>\n";
-		print "\n";
 	}
 	print "</TABLE>";
 	#print "<script type=\"text/javascript\">";
@@ -372,7 +345,6 @@ my $statement =
 	#print "var t = new SortableTable(document.getElementById('mainScrollTable'),100);";
 	#print "</script>";
 	print "</fieldset>";
-	print "</HTML>";
 	$statement->finish();
 $dbh->disconnect();
 #print "</pre>";
