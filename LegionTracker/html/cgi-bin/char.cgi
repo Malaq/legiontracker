@@ -36,7 +36,7 @@ my $summary_statement =
 $summary_statement->bind_param(1, $char_name);
 $summary_statement->execute() or die $dbh->errstr;
 my $row = $summary_statement->fetchrow_hashref();
-print "<B>Name:</B> <A HREF=\"http://www.wowarmory.com/character-sheet.xml?r=Medivh&n=$row->{name}\" TITLE=\"CHAR_ID=$row->{char_id}\">$row->{name}</A><BR>";
+print "<B>Name:</B> <A HREF=\"http://www.wowarmory.com/character-sheet.xml?r=Medivh&n=$row->{name}\" TITLE=\"CHAR_ID=$row->{char_id}\" TARGET=\"_blank\">$row->{name}</A><BR>";
 print "<B>Class:</B> $row->{class} <BR>";
 print "<B>Rank:</B> $row->{rank} <BR>";
 print "<B>Date Joined:</B> $row->{date_joined} <BR>";

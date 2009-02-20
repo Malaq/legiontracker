@@ -10,35 +10,44 @@ print "Content-type: text/html\n\n";
 
 # For debug output
 #print "<pre>";
-#my $rowcolor = '888888';
-my $rowcolor = 'silver';
+#my $rowcolor = '#A69C8B';
+my $rowcolor = '#463C2B';
+#my $rowcolor = 'silver';
 
 #Class Coloring
 sub classColor {
 	my $tempclass = shift;
 	my $classclr = 'black';
+	#my $classbg = 'black';
+	#my $classbg = '#867C6B';
+	#my $classbg = 'silver';
 	if ($tempclass eq 'Druid') {
-		$classclr='orange';
+		$classclr='#FF7D0A';
 	} elsif ($tempclass eq 'Hunter') {
-		$classclr='green';
+		$classclr='#ABD473';
 	} elsif ($tempclass eq 'Mage') {
-		$classclr='blue';
+		$classclr='#69CCF0';
 	} elsif ($tempclass eq 'Paladin') {
-		$classclr='pink';
+		$classclr='#F58CBA';
 	} elsif ($tempclass eq 'Priest') {
-		$classclr='white';
+		$classclr='#FFFFFF';
 	} elsif ($tempclass eq 'Rogue') {
-		$classclr='yellow';
+		$classclr='#FFF569';
 	} elsif ($tempclass eq 'Shaman') {
-		$classclr='royalblue';
+		$classclr='#2459FF';
 	} elsif ($tempclass eq 'Warlock') {
-		$classclr='purple';
+		$classclr='#9482C9';
 	} elsif ($tempclass eq 'Warrior') {
-		$classclr='brown';
+		$classclr='#C79C6E';
 	} elsif ($tempclass eq 'Death Knight') {
-		$classclr='red';
+		$classclr='#C41F3B';
 	}
-	print "<B><font color=$classclr>$tempclass</font></B>";
+	#print "<TD BGCOLOR=$rowcolor>";
+	print "<TD>";
+	print "<B>";
+	print "<font color=$classclr>$tempclass</font>";
+	print "</B>";
+	print "</TD>";
 }
 
 #Attendance Coloring
@@ -47,12 +56,14 @@ sub attendanceColor {
 	my $attnclr = 'black';
 	if ($tempattn > 85) {
 		$attnclr='green';
+		#$attnclr='#ABD473';
 	} elsif ($tempattn > 60) {
 		$attnclr='yellow';
 	} else {
 		$attnclr='red';
 	}
-	print "<TD BGCOLOR=$rowcolor>";
+	#print "<TD BGCOLOR=$rowcolor>";
+	print "<TD>";
 	print "<font color=$attnclr>$tempattn</font>";
 	print "</TD>";
 }
@@ -61,12 +72,18 @@ sub attendanceColor {
 sub lootColor {
 	my $temploot = shift;
 	my $lootclr = 'black';
+	my $bold1 = '';
+	my $bold2 = '';
 	if ($temploot > 0) {
-		$lootclr='purple';
+		$lootclr='violet';
+		$bold1='';
+		$bold2='';
 	} else {
 		$lootclr='red';
+		$bold1='';
+		$bold2='';
 	}
-	print "<font color=$lootclr>$temploot</font>";
+	print "<font color=$lootclr>$bold1$temploot$bold2</font>";
 }
 
 # Setup our DB connection
@@ -282,34 +299,35 @@ my $statement =
 			"AND chr.DATE_REMOVED IS NULL " .
 			"ORDER BY chr.NAME;");
 	print "<fieldset>";
-	print "<legend>Raiding Members</legend>";
+	print "<legend><font color=white>Raiding Members</font></legend>";
 	print "<script src=\"sorttable.js\"></script>\n";
-	print "<TABLE class=\"sortable\" style=\"filter:alpha(opacity=75);-moz-opacity:.75;opacity:.75;\" BORDER=2 ALIGN=LEFT>";
+	print "<TABLE class=\"sortable\" ALIGN=LEFT id=\"mainScrollTable\">";
 	#print "<TR><TH colspan=\"3\">Char Info</TH><TH colspan=\"4\">7 Day Info</TH><TH colspan=\"4\">30 Day Info</TH><TH colspan=\"4\">60 Day Info</TH></TR>";
+	print "<thead>";
 	print "<TR>";
-	print "<TH WIDTH=90><U><B><font color=black>Name</B></U></TH>";
-	print "<TH WIDTH=100><U><B>Class</B></U></TH>";
-	print "<TH WIDTH=100><U><B>Rank</B></U></TH>";
-	print "<TH WIDTH=120><U><B>7 Day Attn</B></U></TH>";
-	print "<TH WIDTH=40><U><B>MS</B></U></TH>";
-	print "<TH WIDTH=40><U><B>AS</B></U></TH>";
-	print "<TH WIDTH=40><U><B>OS</B></U></TH>";
-	print "<TH WIDTH=120><U><B>30 Day Attn</B></U></TH>";
-	print "<TH WIDTH=40><U><B>MS</B></U></TH>";
-	print "<TH WIDTH=40><U><B>AS</B></U></TH>";
-	print "<TH WIDTH=40><U><B>OS</B></U></TH>";
-	print "<TH WIDTH=120><U><B>60 Day Attn</B></U></TH>";
-	print "<TH WIDTH=40><U><B>MS</B></U></TH>";
-	print "<TH WIDTH=40><U><B>AS</B></U></TH>";
-	print "<TH WIDTH=40><U><B>OS</B></U></TH></TR>\n";
+	print "<TD WIDTH=90><U><B><font color=#C5BCAC>Name</font></B></U></TD>";
+	print "<TD WIDTH=100><U><B><font color=#C5BCAC>Class</font></B></U></TD>";
+	print "<TD WIDTH=100><U><B><font color=#C5BCAC>Rank</font></B></U></TD>";
+	print "<TD WIDTH=120><U><B><font color=#C5BCAC>7 Day Attn</font></B></U></TD>";
+	print "<TD WIDTH=40><U><B><font color=#C5BCAC>MS</font></B></U></TD>";
+	print "<TD WIDTH=40><U><B><font color=#C5BCAC>AS</font></B></U></TD>";
+	print "<TD WIDTH=40><U><B><font color=#C5BCAC>OS</font></B></U></TD>";
+	print "<TD WIDTH=120><U><B><font color=#C5BCAC>30 Day Attn</font></B></U></TD>";
+	print "<TD WIDTH=40><U><B><font color=#C5BCAC>MS</font></B></U></TD>";
+	print "<TD WIDTH=40><U><B><font color=#C5BCAC>AS</font></B></U></TD>";
+	print "<TD WIDTH=40><U><B><font color=#C5BCAC>OS</font></B></U></TD>";
+	print "<TD WIDTH=120><U><B><font color=#C5BCAC>60 Day Attn</font></B></U></TD>";
+	print "<TD WIDTH=40><U><B><font color=#C5BCAC>MS</font></B></U></TD>";
+	print "<TD WIDTH=40><U><B><font color=#C5BCAC>AS</font></B></U></TD>";
+	print "<TD WIDTH=40><U><B><font color=#C5BCAC>OS</font></B></U></TD></TR>\n";
+	print "</thead>";
 	$statement->execute() or die $dbh->errstr;
 	while (my $row = $statement->fetchrow_hashref()) {
-		print "<TR>";
-		print "<TD><B><A HREF=\"char.shtml?data=$row->{NAME}\"> $row->{NAME} </A></B></TD>";
-		print "<TD BGCOLOR=black>";
+		print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\">";
+		#print "<TR>";
+		print "<TD><B><A HREF=\"char.shtml?data=$row->{NAME}\" STYLE=\"text-decoration:none\"> $row->{NAME} </A></B></TD>";
 		classColor($row->{CLASS});
-		print "</TD>";
-		print "<TD>$row->{RANK}</TD>";
+		print "<TD><font color=#FFFFFF>$row->{RANK}</font></TD>";
 		#7 day stats
 		attendanceColor($row->{'7day'});
 		print "<TD>";
@@ -346,8 +364,14 @@ my $statement =
 		print "</TR>\n";
 		print "\n";
 	}
-	print "</fieldset>";
 	print "</TABLE>";
+	#print "<script type=\"text/javascript\">";
+	#print "var t = new ScrollableTable(document.getElementById('mainScrollTable'),100);";
+	#print "</script>";
+	#print "<script type=\"text/javascript\">";
+	#print "var t = new SortableTable(document.getElementById('mainScrollTable'),100);";
+	#print "</script>";
+	print "</fieldset>";
 	print "</HTML>";
 	$statement->finish();
 $dbh->disconnect();
