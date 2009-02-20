@@ -5,40 +5,16 @@
 		<meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
 		<script type="text/javascript" src="webtoolkit.scrollabletable.js"></script>
 		<script type="text/javascript" src="webtoolkit.sortabletable.js"></script>
-    	    <style>
-	        table {
-	            text-align: left;
-	            font-size: 12px;
-	            font-family: verdana;
-	        }
-	
-	        table thead  {
-	            cursor: pointer;
-	        }
-	
-	        table thead tr,
-	        table tfoot tr {
-	            background: #171717;
-	        }
-	
-	        table tbody tr {
-	            background: #0A0A0A;
-	        }
-		.highlight { background-color: #8888FF }
-		.normal { background-color:#0A0A0A }
-	
-	    </style>
+		<link rel="stylesheet" type="text/css" href="style.css" />		
 	</head>
-	<body bgcolor="black">
-		<div style="position: absolute; left: 10; top: 0; z-index: 9999;">
+	<body>
+		<div id='topbar'>
 		<!--#include virtual="cgi-bin/topbar.cgi"-->
 		</div>
-		<div style="position: absolute; left: 10; top: 50px; z-index: 9999;">
-		<span class="topbar">
+		<div id='navbar'>
 		<!--#include virtual="cgi-bin/navibar.cgi"-->
-		</span>
 		</div>
-		<div style="position: absolute; left: 170px; top: 50px; z-index: 9999;">
+		<div id='main_frame'>
 		<!--#include virtual="cgi-bin/main.cgi"-->
 		</div>
 	</body>

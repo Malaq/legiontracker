@@ -1,0 +1,105 @@
+/* Some default table properties */
+table {
+	text-align: left;
+	font-size: 12px;
+	font-family: verdana;
+	border-collapse: collapse;
+}
+
+table thead  {
+	cursor: pointer;
+}
+
+table thead tr,
+table tfoot tr,
+table thead tr th{
+	background: #171717;
+	color: #C5BCAC;
+}
+
+table tbody tr {
+	background: #0A0A0A;
+}
+
+td {
+	border-left: none;
+	border-right: none;
+	border-top: 1px solid #35354F;
+	border-bottom: none;
+}
+
+body {
+	background-color: black;
+	color: white;
+}
+
+
+/* Default style for links */
+a {
+	text-decoration:none;
+	color: #557FAA;
+}
+
+/*******************************
+ *         Main 'frame'        *
+ *******************************/
+#main_frame {
+	position: absolute;
+	left: 170px;
+	top: 50px;
+	z-index: 9999;
+}
+
+legend {
+	color: #EFFFEF;
+	font-family: verdana;
+	font-size: 12px;
+}
+
+/* Highlighting for the sortable table */
+.highlight { background-color: #222245 }
+.normal { background-color:#0A0A0A }
+
+/* Attendance */
+.high_attendance { color:#00FF00; }
+.medium_attendance { color:yellow; }
+.low_attendance { color:red; }
+
+/* Loot */
+.loot { color:red; }
+.no_loot { color:purple; }
+
+/* Other columns */
+.member_name { color: #557FAA; }
+.rank { color: #EFFFEF; }
+
+
+/*******************************
+ *        Navigation bar       *
+ *******************************/
+#navbar {
+	position: absolute;
+	left: 10;
+	top: 50px;
+	z-index: 9999;
+}
+
+/* Links */
+#navbar a { color: #884444; }
+
+/*******************************
+ *        Title bar            *
+ *******************************/
+#topbar {
+	position: absolute:
+	left: 10;
+	top: 0;
+	z-index: 9999;
+}
+
+/* Title */
+#topbar a {
+	font-family: Arial;
+	color: #545494;
+	font-size: 20px;
+}
