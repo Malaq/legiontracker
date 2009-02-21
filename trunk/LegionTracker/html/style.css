@@ -26,6 +26,7 @@ td {
 	border-right: none;
 	border-top: 1px solid #35354F;
 	border-bottom: none;
+	padding-right: 15px;
 }
 
 body {
@@ -45,8 +46,8 @@ a {
  *******************************/
 #main_frame {
 	position: absolute;
-	left: 170px;
-	top: 50px;
+	left: 175px;
+	top: 55px;
 	z-index: 9999;
 }
 
@@ -58,7 +59,11 @@ legend {
 
 /* Highlighting for the sortable table */
 .highlight { background-color: #222245 }
-.normal { background-color:#0A0A0A }
+.normal {
+	background-color:#0A0A0A;
+	white-space: nowrap;
+	cursor:pointer;
+}
 
 /* Attendance */
 .high_attendance { color:#00FF00; }
@@ -66,13 +71,19 @@ legend {
 .low_attendance { color:red; }
 
 /* Loot */
-.loot { color:red; }
-.no_loot { color:purple; }
+.loot { color:violet; }
+.no_loot { color:red; }
 
 /* Other columns */
 .member_name { color: #557FAA; }
 .rank { color: #EFFFEF; }
 
+/* Alert */
+.alert { background-color: #990000; }
+.alert a { 
+	color: silver;
+	text-decoration: line-through;
+}
 
 /*******************************
  *        Navigation bar       *
@@ -80,19 +91,19 @@ legend {
 #navbar {
 	position: absolute;
 	left: 10;
-	top: 50px;
+	top: 55px;
 	z-index: 9999;
 }
 
 /* Links */
-#navbar a { color: #884444; }
+#navbar a { color: #CC3333; }
 
 /*******************************
  *        Title bar            *
  *******************************/
 #topbar {
-	position: absolute:
-	left: 10;
+	position: absolute;
+	left: 10px;
 	top: 0;
 	z-index: 9999;
 }
@@ -100,6 +111,48 @@ legend {
 /* Title */
 #topbar a {
 	font-family: Arial;
+	font-weight: bold;
 	color: #545494;
-	font-size: 20px;
+	font-size: 24px;
 }
+
+/*******************************
+ *        Raid Details         *
+ *******************************/
+#rdraidsummary {
+	position: absolute;
+	left: 10px;
+	top: 0;
+	z-index: 9999;
+}
+
+#rdepicsdropped {
+	position: absolute;
+	left: 240px;
+	top: 0;
+	z-index: 9999;
+}
+
+#rddetails {
+	position: absolute;
+	left: 10px;
+	top: 120px;
+	z-index: 9999;
+	width: 800px;
+}
+/*display:inline
+/*
+#rdlootdetails {
+	position: absolute;
+	left: 10px;
+	top: 200px;
+	z-index: 9999;
+}
+
+#rdattendancedetails {
+	position: absolute;
+	left: 10px;
+	top: 400px;
+	z-index: 9999;
+}
+*/

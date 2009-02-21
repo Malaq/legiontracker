@@ -5,6 +5,12 @@ use CGI qw(:standard);
 use CGI::Carp qw(warningsToBrowser fatalsToBrowser);
 use DBI;
 
+sub URLEncode {
+my $theURL = $_[0];
+$theURL =~ s/([\W])/"%" . uc(sprintf("%2.2x",ord($1)))/eg;
+return $theURL;
+}
+
 # Tells the browser that we're outputting HTML
 print "Content-type: text/html\n\n";
 
@@ -92,6 +98,7 @@ $raid_query->bind_param(1, $raid_id);
 $raid_query->bind_param(2, $raid_id);
 $raid_query->execute() or die $dbh->errstr;
 my $row = $raid_query->fetchrow_hashref();
+print "<div id=\'rdraidsummary\'>";
 print "<fieldset style=\"width: 200px;\">";
 print "<legend>Raid Summary:</legend>";
 #print "Raid ID: <B>$raid_id</B><br>";
@@ -105,7 +112,9 @@ print "Scheduled: <B>$sched</B><br>";
 print "Raiders Available: <B>$row->{ATTENDANCE_COUNT}</B><br>";
 print "Raid Duration: <B>$row->{tic}</B><br>";
 print "</fieldset>";
+print "</div>";
 #print "Epics Dropped: <B>$row->{TOTAL_LOOT}</B><br>";
+print "<div id=\'rdepicsdropped\'>";
 print "<fieldset style=\"width: 200px;\">";
 print "<legend>Epics Dropped: <B>$row->{ALN}</B></legend>";
 print "Main Spec: <B>$row->{MLN}</B><br>";
@@ -113,12 +122,65 @@ print "Alt Spec: <B>$row->{TLN}</B><br>";
 print "Off Spec: <B>$row->{OLN}</B><br>";
 print "Disenchanted: <B>$row->{DLN}</B><br>";
 print "</fieldset>";
-print "<br>";
+print "</div>";
+#print "<br>";
 
 $raid_query->finish();
 
+#Attendees
+#print "<BR CLEAR=all>";
+print "<div id=\'rddetails\'>";
+print "<fieldset>";
+print "<legend>Attendance Details:</legend>";
+#print "<B><font size=5>Attendees</font></B><br>";
+my $attendance_stmt =
+	$dbh->prepare("SELECT chr.NAME, chr.CLASS, ra.ATTENDANCE, " .
+			"concat( floor( length(replace(ATTENDANCE,'0',''))*100 / length(ATTENDANCE)) ,'%') PERCENT " .
+			"FROM `CHARACTER` chr, `RAID_ATTENDANCE` ra " .
+			"WHERE ra.CHAR_ID = chr.CHAR_ID " .
+			"AND ra.RAID_ID = ?" .
+			"AND INSTR(ra.ATTENDANCE, '1') > 0 " .
+			"ORDER BY chr.NAME;");
+
+$attendance_stmt->bind_param(1, $raid_id);
+$attendance_stmt->execute() or die $dbh->errstr;
+print "<script src=\"sorttable.js\"></script>\n";
+print "<TABLE class=\"sortable normal\" ALIGN=LEFT>";
+print "<THEAD>";
+print "<TR>";
+print "<TH><U><B>Name</B></U></TH>";
+print "<TH><U><B>Class</B></U></TH>";
+print "<TH><U><B>Pct</B></U></TH>";
+print "<TH><U><B>Attendance</B>(10 min increments)</U></TH>";
+print "</TR>";
+print "</THEAD>\n";
+print "<TBODY>";
+while (my $row = $attendance_stmt->fetchrow_hashref()) {
+	my $attn = $row->{ATTENDANCE};
+	$attn =~ s|0|~|g;
+	#$attn =~ s|1|<div style='width:10px;height:10px;background-color:green;display:inline-block'></div>|g;
+	#$attn =~ s|~|<div style='width:10px;height:10px;background-color:red;display:inline-block'></div>|g;
+	#$attn =~ s|1|<td style='background-color:green;'></td>|g;
+	#$attn =~ s|~|<td style='background-color:red;'></td>|g;
+	$attn =~ s|1|<img src=\"images/greenbox.JPG\">|g;
+	$attn =~ s|~|<img src=\"images/redbox.JPG\">|g;
+	print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='char.shtml?data=$row->{NAME}'\">";
+	print "<td><A HREF=\"char.shtml?data=$row->{NAME}\"><B>$row->{NAME}</B></A></td>";
+	print "<td>$row->{CLASS}</td>";
+	print "<td>$row->{PERCENT}</td>";
+	print "<td>$attn</td> ";
+	print "</tr>";
+	}
+print "</TBODY>";
+print "</TABLE>";
+print "</fieldset>";
+#print "</div>";
+#print "</HTML>";
+$attendance_stmt->finish();
+
 # Loot table
 #print "<B><font size=5>Loot</font></B><br>";
+#print "<div id=\'rdlootdetails\'>";
 print "<fieldset>";
 print "<legend>Loot Details:</legend>";
 my $loot_statement =
@@ -135,10 +197,10 @@ $loot_statement->bind_param(1, $raid_id);
 $loot_statement->execute() or die $dbh->errstr;
 print "<script src=\"sorttable.js\"></script>\n";
 print "<script src=\"http://www.wowhead.com/widgets/power.js\"></script>\n";
-print "<TABLE class=\"sortable\" BORDER=2 ALIGN=LEFT>";
+print "<TABLE class=\"sortable normal\" ALIGN=LEFT>";
 print "<THEAD>";
 print "<TR>";
-print "<TH><U><B><font color=black>Name</B></U></TH>";
+print "<TH><U><B>Name</B></U></TH>";
 print "<TH><U><B>Item Name</B></U></TH>";
 print "<TH><U><B>Date</B></U></TH>";
 print "<TH><U><B>Spec</B></U></TH>";
@@ -148,7 +210,8 @@ print "</TR>";
 print "</THEAD>\n";
 print "<TBODY>";
 while (my $row = $loot_statement->fetchrow_hashref()) {
-	print "<TR>";
+	my $url = URLEncode($row->{ITEM_NAME});
+	print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='item.shtml?data=$url'\">";
         print "<td><A HREF=\"char.shtml?data=$row->{NAME}\"><B>$row->{NAME}</B></A></td>";
 	print "<TD><a href=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\">$row->{ITEM_NAME}</a></TD><TD>$row->{TIMESTAMP}</TD>";
 	print "<TD>$row->{SPEC}</TD><TD>$row->{ZONE}</TD><TD>$row->{SUBZONE}</TD>";
@@ -158,55 +221,7 @@ while (my $row = $loot_statement->fetchrow_hashref()) {
 print "</TBODY>";
 print "</TABLE>";
 print "</fieldset>";
+print "</div>";
 $loot_statement->finish();
-
-#Attendees
-print "<BR CLEAR=all>";
-print "<fieldset>";
-print "<legend>Attendance Details:</legend>";
-#print "<B><font size=5>Attendees</font></B><br>";
-my $attendance_stmt =
-	$dbh->prepare("SELECT chr.NAME, chr.CLASS, ra.ATTENDANCE, " .
-			"concat( floor( length(replace(ATTENDANCE,'0',''))*100 / length(ATTENDANCE)) ,'%') PERCENT " .
-			"FROM `CHARACTER` chr, `RAID_ATTENDANCE` ra " .
-			"WHERE ra.CHAR_ID = chr.CHAR_ID " .
-			"AND ra.RAID_ID = ?" .
-			"AND INSTR(ra.ATTENDANCE, '1') > 0 " .
-			"ORDER BY chr.NAME;");
-
-$attendance_stmt->bind_param(1, $raid_id);
-$attendance_stmt->execute() or die $dbh->errstr;
-print "<script src=\"sorttable.js\"></script>\n";
-print "<TABLE class=\"sortable\" BORDER=2 ALIGN=LEFT>";
-print "<THEAD>";
-print "<TR>";
-print "<TH><U><B><font color=black>Name</B></U></TH>";
-print "<TH><U><B><font color=black>Class</B></U></TH>";
-print "<TH><U><B>Pct</B></U></TH>";
-print "<TH><U><B>Attendance</B>(10 min increments)</U></TH>";
-print "</TR>";
-print "</THEAD>\n";
-print "<TBODY>";
-while (my $row = $attendance_stmt->fetchrow_hashref()) {
-	my $attn = $row->{ATTENDANCE};
-	$attn =~ s|0|~|g;
-	#$attn =~ s|1|<div style='width:10px;height:10px;background-color:green;display:inline-block'></div>|g;
-	#$attn =~ s|~|<div style='width:10px;height:10px;background-color:red;display:inline-block'></div>|g;
-	#$attn =~ s|1|<td style='background-color:green;'></td>|g;
-	#$attn =~ s|~|<td style='background-color:red;'></td>|g;
-	$attn =~ s|1|<img src=\"images/greenbox.JPG\">|g;
-	$attn =~ s|~|<img src=\"images/redbox.JPG\">|g;
-	print "<tr>";
-	print "<td><A HREF=\"char.shtml?data=$row->{NAME}\"><B>$row->{NAME}</B></A></td>";
-	print "<td>$row->{CLASS}</td>";
-	print "<td>$row->{PERCENT}</td>";
-	print "<td>$attn</td> ";
-	print "</tr>";
-	}
-print "</TBODY>";
-print "</TABLE>";
-print "</fieldset>";
-#print "</HTML>";
-$attendance_stmt->finish();
 
 $dbh->disconnect();

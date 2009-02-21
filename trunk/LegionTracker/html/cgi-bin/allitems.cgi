@@ -5,6 +5,12 @@ use CGI qw(:standard);
 use CGI::Carp qw(warningsToBrowser fatalsToBrowser);
 use DBI;
 
+sub URLEncode {
+my $theURL = $_[0];
+$theURL =~ s/([\W])/"%" . uc(sprintf("%2.2x",ord($1)))/eg;
+return $theURL;
+}
+
 # Tells the browser that we're outputting HTML
 print "Content-type: text/html\n\n";
 
@@ -27,7 +33,7 @@ print "<font size=\"6\" face=\"Monotype Corsiva\"><B>$char_name</B></font>";
 
 # Loot table
 my $list_statement =
-	$dbh->prepare("SELECT it.ITEM_NAME, it.ITEM_ID, min(rc.DATE) First_Loot, max(rc.DATE) Last_Looted " .
+	$dbh->prepare("SELECT it.ITEM_NAME, it.ITEM_ID, min(rc.DATE) First_Loot, max(rc.DATE) Last_Looted, count(*) COUNT " .
 		"FROM `ITEM` it, `ITEMS_LOOTED` il, RAID_CALENDAR rc " .
 		"where it.ITEM_ID = il.ITEM_ID " .
 		"and il.RAID_ID = rc.RAID_ID " .
@@ -39,19 +45,30 @@ print "<fieldset>";
 print "<legend>All Items Looted</legend>";
 print "<script src=\"sorttable.js\"></script>\n";
 print "<script src=\"http://www.wowhead.com/widgets/power.js\"></script>\n";
-print "<TABLE class=\"sortable\" style=\"filter:alpha(opacity=75);-moz-opacity:.75;opacity:.75;\" BORDER=2 ALIGN=LEFT><TR>";
-print "<TH WIDTH=155><U><B><font color=black>Item Name</B></U></TH>";
+print "<TABLE class=\"sortable normal\" ALIGN=LEFT WIDTH=\"600\" id=\"allItemsScrollTable\">";
+print "<THEAD>";
+print "<TR>";
+print "<TH WIDTH=200><U><B>Item Name</B></U></TH>";
+print "<TH WIDTH=20><U><B>Count</B></U></TH>";
 print "<TH WIDTH=100><U><B>First Looted</B></U></TH>";
 print "<TH WIDTH=100><U><B>Last Looted</B></U></TH>";
 print "</TR>\n";
+print "</THEAD>";
 while (my $row = $list_statement->fetchrow_hashref()) {
-	print "<TR>";
-	print "<TD><A HREF=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\" TARGET=\"_blank\">$row->{ITEM_NAME}</A></TD><TD>$row->{First_Loot}</TD><TD>$row->{Last_Looted}</TD>";
+	my $url = URLEncode($row->{ITEM_NAME});
+	print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='item.shtml?data=$url'\">";
+	print "<TD><A HREF=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\" TARGET=\"_blank\">$row->{ITEM_NAME}</A></TD>";
+	print "<TD>$row->{COUNT}</TD>";
+	print "<TD>$row->{First_Loot}</TD>";
+	print "<TD>$row->{Last_Looted}</TD>";
 	print "</TR>\n";
 	print "\n";
 }
-print "</fieldset>";
 print "</TABLE>";
+print "</fieldset>";
+#print "<script type=\"text/javascript\">";
+#print "var t = new ScrollableTable(document.getElementById('allItemsScrollTable'), 500, 600);";
+#print "</script>";
 print "</HTML>";
 $list_statement->finish();
 $dbh->disconnect();

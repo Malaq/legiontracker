@@ -35,8 +35,8 @@ $list_statement->execute() or die $dbh->errstr;
 print "<fieldset>";
 print "<legend>All Guilded Characters</legend>";
 print "<script src=\"sorttable.js\"></script>\n";
-print "<TABLE class=\"sortable\" style=\"filter:alpha(opacity=75);-moz-opacity:.75;opacity:.75;\" BORDER=2 ALIGN=LEFT><TR>";
-print "<TH WIDTH=155><U><B><font color=black>Name</B></U></TH>";
+print "<TABLE class=\"sortable normal\" ALIGN=LEFT><TR>";
+print "<TH WIDTH=155><U><B>Name</B></U></TH>";
 print "<TH WIDTH=100><U><B>Class</B></U></TH>";
 print "<TH WIDTH=100><U><B>Rank</B></U></TH>";
 print "<TH WIDTH=100><U><B>Date Joined</B></U></TH>";
@@ -44,9 +44,10 @@ print "<TH WIDTH=100><U><B>Date Removed</B></U></TH>";
 print "</TR>\n";
 while (my $row = $list_statement->fetchrow_hashref()) {
 	if ( $row->{DATE_REMOVED} eq "" ) {
-		print "<TR>";
+		#print "<TR>";
+		print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='char.shtml?data=$row->{NAME}'\">";
 	} else {
-		print "<TR BGCOLOR=\"RED\">";
+		print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='alert'\" class=\"alert\" onclick=\"location.href='char.shtml?data=$row->{NAME}'\">";
 	}
 	print "<TD><A HREF=\"char.shtml?data=$row->{NAME}\">$row->{NAME}</A></TD><TD>$row->{CLASS}</TD><TD>$row->{RANK}</TD>";
 	print "<TD>$row->{DATE_JOINED}</TD>";
@@ -54,8 +55,8 @@ while (my $row = $list_statement->fetchrow_hashref()) {
 	print "</TR>\n";
 	print "\n";
 }
-print "</fieldset>";
 print "</TABLE>";
+print "</fieldset>";
 print "</HTML>";
 $list_statement->finish();
 $dbh->disconnect();

@@ -27,7 +27,7 @@ print "<font size=\"6\" face=\"Monotype Corsiva\"><B>$char_name</B></font>";
 
 # Raid table
 my $list_statement =
-	$dbh->prepare("SELECT rc.RAID_ID, rc.DATE, rc.ATTENDANCE_COUNT, total_loot.numb DROPS, concat(IFNULL(floor((de.numb*100)/total_loot.numb),0),'%') SATURATION " .
+	$dbh->prepare("SELECT rc.RAID_ID, rc.DATE, rc.ATTENDANCE_COUNT, IFNULL(total_loot.numb,0) DROPS, concat(IFNULL(floor((de.numb*100)/total_loot.numb),0),'%') SATURATION " .
 			"FROM `RAID_CALENDAR` rc " .
 			"LEFT JOIN " .
 		        "(SELECT raid_id, count(item_id) numb " .
@@ -49,15 +49,19 @@ $list_statement->execute() or die $dbh->errstr;
 print "<fieldset>";
 print "<legend>Scheduled Raids</legend>";
 print "<script src=\"sorttable.js\"></script>\n";
-print "<TABLE class=\"sortable\" style=\"filter:alpha(opacity=75);-moz-opacity:.75;opacity:.75;\" BORDER=2 ALIGN=LEFT><TR>";
-print "<TH WIDTH=155><U><B><font color=black>Raid Date</B></U></TH>";
+print "<TABLE class=\"sortable normal\" ALIGN=LEFT>";
+print "<THEAD>\n";
+print "<TR>";
+print "<TH WIDTH=155><U><B>Raid Date</B></U></TH>";
 print "<TH WIDTH=100><U><B>Members Available</B></U></TH>";
 print "<TH WIDTH=100><U><B>Epics Dropped</B></U></TH>";
 print "<TH WIDTH=100><U><B>Loot Saturation</B></U></TH>";
 print "</TR>\n";
+print "</THEAD>";
 while (my $row = $list_statement->fetchrow_hashref()) {
-	print "<TR>";
+	print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='raiddetail.shtml?data=$row->{RAID_ID}'\">";
 	print "<TD><A HREF=\"raiddetail.shtml?data=$row->{RAID_ID}\">$row->{DATE}</A></TD>";
+	#print "<TD>$row->{DATE}</TD>";
 	print "<TD>$row->{ATTENDANCE_COUNT}</TD>";
 	print "<TD>$row->{DROPS}</TD>";
 	print "<TD>$row->{SATURATION}</TD>";

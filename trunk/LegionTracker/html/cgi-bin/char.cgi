@@ -5,6 +5,12 @@ use CGI qw(:standard);
 use CGI::Carp qw(warningsToBrowser fatalsToBrowser);
 use DBI;
 
+sub URLEncode {
+my $theURL = $_[0];
+$theURL =~ s/([\W])/"%" . uc(sprintf("%2.2x",ord($1)))/eg;
+return $theURL;
+}
+
 # Tells the browser that we're outputting HTML
 print "Content-type: text/html\n\n";
 
@@ -52,7 +58,7 @@ $summary_statement->finish();
 print "<fieldset>";
 print "<legend>Attendance Details:</legend>";
 print <<STRINGDELIM;
-	<table cellspacing="1" cellpadding="2" class="" id="attnDetail">
+	<table cellspacing="1" cellpadding="2" class="normal" id="attnDetail">
 	<thead>
 	<tr>
 		<th>Date</th>
@@ -87,7 +93,7 @@ while (my $row = $attn_statement->fetchrow_hashref()) {
 	$attn =~ s|1|<img src=\"images/greenbox.JPG\">|g;
 	$attn =~ s|~|<img src=\"images/redbox.JPG\">|g;
 	print <<STRINGDELIM;
-		<tr>
+	        <TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='raiddetail.shtml?data=$row->{RAID_ID}'\">
 			<td><A HREF=\"raiddetail.shtml?data=$row->{RAID_ID}\" TITLE=\"RAID_ID=$row->{RAID_ID}\">$row->{DATE}</A></td><td>$attn</td><td>$row->{PERCENT}</td>
 		</tr>
 STRINGDELIM
@@ -122,10 +128,10 @@ $loot_statement->bind_param(1, $char_name);
 $loot_statement->execute() or die $dbh->errstr;
 print "<script src=\"sorttable.js\"></script>\n";
 print "<script src=\"http://www.wowhead.com/widgets/power.js\"></script>\n";
-print "<table cellspacing=\"1\" cellpadding=\"2\" class=\"sortable\" id=\"lootDetail\">";
+print "<table cellspacing=\"1\" cellpadding=\"2\" class=\"sortable normal\" id=\"lootDetail\">";
 print "<THEAD>";
 print "<TR>";
-print "<TH><U><B><font color=black>Name</B></U></TH>";
+print "<TH><U><B>Name</B></U></TH>";
 print "<TH><U><B>Item Name</B></U></TH>";
 print "<TH><U><B>Date</B></U></TH>";
 print "<TH><U><B>Spec</B></U></TH>";
@@ -135,7 +141,8 @@ print "</TR>";
 print "</THEAD>\n";
 print "<TBODY>";
 while (my $row = $loot_statement->fetchrow_hashref()) {
-	print "<TR>";
+	my $url = URLEncode($row->{ITEM_NAME}); 
+	print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='item.shtml?data=$url'\">";
 	print "<TD>$row->{NAME}</TD><TD><a href=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\">$row->{ITEM_NAME}</a></TD><TD>$row->{TIMESTAMP}</TD>";
 	print "<TD>$row->{SPEC}</TD><TD>$row->{ZONE}</TD><TD>$row->{SUBZONE}</TD>";
 	print "</TR>\n";
