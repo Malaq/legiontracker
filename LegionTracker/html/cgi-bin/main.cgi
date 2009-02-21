@@ -292,7 +292,7 @@ my $statement =
 <fieldset>
 <legend><font color=white>Raiding Members</font></legend>
 <script src=\"sorttable.js\"></script>\n
-<TABLE class=\"sortable\" ALIGN=LEFT id=\"mainScrollTable\">
+<TABLE class=\"sortable normal\" ALIGN=LEFT id=\"mainScrollTable\">
 <thead>
 <TR>
 <TD WIDTH=90><U><B>Name</B></U></TD>
