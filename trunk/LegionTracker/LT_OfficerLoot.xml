@@ -64,6 +64,105 @@
       </Layer>
     </Layers>
     <Frames>
+      <Frame name="LT_OfficerLoot_TimeSpentTotal">
+        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
+        <Size>
+          <AbsDimension x="85" y="18" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="218" y="-508" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Layers>
+          <Layer>
+            <FontString name="$parentLabel" font="Fonts\FRIZQT__.TTF" text="$parentLabel3">
+              <Anchors>
+                <Anchor point="TOPLEFT" />
+                <Anchor point="BOTTOMRIGHT" />
+              </Anchors>
+              <FontHeight>
+                <AbsValue val="12" />
+              </FontHeight>
+              <Color r="1" g="0.8196079" b="0" />
+              <Shadow>
+                <Color r="0" g="0" b="0" />
+                <Offset>
+                  <AbsDimension x="1" y="-1" />
+                </Offset>
+              </Shadow>
+            </FontString>
+          </Layer>
+        </Layers>
+      </Frame>
+      <Frame name="LT_OfficerLoot_TimeSpentCur">
+        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
+        <Size>
+          <AbsDimension x="65" y="18" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="147" y="-508" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Layers>
+          <Layer>
+            <FontString name="$parentLabel" font="Fonts\FRIZQT__.TTF" text="$parentLabel2">
+              <Anchors>
+                <Anchor point="TOPLEFT" />
+                <Anchor point="BOTTOMRIGHT" />
+              </Anchors>
+              <FontHeight>
+                <AbsValue val="12" />
+              </FontHeight>
+              <Color r="1" g="0.8196079" b="0" />
+              <Shadow>
+                <Color r="0" g="0" b="0" />
+                <Offset>
+                  <AbsDimension x="1" y="-1" />
+                </Offset>
+              </Shadow>
+            </FontString>
+          </Layer>
+        </Layers>
+      </Frame>
+      <Frame name="LT_OfficerLoot_TimeSpentLabel">
+        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
+        <Size>
+          <AbsDimension x="123" y="18" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="18" y="-508" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Layers>
+          <Layer>
+            <FontString name="$parentLabel" font="Fonts\FRIZQT__.TTF" text="Time Spent (total):">
+              <Anchors>
+                <Anchor point="TOPLEFT" />
+                <Anchor point="BOTTOMRIGHT" />
+              </Anchors>
+              <FontHeight>
+                <AbsValue val="12" />
+              </FontHeight>
+              <Color r="1" g="0.8196079" b="0" />
+              <Shadow>
+                <Color r="0" g="0" b="0" />
+                <Offset>
+                  <AbsDimension x="1" y="-1" />
+                </Offset>
+              </Shadow>
+            </FontString>
+          </Layer>
+        </Layers>
+      </Frame>
       <Slider name="LT_OfficerLoot_Slider" enableMouse="true" minValue="0" maxValue="1" defaultValue="1" valueStep="1">
         <!--<FrameSkin skinid="f15d4970-d66d-444e-bb2d-1ad102c87fed" frameid="f15d4976-d66d-444e-bb2d-1ad102c87fed" />-->
         <Size>
@@ -91,7 +190,8 @@
           <AbsInset left="0" right="0" top="-10" bottom="-10" />
         </HitRectInsets>
         <Scripts>
-          <OnValueChanged>LT_OfficerLoot:ScrollChanged();</OnValueChanged>
+          <OnValueChanged>LT_OfficerLoot:ScrollChanged();
+</OnValueChanged>
         </Scripts>
         <ThumbTexture name="$parentThumb" file="interface\buttons\ui-scrollbar-knob">
           <Size>
@@ -112,7 +212,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_OfficerLoot:ScrollDown();</OnClick>
+          <OnClick>LT_OfficerLoot:ScrollDown();
+</OnClick>
         </Scripts>
         <NormalTexture file="interface\buttons\ui-scrollbar-scrolldownbutton-up">
           <TexCoords left="0.2" right="0.75" top="0.2" bottom="0.75" />
@@ -144,7 +245,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_OfficerLoot:Remove(1);</OnClick>
+          <OnClick>LT_OfficerLoot:Remove(1);
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -525,7 +627,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_OfficerLoot:Award(1);</OnClick>
+          <OnClick>LT_OfficerLoot:Award(1);
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -569,7 +672,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_OfficerLoot:Remove(2);</OnClick>
+          <OnClick>LT_OfficerLoot:Remove(2);
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -613,7 +717,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_OfficerLoot:Award(2);</OnClick>
+          <OnClick>LT_OfficerLoot:Award(2);
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -657,7 +762,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_OfficerLoot:Remove(3);</OnClick>
+          <OnClick>LT_OfficerLoot:Remove(3);
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -701,7 +807,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_OfficerLoot:Award(3);</OnClick>
+          <OnClick>LT_OfficerLoot:Award(3);
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -745,7 +852,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_OfficerLoot:ScrollUp();</OnClick>
+          <OnClick>LT_OfficerLoot:ScrollUp();
+</OnClick>
         </Scripts>
         <NormalTexture file="interface\buttons\ui-scrollbar-scrollupbutton-up">
           <TexCoords left="0.2" right="0.75" top="0.2" bottom="0.75" />
@@ -768,7 +876,8 @@
     <Scripts>
       <OnLoad>LT_OfficerLoot:OnLoad();
 </OnLoad>
-      <OnMouseWheel>LT_OfficerLoot:ScrollWheel(arg1);</OnMouseWheel>
+      <OnMouseWheel>LT_OfficerLoot:ScrollWheel(arg1);
+</OnMouseWheel>
     </Scripts>
   </Frame>
 </Ui>
