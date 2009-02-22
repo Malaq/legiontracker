@@ -290,6 +290,9 @@ function LT_TimerOnUpdate(self, elapsed)
     if (LT_Main:IsShown()) then
         GuildRoster();
     end
+    
+    -- Some code to get a more exact server time, by calculating the offset from client time.
+    -- Only runs until the first minute of server time ticks over.
     if (LT_GameTimeOffset == nil) then
         local hour, minute = GetGameTime();
         if (LT_GameTimeStart == nil) then
@@ -303,11 +306,13 @@ function LT_TimerOnUpdate(self, elapsed)
             LT_GameTimeOffset = time(time_table) - time();
         end
     end
-    if (LT_TIMER_TOGGLE == true) then
-        self.TimeSinceLastUpdate  = self.TimeSinceLastUpdate + elapsed;
-        
-        --Prevent code from running more than once a second.
-        if (self.TimeSinceLastUpdate > LT_Timer_UpdateInterval) then
+    
+    self.TimeSinceLastUpdate  = self.TimeSinceLastUpdate + elapsed;
+    --Prevent code from running more than once a second.
+    if (self.TimeSinceLastUpdate > LT_Timer_UpdateInterval) then
+        -- Update the officerloot pane
+        LT_OfficerLoot:TimerUpdate();
+        if (LT_TIMER_TOGGLE == true) then
             --DEFAULT_CHAT_FRAME:AddMessage("Thrashing?");
             LT_TIMER_TOTAL = difftime(time(), LT_TIMER_START);
 

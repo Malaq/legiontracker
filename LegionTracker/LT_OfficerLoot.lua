@@ -26,6 +26,8 @@ function LT_OfficerLoot:OnLoad()
     self.tables = {};
     self.remove_buttons = {};
     self.award_buttons = {};
+    _G["LT_OfficerLoot_TimeSpentCurLabel"]:SetText("");
+    _G["LT_OfficerLoot_TimeSpentTotalLabel"]:SetText("");
     for i = 1, self.slots do
         table.insert(self.table_frames, _G["LT_OfficerLoot_TableFrame"..i]);
         table.insert(self.table_labels, _G["LT_OfficerLoot_Label"..i.."Label"]);
@@ -322,9 +324,9 @@ end
 function LT_OfficerLoot:SendInstructions(channel, player)
     local instructions = {
         "To bid for an item, send a tell in the following format:",
-        "[Item], [Replacing], spec (main/alt/off), (short) comments",
+        "[Item][Replacing] spec (main/alt/off) comments",
         "For example, if you want to bid for a Grim Toll, you could send: ",
-        " \124cffa335ee\124Hitem:40256:0:0:0:0:0:0:0:0\124h[Grim Toll]\124h\124r,  \124cffa335ee\124Hitem:34472:0:0:0:0:0:0:0:0\124h[Shard of Contempt]\124h\124r, Main, best in slot"
+        " \124cffa335ee\124Hitem:40256:0:0:0:0:0:0:0:0\124h[Grim Toll]\124h\124r  \124cffa335ee\124Hitem:34472:0:0:0:0:0:0:0:0\124h[Shard of Contempt]\124h\124r Main best in slot"
     };
     
     for i = 1, #instructions do
@@ -370,6 +372,27 @@ function LT_OfficerLoot:AddBid(item, player, spec, replacing, comments)
     self:SendOfficerMessage("LT_OfficerLoot_Bid", self:Serialize(bid));
 end
 
+function LT_OfficerLoot:MungeItem(s)
+    -- Look for an item link.
+    if (s:sub(1,1) ~= "|") then
+        return "", s;
+    end
+    local delim = s:find("|h|r") + 3;
+    local itemlink = s:sub(1, delim);
+    local _, item = GetItemInfo(itemlink);
+    return item, s:sub(delim + 1);
+end
+
+function LT_OfficerLoot:MungeDelimeters(s)
+    -- Remove the first block of non-alphanumeric characters.
+    return s:gsub("^([ ,.;]+)","",1);
+end
+
+function LT_OfficerLoot:MungeSpec(s)
+    local spec = s:gsub("(%w+).*", "%1"):lower();
+    return spec, s:gsub("%w+(.*)", "%1");
+end
+
 function LT_OfficerLoot:OnEvent(event, arg1, arg2)
     if (event == "CHAT_MSG_WHISPER" and self.mode == "Master" and #self.items > 0) then
         if (arg1 == "!bid") then
@@ -379,20 +402,19 @@ function LT_OfficerLoot:OnEvent(event, arg1, arg2)
         end
         
         local player = arg2;
-        local msg = { strsplit(",", arg1) };
-        -- Format: [item], [replacing], spec, comments
-        -- replacing can be blank, comments are optional
-        if (#msg < 3) then
-            -- Is this a bid?  Probably not.
-            return;
-        end
         
-        local _, item = GetItemInfo(strtrim(msg[1]));
-        local _, replacing = GetItemInfo(strtrim(msg[2]));
-        local spec = strlower(strtrim(msg[3]));
-        local comments = msg[4];
+        local item, replacing, spec, comments;
+        msg = self:MungeDelimeters(arg1);
+        item, msg = self:MungeItem(msg);
+        msg = self:MungeDelimeters(msg);
+        replacing, msg = self:MungeItem(msg);
+        msg = self:MungeDelimeters(msg);
+        spec, msg = self:MungeSpec(msg);
+        msg = self:MungeDelimeters(msg);
+        comments = msg;
         
-        if (item == nil) then
+
+        if (item == "") then
             -- Could send back an error message here... but if you aren't linking an item first,
             -- you're probably not bidding...
             return;
@@ -408,17 +430,6 @@ function LT_OfficerLoot:OnEvent(event, arg1, arg2)
             return;
         end
         
-        if (replacing == nil) then
-            replacing = "";
-        end
-        if (comments == nil) then
-            comments = "";
-        end
-        for i = 5, #msg do
-            comments = comments .. "," .. msg[i];
-        end
-        comments = strtrim(comments);
-        
         self:AddBid(item, player, spec, replacing, comments);
         self.inc_msg_ignore[arg1] = 1;
         self:SendInvisChatMessage("Your bid for " .. item .. " was received successfully.", "WHISPER", nil, player);
@@ -432,7 +443,13 @@ end
 
 
 function LT_OfficerLoot:StartNewItems(items, item_links, dont_clear_bids)
-
+    if (LT_OfficerLoot_TotalLootTime == nil) then
+        -- So... I was going to make this a saved variable.  But the problem is, most people don't
+        -- actually reset anything at the start of a raid night.  So this would accumulate forever.
+        -- In the next version with timer sync'ing, we can save this and reset it on timer reset.
+        LT_OfficerLoot_TotalLootTime = 0;
+    end
+        
     -- Setup the data structures
     if (self.cur_id == nil or dont_clear_bids == nil) then
         self.cur_id = 1;
@@ -476,10 +493,35 @@ function LT_OfficerLoot:StartNewItems(items, item_links, dont_clear_bids)
     
     if (dont_clear_bids ~= nil and #item_links == 0 and self.LootStartTime) then
         local chg = time() - self.LootStartTime;
-        LT_Print("Time spent dealing with loot: "..math.floor(chg/60).." minutes, "..(chg%60).." seconds");
+        LT_OfficerLoot_TotalLootTime = LT_OfficerLoot_TotalLootTime + chg;
+        _G["LT_OfficerLoot_TimeSpentTotalLabel"]:SetText("(" .. self:TimeStr(LT_OfficerLoot_TotalLootTime) .. ")");
+        _G["LT_OfficerLoot_TimeSpentCurLabel"]:SetText("");
+        LT_Print("Time spent dealing with loot: "..self:TimeStr(chg));
     end
     
     self:Display();
+end
+
+function LT_OfficerLoot:TimeStr(seconds)
+    local h = math.floor(seconds/3600);
+    local m = math.floor(seconds/60)%60;
+    local s = seconds%60;
+    local str = "";
+    if (h > 0) then
+        str = str..h.."h";
+    end
+    if (m > 0) then
+        str = str..m.."m";
+    end
+    str = str..s.."s";
+    return str;
+end
+
+function LT_OfficerLoot:TimerUpdate()
+    if (LT_OfficerLoot_Frame:IsShown() and self.LootStartTime and #self.items > 0) then
+        _G["LT_OfficerLoot_TimeSpentCurLabel"]:SetText(self:TimeStr(time() - self.LootStartTime));
+        -- _G["LT_OfficerLoot_TimeSpentTotalLabel"]:SetText(self:TimeStr(time() - self.LootStartTime + LT_OfficerLoot_TotalLootTime));
+    end
 end
 
 function LT_OfficerLoot:OnShow()
@@ -501,7 +543,7 @@ function LT_OfficerLoot:GetRow(bid)
                     return val;
                 end,
                 color = function()
-                    if bid.votes["Happyduude"] then
+                    if bid.votes[UnitName("player")] then
                         return {r = 0, g = 1, b = 1}
                     else
                         return {r = 1, g = 1, b = 1}
