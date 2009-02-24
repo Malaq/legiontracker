@@ -292,31 +292,34 @@ my $statement =
 <fieldset>
 <legend><font color=white>Raiding Members</font></legend>
 <script src=\"sorttable.js\"></script>\n
-<TABLE class=\"sortable normal\" ALIGN=LEFT id=\"mainScrollTable\">
+<TABLE class=\"sortable normal\" ALIGN=LEFT id=\"mainTable\">
 <thead>
 <TR>
-<TD WIDTH=90><U><B>Name</B></U></TD>
-<TD WIDTH=100><U><B>Class</B></U></TD>
-<TD WIDTH=100><U><B>Rank</B></U></TD>
-<TD WIDTH=120><U><B>7 Day Attn</B></U></TD>
-<TD WIDTH=40><U><B>MS</B></U></TD>
-<TD WIDTH=40><U><B>AS</B></U></TD>
-<TD WIDTH=40><U><B>OS</B></U></TD>
-<TD WIDTH=120><U><B>30 Day Attn</B></U></TD>
-<TD WIDTH=40><U><B>MS</B></U></TD>
-<TD WIDTH=40><U><B>AS</B></U></TD>
-<TD WIDTH=40><U><B>OS</B></U></TD>
-<TD WIDTH=120><U><B>60 Day Attn</B></U></TD>
-<TD WIDTH=40><U><B>MS</B></U></TD>
-<TD WIDTH=40><U><B>AS</B></U></TD>
-<TD WIDTH=40><U><B>OS</B></U></TD></TR>\n
+<TD></TD>
+<TD><U><B>Name</B></U></TD>
+<TD><U><B>Class</B></U></TD>
+<TD><U><B>Rank</B></U></TD>
+<TD><U><B>7 Day Attn</B></U></TD>
+<TD><U><B>MS</B></U></TD>
+<TD><U><B>AS</B></U></TD>
+<TD><U><B>OS</B></U></TD>
+<TD><U><B>30 Day Attn</B></U></TD>
+<TD><U><B>MS</B></U></TD>
+<TD><U><B>AS</B></U></TD>
+<TD><U><B>OS</B></U></TD>
+<TD><U><B>60 Day Attn</B></U></TD>
+<TD><U><B>MS</B></U></TD>
+<TD><U><B>AS</B></U></TD>
+<TD><U><B>OS</B></U></TD></TR>\n
 </thead>
 DELIMETER
 
 	$statement->execute() or die $dbh->errstr;
 	while (my $row = $statement->fetchrow_hashref()) {
-		print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\">";
-		#print "<TR>";
+		#print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='char.shtml?data=$row->{NAME}'\">";
+		#print "<TR id=\"row$row->{NAME}\" onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\">";
+		print "<TR id=\"row$row->{NAME}\">";
+		print "<TD><input id=\"$row->{NAME}\" name\"$row->{NAME}\" type=\"checkbox\" value=\"$row->{NAME}\" onClick=\"highlightRow(this);\" /></TD>";
 		print "<TD><B><A HREF=\"char.shtml?data=$row->{NAME}\" STYLE=\"text-decoration:none\" class='member_name'> $row->{NAME} </A></B></TD>";
 		classColor($row->{CLASS});
 		print "<TD class='rank'>$row->{RANK}</TD>";
@@ -339,10 +342,10 @@ DELIMETER
 	}
 	print "</TABLE>";
 	#print "<script type=\"text/javascript\">";
-	#print "var t = new ScrollableTable(document.getElementById('mainScrollTable'),100);";
+	#print "var t = new ScrollableTable(document.getElementById('mainTable'),100);";
 	#print "</script>";
 	#print "<script type=\"text/javascript\">";
-	#print "var t = new SortableTable(document.getElementById('mainScrollTable'),100);";
+	#print "var t = new SortableTable(document.getElementById('mainTable'),100);";
 	#print "</script>";
 	print "</fieldset>";
 	$statement->finish();

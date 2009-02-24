@@ -27,6 +27,7 @@ td {
 	border-top: 1px solid #35354F;
 	border-bottom: none;
 	padding-right: 15px;
+	white-space: nowrap;
 }
 
 body {
@@ -46,7 +47,7 @@ a {
  *******************************/
 #main_frame {
 	position: absolute;
-	left: 175px;
+	left: 180px;
 	top: 55px;
 	z-index: 9999;
 }
@@ -61,7 +62,6 @@ legend {
 .highlight { background-color: #222245 }
 .normal {
 	background-color:#0A0A0A;
-	white-space: nowrap;
 	cursor:pointer;
 }
 
@@ -138,7 +138,7 @@ legend {
 	left: 10px;
 	top: 120px;
 	z-index: 9999;
-	width: 800px;
+	/*width: 800px;*/
 }
 /*display:inline
 /*
