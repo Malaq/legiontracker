@@ -5,6 +5,34 @@ use CGI qw(:standard);
 use CGI::Carp qw(warningsToBrowser fatalsToBrowser);
 use DBI;
 
+sub attendanceColor {
+	my $attendance = shift;
+	my $attendance_type = '';
+	if ($attendance > 25) {
+		$attendance_type = 'high_attendance';
+	} elsif ($attendance > 20) {
+		$attendance_type = 'medium_attendance';
+	} else {
+		$attendance_type = 'low_attendance';
+	}
+	print "<TD class='$attendance_type'>$attendance</TD>";
+}
+
+sub saturationColor {
+	my $saturation = shift;
+	my $satnum = substr($saturation, 0, - 1);
+	my $attendance_type = '';
+	if ($satnum < 25) {
+		$attendance_type = 'high_attendance';
+	} elsif ($satnum < 50) {
+		$attendance_type = 'medium_attendance';
+	} else {
+		$attendance_type = 'low_attendance';
+	}
+	print "<TD class='$attendance_type'>$saturation</TD>";
+}
+
+
 # Tells the browser that we're outputting HTML
 print "Content-type: text/html\n\n";
 
@@ -27,7 +55,8 @@ print "<font size=\"6\" face=\"Monotype Corsiva\"><B>$char_name</B></font>";
 
 # Raid table
 my $list_statement =
-	$dbh->prepare("SELECT rc.RAID_ID, rc.DATE, rc.ATTENDANCE_COUNT, IFNULL(total_loot.numb,0) DROPS, concat(IFNULL(floor((de.numb*100)/total_loot.numb),0),'%') SATURATION " .
+	$dbh->prepare("SELECT rc.RAID_ID, rc.DATE, date_format(rc.DATE, '%W') DAYOFWEEK, rc.ATTENDANCE_COUNT, IFNULL(total_loot.numb,0) DROPS, " .
+			"concat(IFNULL(floor((de.numb*100)/total_loot.numb),0),'%') SATURATION " .
 			"FROM `RAID_CALENDAR` rc " .
 			"LEFT JOIN " .
 		        "(SELECT raid_id, count(item_id) numb " .
@@ -52,7 +81,8 @@ print "<script src=\"sorttable.js\"></script>\n";
 print "<TABLE class=\"sortable normal\" ALIGN=LEFT>";
 print "<THEAD>\n";
 print "<TR>";
-print "<TH WIDTH=155><U><B>Raid Date</B></U></TH>";
+print "<TH WIDTH=100><U><B>Raid Date</B></U></TH>";
+print "<TH WIDTH=100><U><B>Weekday</B></U></TH>";
 print "<TH WIDTH=100><U><B>Members Available</B></U></TH>";
 print "<TH WIDTH=100><U><B>Epics Dropped</B></U></TH>";
 print "<TH WIDTH=100><U><B>Loot Saturation</B></U></TH>";
@@ -60,11 +90,19 @@ print "</TR>\n";
 print "</THEAD>";
 while (my $row = $list_statement->fetchrow_hashref()) {
 	print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='raiddetail.shtml?data=$row->{RAID_ID}'\">";
-	print "<TD><A HREF=\"raiddetail.shtml?data=$row->{RAID_ID}\">$row->{DATE}</A></TD>";
-	#print "<TD>$row->{DATE}</TD>";
-	print "<TD>$row->{ATTENDANCE_COUNT}</TD>";
-	print "<TD>$row->{DROPS}</TD>";
-	print "<TD>$row->{SATURATION}</TD>";
+	print "<TD>";
+	print "<A HREF=\"raiddetail.shtml?data=$row->{RAID_ID}\">";
+	print "$row->{DATE}";
+	print "</A>";
+	print "</TD>";
+	print "<TD>";
+	print "$row->{DAYOFWEEK}";
+	print "</TD>";
+	attendanceColor($row->{ATTENDANCE_COUNT});
+	print "<TD>";
+	print "$row->{DROPS}";
+	print "</TD>";
+	saturationColor($row->{SATURATION});
 	print "</TR>\n";
 	print "\n";
 }
