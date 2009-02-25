@@ -45,6 +45,9 @@ my $row = $summary_statement->fetchrow_hashref();
 my $utf8name = $row->{name};
 utf8::encode($utf8name); 
 $utf8name = URLEncode($utf8name);
+print "<table>";
+print "<TR>";
+print "<TD rowspan=\"2\">";
 print "<B>Name:</B> <A HREF=\"http://www.wowarmory.com/character-sheet.xml?r=Medivh&n=$utf8name\" TITLE=\"CHAR_ID=$row->{char_id}\" TARGET=\"_blank\">$row->{name}</A><BR>";
 print "<B>Class:</B> $row->{class} <BR>";
 print "<B>Rank:</B> $row->{rank} <BR>";
@@ -53,9 +56,39 @@ if ( $row->{date_removed} ne "" )
 {
 print "<B>Date Removed (estimated):</B> $row->{date_removed} <BR>";
 }
-print "</fieldset>";
+print "</TD>";
+print "<TD>";
+print "<B>Alts:</B>";
+print "</TD>";
+print "</TR>";
+print "<TR>";
+print "<TD>";
 
+#print "</fieldset>";
 $summary_statement->finish();
+
+#Alts
+#print "<fieldset>";
+#print "<legend>Alts:</legend>";
+my $sql_text = 
+my $alt_statement =
+	$dbh->prepare("SELECT DISTINCT chr.NAME " .
+			"FROM RAID_ATTENDANCE ra, `CHARACTER` chr " .
+			"WHERE ra.char_id = chr.char_id " .
+			"AND ra.attendance = ? " .
+			"and ra.raid_id = (select distinct max(raid_id) from RAID_ATTENDANCE ra, `CHARACTER` chr where ra.char_id = chr.char_id and chr.NAME = ? );");
+$alt_statement->bind_param(1, $char_name);
+$alt_statement->bind_param(2, $char_name);
+$alt_statement->execute() or die $dbh->errstr;
+while (my $row = $alt_statement->fetchrow_hashref()) {
+	print "$row->{NAME}<br>";
+}
+print "</TD>";
+print "</TR>";
+print "</TABLE>";
+print "</fieldset>";
+$alt_statement->finish();
+#End Alts
 
 # Attendance
 print "<fieldset>";

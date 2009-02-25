@@ -24,6 +24,76 @@
 		}
 		-->
 		</script>
+		<script language="javascript">
+		<!--
+		function checkAll() {
+		     var boxes = document.getElementById('myform').getElementsByTagName('input');
+		     for (var i = 0; i < boxes.length; i++) {
+		          if (boxes[i].type == 'checkbox' && boxes[i].id!="checkall"){
+		                boxes[i].checked = true;
+				//document.getElementById('check_'+ boxes[i].value).style.background = '#FFFFCC';
+				document.getElementById('check_'+ boxes[i].value).className='highlight';
+		          }
+		     }
+	     	}
+
+		function clearAll() {
+		     var boxes = document.getElementById('myform').getElementsByTagName('input');
+		     for (var i = 0; i < boxes.length; i++) {
+		          if (boxes[i].type == 'checkbox' && boxes[i].id!="checkall"){
+		                boxes[i].checked = false;
+		                //document.getElementById('check_'+ boxes[i].value).style.background = '';
+				document.getElementById('check_'+ boxes[i].value).className='normal';
+		          }
+		     }
+		}
+
+		function hideUnchecked() {
+		     var boxes = document.getElementById('myform').getElementsByTagName('input');
+		     for (var i = 0; i < boxes.length; i++) {
+		          if (boxes[i].type == 'checkbox' && boxes[i].id!="checkall" && !boxes[i].checked){
+				//if(!boxes[i].checked) {
+				document.getElementById('check_'+ boxes[i].value).style.display = 'none';
+				//}
+		          }
+		     }
+		}
+
+		function showAll() {
+		     clearAll();
+		     var boxes = document.getElementById('myform').getElementsByTagName('input');
+		     for (var i = 0; i < boxes.length; i++) {
+		          if (boxes[i].type == 'checkbox' && boxes[i].id!="checkall"){
+				document.getElementById('check_'+ boxes[i].value).style.display = '';
+		          }
+		     }
+		}
+
+		function toggle(it) {
+		     var box = document.getElementById(it);
+		     if(box.checked){
+     			     box.checked = false;
+			     document.getElementById('check_'+ it).className='normal';
+		     } else {
+			     box.checked = true;
+			     document.getElementById('check_'+ it).className='highlight';
+		     }
+
+		}
+
+		function mouseHighlight(it) {
+		     var box = document.getElementById(it);
+		     if(!box.checked){
+			     document.getElementById('check_'+ it).className='normal';
+		     } else {
+			     document.getElementById('check_'+ it).className='highlight';
+		     }
+
+		}
+
+		// End -->
+		</script>
+		
 		<link rel="stylesheet" type="text/css" href="style.css" />		
 	</head>
 	<body>
