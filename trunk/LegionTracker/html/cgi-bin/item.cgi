@@ -61,7 +61,7 @@ $summary_statement->finish();
 
 # Loot table
 print "<fieldset>";
-print "<legend>Loot History:</legend>";
+print "<legend>Loot History (limit of 500 rows):</legend>";
 my $sql_text = 
 my $loot_statement =
 	$dbh->prepare("SELECT chr.NAME, it.ITEM_NAME, it.ITEM_ID, il.SPEC, il.TIMESTAMP, il.ZONE, il.SUBZONE " .
@@ -70,7 +70,9 @@ my $loot_statement =
 			"AND il.RAID_ID = rc.RAID_ID " .
 			"AND it.ITEM_ID = il.ITEM_ID " .
 			"AND it.ITEM_NAME like ? " .
-			"ORDER BY it.ITEM_NAME, il.TIMESTAMP DESC;");
+			"ORDER BY it.ITEM_NAME, il.TIMESTAMP DESC " .
+			"limit 500;");
+# 1373 is the limit this can handle.  It breaks at 1374. Research why later.
 $loot_statement->bind_param(1, '%'.$item_name.'%');
 $loot_statement->execute() or die $dbh->errstr;
 print "<script src=\"sorttable.js\"></script>\n";

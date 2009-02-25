@@ -20,6 +20,7 @@ my $username = 'legiontracker_tg';
 my $password = 'legio3';
 my $hostname = 'fdb1.awardspace.com';
 my $dbport = '3306';
+my $mainchar = '';
 
 # Database handle
 my $dbh = DBI->connect("dbi:mysql:database=$database;host=$hostname;port=$dbport", $username, $password) or print $DBI::errstr;
@@ -51,48 +52,89 @@ print "<TD rowspan=\"2\">";
 print "<B>Name:</B> <A HREF=\"http://www.wowarmory.com/character-sheet.xml?r=Medivh&n=$utf8name\" TITLE=\"CHAR_ID=$row->{char_id}\" TARGET=\"_blank\">$row->{name}</A><BR>";
 print "<B>Class:</B> $row->{class} <BR>";
 print "<B>Rank:</B> $row->{rank} <BR>";
+my $rank = $row->{rank};
 print "<B>Date Joined:</B> $row->{date_joined} <BR>";
 if ( $row->{date_removed} ne "" )
 {
 print "<B>Date Removed (estimated):</B> $row->{date_removed} <BR>";
 }
-print "</TD>";
-print "<TD>";
-print "<B>Alts:</B>";
-print "</TD>";
-print "</TR>";
-print "<TR>";
-print "<TD>";
-
-#print "</fieldset>";
 $summary_statement->finish();
+print "</TD>";
+print "<TD>";
+if (( $rank eq "Alt" ) || ( $rank eq "Officer Alt" ))
+{
+	print "<B>Main:</B>";
+	print "</TD>";
+	print "</TR>";
+	print "<TR>";
+	print "<TD>";
+	#Mains
+	my $sql_text = 
+	my $main_statement =
+		$dbh->prepare("SELECT ra.attendance MAIN " .
+				"FROM `CHARACTER` chr, RAID_ATTENDANCE ra " .
+				"WHERE chr.char_id = ra.char_id " .
+				"AND chr.NAME = ? " .
+				"and ra.raid_id = (select distinct max(raid_id) from RAID_ATTENDANCE ra, `CHARACTER` chr where ra.char_id = chr.char_id and chr.NAME = ? );");
+	$main_statement->bind_param(1, $char_name);
+	$main_statement->bind_param(2, $char_name);
+	$main_statement->execute() or die $dbh->errstr;
+	my $row = $main_statement->fetchrow_hashref();
+	$mainchar = $row->{MAIN};
+	print "<A HREF=\"char.shtml?data=$mainchar\" STYLE=\"text-decoration:none\" class='member_name'>";
+	print "$mainchar";
+	print "</A>";
+	print "<br>";
+	
+	$main_statement->finish();
 
-#Alts
-#print "<fieldset>";
-#print "<legend>Alts:</legend>";
-my $sql_text = 
-my $alt_statement =
-	$dbh->prepare("SELECT DISTINCT chr.NAME " .
-			"FROM RAID_ATTENDANCE ra, `CHARACTER` chr " .
-			"WHERE ra.char_id = chr.char_id " .
-			"AND ra.attendance = ? " .
-			"and ra.raid_id = (select distinct max(raid_id) from RAID_ATTENDANCE ra, `CHARACTER` chr where ra.char_id = chr.char_id and chr.NAME = ? );");
-$alt_statement->bind_param(1, $char_name);
-$alt_statement->bind_param(2, $char_name);
-$alt_statement->execute() or die $dbh->errstr;
-while (my $row = $alt_statement->fetchrow_hashref()) {
-	print "$row->{NAME}<br>";
+}
+else
+{
+	print "<B>Alts:</B>";
+	print "</TD>";
+	print "</TR>";
+	print "<TR>";
+	print "<TD>";
+	
+	#Alts
+	my $sql_text = 
+	my $alt_statement =
+		$dbh->prepare("SELECT DISTINCT chr.NAME " .
+				"FROM RAID_ATTENDANCE ra, `CHARACTER` chr " .
+				"WHERE ra.char_id = chr.char_id " .
+				"AND ra.attendance = ? " .
+				"and ra.raid_id = (select distinct max(raid_id) from RAID_ATTENDANCE ra, `CHARACTER` chr where ra.char_id = chr.char_id and chr.NAME = ? );");
+	$alt_statement->bind_param(1, $char_name);
+	$alt_statement->bind_param(2, $char_name);
+	$alt_statement->execute() or die $dbh->errstr;
+	while (my $row = $alt_statement->fetchrow_hashref()) {
+		my $altname = $row->{NAME};
+		print "<A HREF=\"char.shtml?data=$altname\" STYLE=\"text-decoration:none\" class='member_name'>";
+		print "$altname";
+		print "</A>";
+		print "<br>";
+	}
+	$alt_statement->finish();
 }
 print "</TD>";
 print "</TR>";
 print "</TABLE>";
 print "</fieldset>";
-$alt_statement->finish();
 #End Alts
 
+if ( $rank ne "Friend" )
+{
 # Attendance
 print "<fieldset>";
-print "<legend>Attendance Details:</legend>";
+if (( $rank eq "Alt") || ( $rank eq "Officer Alt" ))
+{
+	print "<legend>Attendance Details (<B>$mainchar</B>):</legend>";
+}
+else
+{
+	print "<legend>Attendance Details:</legend>";
+}
 print <<STRINGDELIM;
 	<table cellspacing="1" cellpadding="2" class="normal" id="attnDetail">
 	<thead>
@@ -115,7 +157,14 @@ order by rc.DATE desc;
 STRINGDELIM
 
 my $attn_statement = $dbh->prepare( $sql_text );
+if (( $rank eq "Alt") || ( $rank eq "Officer Alt" ))
+{
+$attn_statement->bind_param(1, $mainchar);
+}
+else
+{
 $attn_statement->bind_param(1, $char_name);
+}
 $attn_statement->execute() or die $dbh->errstr;
 
 print "<TBODY>";
@@ -141,12 +190,12 @@ STRINGDELIM
 print "</fieldset>";
 
 $attn_statement->finish();
-
+}
 
 
 # Loot table
 print "<fieldset>";
-print "<legend>Loot Details:</legend>";
+print "<legend>Loot Details (<B>$char_name</B>):</legend>";
 my $loot_statement =
 	$dbh->prepare("SELECT chr.NAME, it.ITEM_ID, it.ITEM_NAME, il.TIMESTAMP, il.SPEC, il.ZONE, il.SUBZONE " .
 			"FROM `CHARACTER` chr, ITEMS_LOOTED il, RAID_CALENDAR rc, ITEM it " .
