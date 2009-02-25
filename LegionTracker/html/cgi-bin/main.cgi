@@ -61,7 +61,7 @@ sub attendanceColor {
 	} else {
 		$attendance_type = 'low_attendance';
 	}
-	print "<TD class='$attendance_type'>$attendance</TD>";
+	print "<TD class='$attendance_type' align=\"right\">$attendance</TD>";
 }
 
 #Loot Coloring
@@ -287,39 +287,47 @@ my $statement =
 			"WHERE chr.RANK not in ('Friend','Alt','Officer Alt', '') " .
 			"AND chr.DATE_REMOVED IS NULL " .
 			"ORDER BY chr.NAME;");
-
+#<TR>
+#<TH colspan=\"3\">Character Data</TD>
+#<TH colspan=\"4\">7 Day Data</TD>
+#<TH colspan=\"4\">30 Day Data</TD>
+#<TH colspan=\"4\">60 Day Data</TD>
+#</TR>
 	print <<DELIMETER;
 <fieldset>
 <legend><font color=white>Raiding Members</font></legend>
+<form name=\"myform\" id=\"myform\" action=\"checkboxes.asp\" method=\"post\">
 <script src=\"sorttable.js\"></script>\n
 <TABLE class=\"sortable normal\" ALIGN=LEFT id=\"mainTable\">
 <thead>
 <TR>
-<TD></TD>
-<TD><U><B>Name</B></U></TD>
-<TD><U><B>Class</B></U></TD>
-<TD><U><B>Rank</B></U></TD>
-<TD><U><B>7 Day Attn</B></U></TD>
-<TD><U><B>MS</B></U></TD>
-<TD><U><B>AS</B></U></TD>
-<TD><U><B>OS</B></U></TD>
-<TD><U><B>30 Day Attn</B></U></TD>
-<TD><U><B>MS</B></U></TD>
-<TD><U><B>AS</B></U></TD>
-<TD><U><B>OS</B></U></TD>
-<TD><U><B>60 Day Attn</B></U></TD>
-<TD><U><B>MS</B></U></TD>
-<TD><U><B>AS</B></U></TD>
-<TD><U><B>OS</B></U></TD></TR>\n
+<TH CLASS=\"sorttable_nosort\" style=\"display:none;\"><input type=\"checkbox\" id=\"checkall\" onclick=\"if(this.checked) checkAll(); else clearAll();\" /></TH>
+<TH><U><B>Name</B></U></TH>
+<TH><U><B>Class</B></U></TH>
+<TH><U><B>Rank</B></U></TH>
+<TH><U><B>7 Day Attn</B></U></TH>
+<TH><U><B>MS</B></U></TH>
+<TH><U><B>AS</B></U></TH>
+<TH><U><B>OS</B></U></TH>
+<TH><U><B>30 Day Attn</B></U></TH>
+<TH><U><B>MS</B></U></TH>
+<TH><U><B>AS</B></U></TH>
+<TH><U><B>OS</B></U></TH>
+<TH><U><B>60 Day Attn</B></U></TH>
+<TH><U><B>MS</B></U></TH>
+<TH><U><B>AS</B></U></TH>
+<TH><U><B>OS</B></U></TH></TR>\n
 </thead>
+<tbody>
 DELIMETER
 
 	$statement->execute() or die $dbh->errstr;
+	my $counter = 0;
 	while (my $row = $statement->fetchrow_hashref()) {
 		#print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='char.shtml?data=$row->{NAME}'\">";
-		#print "<TR id=\"row$row->{NAME}\" onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\">";
-		print "<TR id=\"row$row->{NAME}\">";
-		print "<TD><input id=\"$row->{NAME}\" name\"$row->{NAME}\" type=\"checkbox\" value=\"$row->{NAME}\" onClick=\"highlightRow(this);\" /></TD>";
+		print "<TR id=\"check_$counter\" onClick=\"toggle($counter);\" onMouseOver=\"this.className='highlight'\" onMouseOut=\"mouseHighlight($counter);\">";
+		#print "<TD><input name\"list[]\" id=\"$counter\" type=\"checkbox\" value=\"$counter\" onClick=\"highlightRow(this);\" /></TD>";
+		print "<TD style=\"display:none;\"><input name\"list[]\" id=\"$counter\" type=\"checkbox\" value=\"$counter\" onClick=\"toggle($counter);\" /></TD>";
 		print "<TD><B><A HREF=\"char.shtml?data=$row->{NAME}\" STYLE=\"text-decoration:none\" class='member_name'> $row->{NAME} </A></B></TD>";
 		classColor($row->{CLASS});
 		print "<TD class='rank'>$row->{RANK}</TD>";
@@ -339,7 +347,9 @@ DELIMETER
 		lootColor($row->{'60AS'});
 		lootColor($row->{'60OS'});
 		print "</TR>\n";
+		$counter = $counter+1;
 	}
+	print "</TBODY>";
 	print "</TABLE>";
 	#print "<script type=\"text/javascript\">";
 	#print "var t = new ScrollableTable(document.getElementById('mainTable'),100);";
@@ -348,6 +358,10 @@ DELIMETER
 	#print "var t = new SortableTable(document.getElementById('mainTable'),100);";
 	#print "</script>";
 	print "</fieldset>";
+	print "<input type=\"button\" name=\"Compare\" value=\"Compare Selected\" onClick=\"hideUnchecked();\">";
+	print "<input type=\"button\" name=\"Show_All\" value=\"Reset\" onClick=\"showAll();\">";
+	print "</form>";
+	#print "</fieldset>";
 	$statement->finish();
 $dbh->disconnect();
 #print "</pre>";
