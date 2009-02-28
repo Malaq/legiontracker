@@ -135,7 +135,17 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
         return;
     end
     
+    if (cmd.type == "AwardItem") then
+        Loot_OnEvent("AWARD", "CHAT_MSG_LOOT", cmd.message);
+        if (LT_OfficerLoot_AwardedItems[bid.player] == nil) then
+            LT_OfficerLoot_AwardedItems[bid.player] = {};
+        end
+        LT_OfficerLoot_AwardedItems[bid.player][iname] = 1;
+    end
+    
     if (cmd.type == "Start") then
+        LT_OfficerLoot_AwardedItems = {};
+        LT_OfficerLoot_ZoneData = {};
         self.whisper_id = cmd.whisper_id;
         self:StartNewItems(cmd.items, cmd.item_links);
         LT_OfficerLoot_ZoneData["ZONE"] = cmd.real_zone;
@@ -179,7 +189,6 @@ function LT_OfficerLoot:ForcePopup()
     self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
 end
 
-
 function LT_OfficerLoot:Remove(id)
     local real_id = id + self.cur_id - 1;
     local item = self.items[real_id];
@@ -220,12 +229,18 @@ function LT_OfficerLoot:Award(id)
     local bid = self:GetBestBid(id);
     local iname, link = GetItemInfo(bid.item);
     SendChatMessage("Grats to " .. bid.player .. " on " .. link .. " (" .. bid.spec .. " spec)", "RAID");
-    Loot_OnEvent("AWARD", "CHAT_MSG_LOOT", bid.player .. " receives loot: " .. link);
-    if (LT_OfficerLoot_AwardedItems[bid.player] == nil) then
-        LT_OfficerLoot_AwardedItems[bid.player] = {};
-    end
-    LT_OfficerLoot_AwardedItems[bid.player][iname] = 1;
+    --Loot_OnEvent("AWARD", "CHAT_MSG_LOOT", bid.player .. " receives loot: " .. link);
+    LT_OfficerLoot:AwardItem(bid.player .. " receives loot: " .. link);
+    --if (LT_OfficerLoot_AwardedItems[bid.player] == nil) then
+    --    LT_OfficerLoot_AwardedItems[bid.player] = {};
+    --end
+    --LT_OfficerLoot_AwardedItems[bid.player][iname] = 1;
     self:Remove(id);
+end
+
+function LT_OfficerLoot:AwardItem(msg)
+    local cmd = {type = "AwardItem", message = msg};
+    self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
 end
 
 function LT_OfficerLoot:OnReceiveVote(prefix, message, distr, sender)

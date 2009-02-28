@@ -462,8 +462,8 @@ function LT_ExportButton()
 end
 
 function LT_Main_StartLootWhispers()
-    LT_OfficerLoot_AwardedItems = {};
-    LT_OfficerLoot_ZoneData = {};
+    --LT_OfficerLoot_AwardedItems = {};
+    --LT_OfficerLoot_ZoneData = {};
     if (GetNumLootItems() == 0) then
         LT_Print("Error: must have the loot window open.");
         return;
