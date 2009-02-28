@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.55"
+﻿LT_VERSION = "Legion Tracker 0.60"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -462,6 +462,8 @@ function LT_ExportButton()
 end
 
 function LT_Main_StartLootWhispers()
+    LT_OfficerLoot_AwardedItems = {};
+    LT_OfficerLoot_ZoneData = {};
     if (GetNumLootItems() == 0) then
         LT_Print("Error: must have the loot window open.");
         return;

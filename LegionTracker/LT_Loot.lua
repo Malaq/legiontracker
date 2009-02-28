@@ -92,8 +92,22 @@ function Loot_OnEvent(this, event, arg1)
 		local name, link, rarity = GetItemInfo(string.sub(arg1, string.find(arg1, "|c.*|r")));
 		local _, color, itemString = strsplit("|", link);
 		local _, itemId = strsplit(":", itemString);
-
-
+        
+        LT_Print("Item Looted player/link: "..player.."|"..name);
+        LT_Print("Message recieved: " ..arg1);
+        -- If its a regular loot, see if its been awarded, if so, ignore the message
+        if (this ~= "AWARD") then
+            LT_Print("Not Awarded.");
+            -- Does the player exist in the awarded items table?
+            if (LT_OfficerLoot_AwardedItems[player] ~= nil) then
+                LT_Print("Player has received an item.");
+                if (LT_OfficerLoot_AwardedItems[player][name] ~= nil) then
+                    LT_Print("It was this item.");
+                    return
+                end
+            end
+        end
+        
 		if (LT_PlayerLootTable[player] == nil) then
 			LT_PlayerLootTable[player] = {};
 		end
@@ -107,8 +121,13 @@ function Loot_OnEvent(this, event, arg1)
 		LT_LootTable[lootId]["time"] = LT_GetGameTime();
 		LT_LootTable[lootId]["player"] = player;
 		LT_LootTable[lootId]["spec"] = "Unassigned";
-		LT_LootTable[lootId]["zone"] = GetRealZoneText();
-		LT_LootTable[lootId]["subzone"] = GetSubZoneText();
+        if (this == "AWARD") then
+            LT_LootTable[lootId]["zone"] = LT_OfficerLoot_ZoneData["ZONE"];
+		    LT_LootTable[lootId]["subzone"] = LT_OfficerLoot_ZoneData["SUBZONE"];
+        else
+    		LT_LootTable[lootId]["zone"] = GetRealZoneText();
+		    LT_LootTable[lootId]["subzone"] = GetSubZoneText();
+        end
         LT_LootTable[lootId]["lootId"] = lootId;
         
         if (LT_Loot_SavedSpecs[player] and LT_Loot_SavedSpecs[player][GetItemInfo(itemString)]) then

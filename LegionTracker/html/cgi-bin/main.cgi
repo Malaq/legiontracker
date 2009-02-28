@@ -357,11 +357,14 @@ DELIMETER
 	#print "<script type=\"text/javascript\">";
 	#print "var t = new SortableTable(document.getElementById('mainTable'),100);";
 	#print "</script>";
-	print "</fieldset>";
+	#print "</fieldset>";
+	print "<BR CLEAR=all>";
 	print "<input type=\"button\" name=\"Compare\" value=\"Compare Selected\" onClick=\"hideUnchecked();\">";
+	print "<BR>";
+	print "<input type=\"button\" name=\"Select_All\" value=\"Select All\" onClick=\"checkAll();\">";
 	print "<input type=\"button\" name=\"Show_All\" value=\"Reset\" onClick=\"showAll();\">";
 	print "</form>";
-	#print "</fieldset>";
+	print "</fieldset>";
 	$statement->finish();
 $dbh->disconnect();
 #print "</pre>";

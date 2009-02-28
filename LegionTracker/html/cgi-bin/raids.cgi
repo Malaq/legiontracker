@@ -8,9 +8,9 @@ use DBI;
 sub attendanceColor {
 	my $attendance = shift;
 	my $attendance_type = '';
-	if ($attendance > 25) {
+	if ($attendance > 27) {
 		$attendance_type = 'high_attendance';
-	} elsif ($attendance > 20) {
+	} elsif ($attendance > 22) {
 		$attendance_type = 'medium_attendance';
 	} else {
 		$attendance_type = 'low_attendance';
@@ -55,7 +55,7 @@ print "<font size=\"6\" face=\"Monotype Corsiva\"><B>$char_name</B></font>";
 
 # Raid table
 my $list_statement =
-	$dbh->prepare("SELECT rc.RAID_ID, rc.DATE, date_format(rc.DATE, '%W') DAYOFWEEK, rc.ATTENDANCE_COUNT, IFNULL(total_loot.numb,0) DROPS, " .
+	$dbh->prepare("SELECT rc.RAID_ID, rc.DATE, date_format(rc.DATE, '%a') DAYOFWEEK, rc.ATTENDANCE_COUNT, IFNULL(total_loot.numb,0) DROPS, " .
 			"concat(IFNULL(floor((de.numb*100)/total_loot.numb),0),'%') SATURATION " .
 			"FROM `RAID_CALENDAR` rc " .
 			"LEFT JOIN " .
@@ -82,16 +82,18 @@ print "<TABLE class=\"sortable normal\" ALIGN=LEFT>";
 print "<THEAD>\n";
 print "<TR>";
 print "<TH WIDTH=100><U><B>Raid Date</B></U></TH>";
-print "<TH WIDTH=100><U><B>Weekday</B></U></TH>";
+print "<TH WIDTH=75><U><B>Weekday</B></U></TH>";
 print "<TH WIDTH=100><U><B>Members Available</B></U></TH>";
 print "<TH WIDTH=100><U><B>Epics Dropped</B></U></TH>";
 print "<TH WIDTH=100><U><B>Loot Saturation</B></U></TH>";
+print "<TH><U><B>Zones Raided</B></U></TH>";
 print "</TR>\n";
 print "</THEAD>";
 while (my $row = $list_statement->fetchrow_hashref()) {
-	print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='raiddetail.shtml?data=$row->{RAID_ID}'\">";
+	my $raidid = $row->{RAID_ID};
+	print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='raiddetail.shtml?data=$raidid'\">";
 	print "<TD>";
-	print "<A HREF=\"raiddetail.shtml?data=$row->{RAID_ID}\">";
+	print "<A HREF=\"raiddetail.shtml?data=$raidid\">";
 	print "$row->{DATE}";
 	print "</A>";
 	print "</TD>";
@@ -103,6 +105,44 @@ while (my $row = $list_statement->fetchrow_hashref()) {
 	print "$row->{DROPS}";
 	print "</TD>";
 	saturationColor($row->{SATURATION});
+	print "<TD>";
+	#start
+	my $zone_statement =
+	$dbh->prepare("SELECT DISTINCT il.zone ZONE " .
+			"FROM ITEMS_LOOTED il " .
+			"WHERE il.raid_id = ? " .
+			"AND il.spec NOT IN ('Unassigned', 'DE''d');");
+	$zone_statement->bind_param(1, $raidid);
+	$zone_statement->execute() or die $dbh->errstr;
+	my $count = 0;
+	while (my $zonerow = $zone_statement->fetchrow_hashref()) {
+		if ( $count ne "0" ) {
+			print ", ";
+		}	
+		print "$zonerow->{ZONE}";
+		$count=$count+1;
+	}
+	$zone_statement->finish();
+
+	if ( $count eq "0" ) {
+	my $zone_statement =
+	$dbh->prepare("SELECT DISTINCT il.zone ZONE " .
+			"FROM ITEMS_LOOTED il " .
+			"WHERE il.raid_id = ? ;");
+	$zone_statement->bind_param(1, $raidid);
+	$zone_statement->execute() or die $dbh->errstr;
+	my $count = 0;
+	while (my $zonerow = $zone_statement->fetchrow_hashref()) {
+		if ( $count ne "0" ) {
+			print ", ";
+		}	
+		print "$zonerow->{ZONE}";
+		$count=$count+1;
+	}
+	$zone_statement->finish();
+	}
+	#finish
+	print "</TD>";
 	print "</TR>\n";
 	print "\n";
 }
