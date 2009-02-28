@@ -136,10 +136,11 @@ else
 	print "<legend>Attendance Details:</legend>";
 }
 print <<STRINGDELIM;
-	<table cellspacing="1" cellpadding="2" class="normal" id="attnDetail">
+	<table cellspacing="1" cellpadding="2" class="sortable normal" id="attnDetail">
 	<thead>
 	<tr>
 		<th>Date</th>
+		<TH>Weekday</TH>
 		<th>Attendance (10 min increments)</th>
 		<th>Percent</th>
 	</tr>
@@ -147,7 +148,7 @@ print <<STRINGDELIM;
 STRINGDELIM
 
 my $sql_text = <<STRINGDELIM;
-SELECT rc.RAID_ID, rc.DATE, ra.ATTENDANCE, concat(FLOOR(IFNULL(length(REPLACE(ra.ATTENDANCE, '0', ''))*100/length(ra.ATTENDANCE),'0')),'%') PERCENT
+SELECT rc.RAID_ID, rc.DATE, date_format(rc.DATE,'%a') WEEKDAY, ra.ATTENDANCE, concat(FLOOR(IFNULL(length(REPLACE(ra.ATTENDANCE, '0', ''))*100/length(ra.ATTENDANCE),'0')),'%') PERCENT
 from `CHARACTER` chr, RAID_ATTENDANCE ra, RAID_CALENDAR rc
 where ra.RAID_ID = rc.RAID_ID
 and chr.CHAR_ID = ra.CHAR_ID
@@ -179,7 +180,7 @@ while (my $row = $attn_statement->fetchrow_hashref()) {
 	$attn =~ s|~|<img src=\"images/redbox.JPG\">|g;
 	print <<STRINGDELIM;
 	        <TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='raiddetail.shtml?data=$row->{RAID_ID}'\">
-			<td><A HREF=\"raiddetail.shtml?data=$row->{RAID_ID}\" TITLE=\"RAID_ID=$row->{RAID_ID}\">$row->{DATE}</A></td><td>$attn</td><td>$row->{PERCENT}</td>
+			<td><A HREF=\"raiddetail.shtml?data=$row->{RAID_ID}\" TITLE=\"RAID_ID=$row->{RAID_ID}\">$row->{DATE}</A></td><TD>$row->{WEEKDAY}</TD><td>$attn</td><td>$row->{PERCENT}</td>
 		</tr>
 STRINGDELIM
 }

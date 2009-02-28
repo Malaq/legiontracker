@@ -1,4 +1,6 @@
 ﻿LT_OfficerLoot = LibStub("AceAddon-3.0"):NewAddon("LT_OfficerLoot", "AceComm-3.0", "AceSerializer-3.0");
+LT_OfficerLoot_AwardedItems = {};
+LT_OfficerLoot_ZoneData = {};
 
 -- TODO:
 -- - Handle dust?
@@ -136,6 +138,8 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
     if (cmd.type == "Start") then
         self.whisper_id = cmd.whisper_id;
         self:StartNewItems(cmd.items, cmd.item_links);
+        LT_OfficerLoot_ZoneData["ZONE"] = cmd.real_zone;
+        LT_OfficerLoot_ZoneData["SUBZONE"] = cmd.sub_zone;
     end
     
     if (self.whisper_id ~= cmd.whisper_id) then
@@ -166,7 +170,7 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
 end
 
 function LT_OfficerLoot:BroadcastNewItems(items, item_links)
-    local cmd = {["type"] = "Start", ["items"] = items, ["item_links"] = item_links, ["whisper_id"] = time()};
+    local cmd = {["type"] = "Start", ["items"] = items, ["item_links"] = item_links, ["whisper_id"] = time(), ["real_zone"] = GetRealZoneText(), ["sub_zone"] = GetSubZoneText()};
     self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
 end
 
@@ -214,8 +218,13 @@ end
 
 function LT_OfficerLoot:Award(id)
     local bid = self:GetBestBid(id);
-    local _, link = GetItemInfo(bid.item);
+    local iname, link = GetItemInfo(bid.item);
     SendChatMessage("Grats to " .. bid.player .. " on " .. link .. " (" .. bid.spec .. " spec)", "RAID");
+    Loot_OnEvent("AWARD", "CHAT_MSG_LOOT", bid.player .. " receives loot: " .. link);
+    if (LT_OfficerLoot_AwardedItems[bid.player] == nil) then
+        LT_OfficerLoot_AwardedItems[bid.player] = {};
+    end
+    LT_OfficerLoot_AwardedItems[bid.player][iname] = 1;
     self:Remove(id);
 end
 
