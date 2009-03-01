@@ -144,13 +144,13 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
     end
     
     if (cmd.type == "VersionCheck") then
-        LT_Print(cmd.player.. "is running version check...");
+        LT_Print(cmd.player.. " is running version check...", "yellow");
         local cmd = {type = "VersionResponse", version = LT_VERSION, player = UnitName("player")};
         self:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd));
     end
     
     if (cmd.type == "VersionResponse") then
-         LT_Print(cmd.player.. ": " ..cmd.version);
+         LT_Print(" "..cmd.player.. ": " ..cmd.version);
     end
     
     if (cmd.type == "Start") then
