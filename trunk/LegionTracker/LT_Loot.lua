@@ -93,16 +93,11 @@ function Loot_OnEvent(this, event, arg1)
 		local _, color, itemString = strsplit("|", link);
 		local _, itemId = strsplit(":", itemString);
         
-        LT_Print("Item Looted player/link: "..player.."|"..name);
-        LT_Print("Message recieved: " ..arg1);
         -- If its a regular loot, see if its been awarded, if so, ignore the message
         if (this ~= "AWARD") then
-            LT_Print("Not Awarded.");
             -- Does the player exist in the awarded items table?
             if (LT_OfficerLoot_AwardedItems[player] ~= nil) then
-                LT_Print("Player has received an item.");
                 if (LT_OfficerLoot_AwardedItems[player][name] ~= nil) then
-                    LT_Print("It was this item.");
                     return
                 end
             end

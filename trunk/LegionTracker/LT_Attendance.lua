@@ -1,4 +1,5 @@
 ﻿LT_AttendanceCheckList = {};
+LT_FirstTic = false;
 
 function LT_Attendance_SlashHandler(args)
     if (string.find(args, " ") == nil) then
@@ -39,6 +40,9 @@ function LT_AttendanceTic()
     LT_AttendanceCheckList = {};
     LT_Print("Attendance updated for " ..guildCount.. " players.");
     LT_Attendance_OnChange();
+    if (LT_FirstTic) then
+        LT_FirstTic = false;
+    end
 end
 
 function LT_ResetAttendance()
@@ -89,13 +93,21 @@ function LT_SingleMemberTic(memberIndex,ticfromalt)
         if (online == nil) then
             --DEFAULT_CHAT_FRAME:AddMessage("DEBUG1: " ..name.." is Offline.");
             if ( LT_AttendanceCheckList[name] == nil ) then
-                GuildRosterSetOfficerNote(memberIndex, onote.."0");
+                if (LT_FirstTic) then
+                    GuildRosterSetOfficerNote(memberIndex, "0");
+                else
+                    GuildRosterSetOfficerNote(memberIndex, onote.."0");
+                end
                 LT_AttendanceCheckList[name] = 1;
             end
         else
             --DEFAULT_CHAT_FRAME:AddMessage("DEBUG1: " ..name.." is Online ");
             if ( LT_AttendanceCheckList[name] == nil ) then
-                GuildRosterSetOfficerNote(memberIndex, onote.."1");
+                if (LT_FirstTic) then
+                    GuildRosterSetOfficerNote(memberIndex, "1");
+                else
+                    GuildRosterSetOfficerNote(memberIndex, onote.."1");
+                end
                 LT_AttendanceCheckList[name] = 1;
             end
         end
