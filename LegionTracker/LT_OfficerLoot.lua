@@ -143,6 +143,15 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
         LT_OfficerLoot_AwardedItems[cmd.pname][cmd.iname] = 1;
     end
     
+    if (cmd.type == "VersionCheck") then
+        local cmd = {type = "VersionResponse", version = LT_VERSION, player = UnitName("player")};
+        self:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd));
+    end
+    
+    if (cmd.type == "VersionResponse") then
+         LT_Print(cmd.player.. ": " ..cmd.version);
+    end
+    
     if (cmd.type == "Start") then
         LT_OfficerLoot_AwardedItems = {};
         LT_OfficerLoot_ZoneData = {};
@@ -192,8 +201,11 @@ end
 function LT_OfficerLoot:Remove(id)
     local real_id = id + self.cur_id - 1;
     local item = self.items[real_id];
+    local link = self.item_links[real_id];
     local cmd = {type = "Remove", name = item}; 
     self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
+    --insert it here
+    SendChatMessage("Dusting item: " ..link, "RAID");
 end
 
 function LT_OfficerLoot:Add(item)
@@ -229,12 +241,7 @@ function LT_OfficerLoot:Award(id)
     local bid = self:GetBestBid(id);
     local iname, link = GetItemInfo(bid.item);
     SendChatMessage("Grats to " .. bid.player .. " on " .. link .. " (" .. bid.spec .. " spec)", "RAID");
-    --Loot_OnEvent("AWARD", "CHAT_MSG_LOOT", bid.player .. " receives loot: " .. link);
     LT_OfficerLoot:AwardItem(bid.player .. " receives loot: " .. link, bid.player,iname);
-    --if (LT_OfficerLoot_AwardedItems[bid.player] == nil) then
-    --    LT_OfficerLoot_AwardedItems[bid.player] = {};
-    --end
-    --LT_OfficerLoot_AwardedItems[bid.player][iname] = 1;
     self:Remove(id);
 end
 

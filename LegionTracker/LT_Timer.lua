@@ -240,7 +240,8 @@ function LT_TimerToggle()
         button1 = "Yes",
         button2 = "No",
         OnAccept = function()
-            LT_ResetAttendance();
+            --LT_ResetAttendance();
+            LT_FirstTic = true;
             LT_PlayerLootTable = {};
             LT_LootTable = {};
             LT_RAID_NAME = date("%Y-%m-%d ", time());

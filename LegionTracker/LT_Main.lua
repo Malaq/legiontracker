@@ -14,6 +14,7 @@ function LT_OnLoad()
     this:RegisterEvent("GUILD_ROSTER_UPDATE");
     this:RegisterEvent("CHAT_MSG_SYSTEM");
     this:RegisterEvent("CHAT_MSG_WHISPER");
+    this:RegisterEvent("RAID_ROSTER_UPDATE");
     --this:RegisterForClicks("LeftButtonDown", "RightButtonDown");
     LT_LoadLabels();
     LT_Main_SetupTable();
@@ -58,6 +59,8 @@ function LT_SlashHandler(args)
             LT_Main_ViewVotes();
         elseif string.find(args, "^startloot") ~= nil then
             LT_Main_StartLootWhispers();
+        elseif string.find(args, "^version") ~= nil then
+            LT_Settings_VersionCheck();
         elseif string.find(args, "^add") ~= nil then
             LT_OfficerLoot:Add(string.sub(args, 4));
         elseif args == "olt1" then
@@ -422,7 +425,7 @@ end
 
 function LT_ResetLootButton()
     StaticPopupDialogs["Reset Warning"] = {
-    text = "You are about to reset all loot data, are you sure?  This process can not be reversed.",
+    text = "LegionTracker: You are about to reset all loot data, are you sure?  This process can not be reversed.",
     button1 = "Yes",
     button2 = "No",
     OnAccept = function()
@@ -454,6 +457,10 @@ function LT_Main_OnEvent(this, event, arg1, arg2)
         LT_UpdatePlayerList();
     elseif (event == "CHAT_MSG_WHISPER") then
         LT_OfficerLoot:OnEvent(event, arg1, arg2);
+    elseif (event == "CHAT_MSG_SYSTEM") then
+        if (arg1 == "You have joined a raid group.") then
+            LT_ResetLootButton();
+        end
     end
 end
 
