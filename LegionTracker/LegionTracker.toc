@@ -1,8 +1,8 @@
 ## Interface: 30000
 ## Title: LegionTracker
 ## Author: Malaaq, Happyduude
-## Version: 0.1
-## eMail: legiontracker@the-hermit.net
+## Version: 0.6
+## eMail: legiontracker@googlegroups.com
 ## URL: n/a
 ## DefaultState: Enabled
 ## LoadOnDemand: 0

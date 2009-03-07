@@ -117,7 +117,7 @@ function LT_OfficerLoot:OutgoingWhisperFilter(msg)
     end
 end
 
-function LT_OfficerLoot:SendOfficerMessage(prefix, msg)
+function LT_OfficerLoot:SendOfficerMessage(prefix, msg, channel)
     -- A hack to add whisper ids in...
     local _, cmd = self:Deserialize(msg);
     if (cmd.whisper_id == nil) then
@@ -125,7 +125,11 @@ function LT_OfficerLoot:SendOfficerMessage(prefix, msg)
     end
     msg = self:Serialize(cmd);
     
-    self:SendCommMessage(prefix, msg, self.msg_channel, self.msg_target);
+    if (channel == nil) then
+        self:SendCommMessage(prefix, msg, self.msg_channel, self.msg_target);
+    else
+        self:SendCommMessage(prefix, msg, channel, self.msg_target);
+    end
 end
 
 function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
@@ -145,12 +149,29 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
     
     if (cmd.type == "VersionCheck") then
         LT_Print(cmd.player.. " is running version check...", "yellow");
-        local cmd = {type = "VersionResponse", version = LT_VERSION, player = UnitName("player")};
-        self:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd));
+        local cmd = {type = "VersionResponse", version = LT_VERSION, player = UnitName("player"), target = cmd.player};
+        self:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd), "GUILD");
     end
     
     if (cmd.type == "VersionResponse") then
-         LT_Print(" "..cmd.player.. ": " ..cmd.version);
+        --LT_Print("Version Response: from: "..cmd.player.." version: "..cmd.version.." LT_VERSION: " ..LT_VERSION);
+        if (cmd.target ~= nil) then
+            --LT_Print("Version Response: target="..cmd.target.." from: "..cmd.player.." version: "..cmd.version.." LT_VERSION: " ..LT_VERSION);
+            if (cmd.target == UnitName("player")) then
+                if (cmd.version == LT_VERSION) then
+                    LT_Print(" "..cmd.player.. ": " ..cmd.version, "green");
+                else
+                    LT_Print(" "..cmd.player.. ": " ..cmd.version, "red");
+                end
+            end
+        else
+            --LT_Print(" * If you get this message, tell "..cmd.player.. " to upgrade from: " ..cmd.version);
+            if (cmd.version == LT_VERSION) then
+                LT_Print(" "..cmd.player.. ": " ..cmd.version, "green");
+            else
+                LT_Print(" "..cmd.player.. ": " ..cmd.version, "red");
+            end
+        end
     end
     
     if (cmd.type == "Start") then
@@ -199,14 +220,16 @@ function LT_OfficerLoot:ForcePopup()
     self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
 end
 
-function LT_OfficerLoot:Remove(id)
+function LT_OfficerLoot:Remove(id, dust)
     local real_id = id + self.cur_id - 1;
     local item = self.items[real_id];
     local link = self.item_links[real_id];
     local cmd = {type = "Remove", name = item}; 
     self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
-    --insert it here
-    SendChatMessage("Dusting item: " ..link, "RAID");
+    
+    if (dust) then
+        SendChatMessage("Dusting item: " ..link, "RAID");
+    end
 end
 
 function LT_OfficerLoot:Add(item)

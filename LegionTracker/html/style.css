@@ -48,8 +48,8 @@ a {
 #main_frame {
 	/*position: relative;*/
 	float: left;
-	/*display: inline;*/
-	left: 180px;
+	/*display: inline;
+	left: 180px;*/
 	top: 55px;
 	z-index: 9999;
 }
@@ -61,7 +61,8 @@ legend {
 }
 
 /* Highlighting for the sortable table */
-.highlight { background-color: #222245 }
+/*.highlight { background-color: #222245 }*/
+.highlight { background-color: #333366 }
 .normal {
 	background-color:#0A0A0A;
 	cursor:pointer;
@@ -77,7 +78,8 @@ legend {
 .no_loot { color:red; }
 
 /* Other columns */
-.member_name { color: #557FAA; }
+/*.member_name { color: #557FAA; }*/
+.member_name { color: #3399CC; }
 .rank { color: #EFFFEF; }
 
 /* Alert */
@@ -96,6 +98,7 @@ legend {
 	left: 10;
 	top: 55px;
 	z-index: 9999;
+	width: 180px;
 }
 
 /* Links */
@@ -123,7 +126,6 @@ legend {
  *        Raid Details         *
  *******************************/
 #rdraidsummary {
-	/*position: absolute;*/
 	float: left;
 	left: 10px;
 	top: 0;
@@ -131,7 +133,6 @@ legend {
 }
 
 #rdepicsdropped {
-	/*position: absolute;*/
 	float: left;
 	left: 240px;
 	top: 0;
@@ -141,10 +142,10 @@ legend {
 #rddetails {
 	/*position: absolute;*/
 	clear: left;
+	/*float: left;*/
 	left: 10px;
 	top: 120px;
 	z-index: 9999;
-	/*width: 800px;*/
 }
 /*display:inline
 /*

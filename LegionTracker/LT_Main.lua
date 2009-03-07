@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.60"
+﻿LT_VERSION = "Legion Tracker 0.61"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -95,7 +95,17 @@ function LT_Print(message, msg_format)
     if (msg_format == nil) then
         DEFAULT_CHAT_FRAME:AddMessage(message);
     else
-        DEFAULT_CHAT_FRAME:AddMessage(format(message), 1, 1, 0);
+        if (msg_format == "yellow") then
+            DEFAULT_CHAT_FRAME:AddMessage(format(message), 1, 1, 0);
+        elseif (msg_format == "red") then
+            DEFAULT_CHAT_FRAME:AddMessage(format(message), 1, 0, 0);
+        elseif (msg_format == "blue") then
+            DEFAULT_CHAT_FRAME:AddMessage(format(message), 0, 0, 1);
+        elseif (msg_format == "green") then
+            DEFAULT_CHAT_FRAME:AddMessage(format(message), 0, 1, 0);
+        else
+            DEFAULT_CHAT_FRAME:AddMessage(format(message), 1, 1, 0);
+        end
     end
 end
 
