@@ -87,7 +87,8 @@ my $raid_query =
 			"FROM RAID_ATTENDANCE ra, `CHARACTER` chr " .
 			"where ra.raid_id = ? " .
 			"and ra.CHAR_ID = chr.CHAR_ID " .
-			"and chr.rank not in ('Friend','Alt','Officer Alt') " .
+			#"and chr.rank not in ('Friend','Alt','Officer Alt') " .
+			"AND INSTR(ra.ATTENDANCE, '1') > 0 " .
 			"GROUP BY raid_id " .
 			") DURATION " .
 			"ON ALL_LOOT.raid_id = rc.raid_id " .
@@ -138,11 +139,15 @@ my $attendance_stmt =
 			"concat( floor( length(replace(ATTENDANCE,'0',''))*100 / length(ATTENDANCE)) ,'%') PERCENT " .
 			"FROM `CHARACTER` chr, `RAID_ATTENDANCE` ra " .
 			"WHERE ra.CHAR_ID = chr.CHAR_ID " .
-			"AND ra.RAID_ID = ?" .
-			"AND INSTR(ra.ATTENDANCE, '1') > 0 " .
+			"AND ra.RAID_ID = ? " .
+			"and chr.rank not in ('Alt','Officer Alt') " .
+			"AND ra.CHAR_ID in (select ra1.CHAR_ID from RAID_ATTENDANCE ra1 where ra1.RAID_ID = ? AND INSTR(ra1.ATTENDANCE, '1') > 0 " .
+			"UNION select ra2.CHAR_ID from RAID_ATTENDANCE ra2 where ra2.RAID_ID = ? AND INSTR(ra2.ATTENDANCE, '0') > 0) " .
 			"ORDER BY chr.NAME;");
 
 $attendance_stmt->bind_param(1, $raid_id);
+$attendance_stmt->bind_param(2, $raid_id);
+$attendance_stmt->bind_param(3, $raid_id);
 $attendance_stmt->execute() or die $dbh->errstr;
 print "<script src=\"sorttable.js\"></script>\n";
 print "<TABLE class=\"sortable normal\" ALIGN=LEFT>";

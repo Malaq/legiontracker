@@ -245,7 +245,7 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_OfficerLoot:Remove(1);
+          <OnClick>LT_OfficerLoot:Remove(1,true);
 </OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
@@ -672,7 +672,7 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_OfficerLoot:Remove(2);
+          <OnClick>LT_OfficerLoot:Remove(2,true);
 </OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
@@ -762,7 +762,7 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_OfficerLoot:Remove(3);
+          <OnClick>LT_OfficerLoot:Remove(3,true);
 </OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">

@@ -47,11 +47,26 @@ my $summary_statement =
 $summary_statement->bind_param(1, '%'.$item_name.'%');
 $summary_statement->execute() or die $dbh->errstr;
 my $row = $summary_statement->fetchrow_hashref();
+
 if ( $row->{ITEM_ID} ne "" ) {
 	print "<B>Name:</B><a href=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\" TARGET=\"_blank\">$row->{ITEM_NAME}</a><BR>";
 	print "<B>First Time Looted:</B> $row->{TIMESTAMP} <BR>";
 	print "<B>Who First Looted:</B> $row->{NAME} <BR>";
-	print "<B>Percent Dusted:</B> n/a <BR>";
+		my $sql2_text = 
+		my $dust_statement =
+			$dbh->prepare("SELECT total_looted.ITEM_ID, FLOOR((IFNULL(total_dusted.all_dusted,0)*100)/IFNULL(total_looted.all_looted,0)) percent_dust " .
+					"FROM ITEM it " .
+					"LEFT JOIN " .
+					"(select ITEM_ID, count(*) all_looted from ITEMS_LOOTED where ITEM_ID = $row->{ITEM_ID} group by ITEM_ID) total_looted " .
+					"ON total_looted.ITEM_ID = it.ITEM_ID " .
+					"LEFT JOIN " .
+					"(select ITEM_ID, count(*) all_dusted from ITEMS_LOOTED where ITEM_ID = $row->{ITEM_ID} AND SPEC = 'DE\\'d' group by ITEM_ID) total_dusted " .
+					"ON total_dusted.ITEM_ID = it.ITEM_ID " .
+					"WHERE it.ITEM_ID = $row->{ITEM_ID};");
+		$dust_statement->execute() or die $dbh->errstr;
+		my $row2 = $dust_statement->fetchrow_hashref();
+	print "<B>Percent Dusted:</B> $row2->{percent_dust}% <BR>";
+		$dust_statement->finish();
 } else {
 	print "<B>Item $item_name is not found.</B>";
 }
