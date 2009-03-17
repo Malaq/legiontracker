@@ -479,6 +479,14 @@ function LT_OfficerLoot:OnEvent(event, arg1, arg2)
             SendChatMessage(item.." isn't an item being bid on...", "WHISPER", nil, player);
             return;
         end
+
+		-- This is a bit of a hack to get back the ability to put in nothing as a replacement item.
+		-- It's somewhat ugly because you could end up eating the first comma in their comment.
+		if (replacing == "main" or replacing == "alt" or replacing == "off") then
+			comments = spec .. " " .. comments;
+			spec = replacing;
+			replacing = "";
+		end
         
         if (spec ~= "main" and spec ~= "alt" and spec ~= "off") then
             SendChatMessage("Please specify a spec of 'Main', 'Alt', or 'Off' (instead of '" .. spec .."')", "WHISPER", nil, player);
