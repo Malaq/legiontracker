@@ -1,4 +1,4 @@
-ScrollingTable = LibStub("AceAddon-3.0"):NewAddon("st", "AceConsole-3.0");
+﻿ScrollingTable = LibStub("AceAddon-3.0"):NewAddon("st", "AceConsole-3.0");
 
 function ScrollingTable:OnInitialize()
     self:RegisterChatCommand("st", "ChatCommand");
@@ -558,6 +558,162 @@ do
 		scrolltroughborder.background = scrolltrough:CreateTexture(nil, "BACKGROUND");
 		scrolltroughborder.background:SetAllPoints(scrolltroughborder);
 		scrolltroughborder.background:SetTexture(0.5, 0.5, 0.5, 1.0);
+		
+		st.Refresh = function(self)	
+			FauxScrollFrame_Update(scrollframe, #st.filtered, st.displayRows, st.rowHeight);
+			local o = FauxScrollFrame_GetOffset(scrollframe);
+			st.offset = o;
+			
+			for i = 1, st.displayRows do
+				local row = i + o;	
+				if st.rows then
+					for col = 1, #st.cols do
+						local rowFrame = st.rows[i];
+						local cellFrame = rowFrame.cols[col];
+						local fShow = true;
+						local fnDoCellUpdate = DoCellUpdate;
+						if st.data[st.filtered[row]] then
+							st.rows[i]:Show();
+							local rowData = st.data[st.filtered[row]];
+							local cellData = rowData.cols[col];
+							if cellData.DoCellUpdate then 
+								fnDoCellUpdate = cellData.DoCellUpdate;
+							elseif st.cols[col].DoCellUpdate then 
+								fnDoCellUpdate = st.cols[col].DoCellUpdate;
+							elseif rowData.DoCellUpdate then
+								fnDoCellUpdate = rowData.DoCellUpdate;
+							end
+						else
+							st.rows[i]:Hide();
+							fShow = false;
+						end
+						fnDoCellUpdate(rowFrame, cellFrame, st.data, st.cols, row, st.filtered[row], col, fShow);
+					end
+				end
+			end
+		end
+		
+		scrollframe:SetScript("OnVerticalScroll", function(self, offset)
+			FauxScrollFrame_OnVerticalScroll(self, offset, st.rowHeight, st.Refresh);
+		end);
+	
+		st:SetFilter(Filter);
+		st:SetDisplayCols(st.cols);
+		st:SetDisplayRows(st.displayRows, st.rowHeight);
+		st:RegisterEvents(st.DefaultEvents);
+		
+		return st;
+	end
+    
+    --Test
+	function ScrollingTable:CreateST1(cols, numRows, rowHeight, highlight, parent)
+		local st = {};
+		local f = CreateFrame("Frame", "ScrollTable"..framecount, parent or UIParent);
+		framecount = framecount + 1;
+		st.showing = true;
+		st.frame = f;
+		
+		st.Show = Show;
+		st.Hide = Hide;
+		st.SetDisplayRows = SetDisplayRows;
+		st.SetRowHeight = SetRowHeight;
+		st.SetHeight = SetHeight;
+		st.SetWidth = SetWidth;
+		st.SetDisplayCols = SetDisplayCols;
+		st.SetData = SetData;
+		st.SortData = SortData;
+		st.CompareSort = CompareSort;
+		st.RegisterEvents = RegisterEvents;
+		st.FireUserEvent = FireUserEvent;
+		
+		st.SetFilter = SetFilter;
+		st.DoFilter = DoFilter;
+		
+		st.highlight = highlight or defaulthighlight;
+		st.displayRows = numRows or 12;
+		st.rowHeight = rowHeight or 15;
+		st.cols = cols or {
+			{
+				["name"] = "Test 1",
+			 	["width"] = 50,
+			 	["color"] = { ["r"] = 0.5, ["g"] = 0.5, ["b"] = 1.0, ["a"] = 1.0 },
+			}, -- [1]
+			{ 
+				["name"] = "Test 2", 
+				["width"] = 50, 
+				["align"] = "CENTER",
+				["bgcolor"] = { ["r"] = 1.0, ["g"] = 0.0, ["b"] = 0.0, ["a"] = 0.2 },
+			}, -- [2]
+			{ 
+				["name"] = "Test 3", 
+				["width"] = 50, 
+				["align"] = "RIGHT",
+				["bgcolor"] = { ["r"] = 0.0, ["g"] = 0.0, ["b"] = 0.0, ["a"] = 0.5 },
+			}, -- [3]
+		};
+		st.DefaultEvents = {
+			["OnEnter"] = function (rowFrame, cellFrame, data, cols, row, realrow, column, ...)
+				if row and realrow then 
+					SetHighLightColor(rowFrame, st.highlight);
+				end
+				return true;
+			end, 
+			["OnLeave"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, ...)
+				if row and realrow then 
+					SetHighLightColor(rowFrame, defaulthighlightblank);
+				end
+				return true;
+			end,
+			["OnClick"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, ...)
+				if not (row or realrow) then
+					for i, col in ipairs(st.cols) do 
+						if i ~= column then -- clear out all other sort marks
+							cols[i].sort = nil;
+						end
+					end
+					local sortorder = "asc";
+					if not cols[column].sort and cols[column].defaultsort then
+						sortorder = cols[column].defaultsort; -- sort by columns default sort first;
+					elseif cols[column].sort and cols[column].sort:lower() == "asc" then 
+						sortorder = "dsc";
+					end
+					cols[column].sort = sortorder;
+					st:SortData();
+				end
+				return true;
+			end,
+		};
+		st.data = {};
+	
+		f:SetBackdrop(ScrollPaneBackdrop);
+		f:SetBackdropColor(0.1,0.1,0.1);
+		f:SetPoint("CENTER",UIParent,"CENTER",0,0);
+		
+		-- build scroll frame		
+		local scrollframe = CreateFrame("ScrollFrame", f:GetName().."ScrollFrame", f, "FauxScrollFrameTemplate");
+		st.scrollframe = scrollframe;
+		scrollframe:Show();
+		scrollframe:SetScript("OnHide", function(self, ...)
+			self:Show();
+		end);
+		
+		--scrollframe:SetPoint("TOPLEFT", f, "TOPLEFT", 0, -4);
+		--scrollframe:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -26, 3);
+		
+		--local scrolltrough = CreateFrame("Frame", f:GetName().."ScrollTrough", scrollframe);
+		--scrolltrough:SetWidth(17);
+		--scrolltrough:SetPoint("TOPRIGHT", f, "TOPRIGHT", -4, -3);
+		--scrolltrough:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -4, 4);
+		--scrolltrough.background = scrolltrough:CreateTexture(nil, "BACKGROUND");
+		--scrolltrough.background:SetAllPoints(scrolltrough);
+		--scrolltrough.background:SetTexture(0.05, 0.05, 0.05, 1.0);
+		--local scrolltroughborder = CreateFrame("Frame", f:GetName().."ScrollTroughBorder", scrollframe);
+		--scrolltroughborder:SetWidth(1);
+		--scrolltroughborder:SetPoint("TOPRIGHT", scrolltrough, "TOPLEFT");
+		--scrolltroughborder:SetPoint("BOTTOMRIGHT", scrolltrough, "BOTTOMLEFT");
+		--scrolltroughborder.background = scrolltrough:CreateTexture(nil, "BACKGROUND");
+		--scrolltroughborder.background:SetAllPoints(scrolltroughborder);
+		--scrolltroughborder.background:SetTexture(0.5, 0.5, 0.5, 1.0);
 		
 		st.Refresh = function(self)	
 			FauxScrollFrame_Update(scrollframe, #st.filtered, st.displayRows, st.rowHeight);
