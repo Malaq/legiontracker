@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.61"
+﻿LT_VERSION = "Legion Tracker 0.62"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -36,13 +36,13 @@ function LT_SlashHandler(args)
     if args == '' then
 		LT_Print("Legion Tracker", "yellow");
 		LT_Print("-------------------------------------", "yellow");
-		LT_Print("show - Displays the main window.", "yellow");
-		LT_Print("hide - Hides the main window.", "yellow");
-		LT_Print("loot - Loot commands.");
-        LT_Print("timer - Timer commands.", "yellow");
-        LT_Print("attendance - Attendance Commands.", "yellow");
-        LT_Print("vote - Show vote window.", "yellow");
-        LT_Print("startloot - Starts loot whispers.", "yellow");
+		LT_Print("attendance - Display attendance commands.", "yellow");
+        LT_Print("hide       - Hides the main window.", "yellow");
+        LT_Print("loot       - Display loot commands.", "yellow");
+        LT_Print("show       - Displays the main window.", "yellow");
+        LT_Print("startloot  - Starts accepting loot whispers.", "yellow");
+        LT_Print("timer      - Display timer commands.", "yellow");
+        LT_Print("vote       - Show vote window.", "yellow");
 	else
 		if args == "show" then
 		    LT_Main:Show();
@@ -115,7 +115,8 @@ function LT_Main_SetupTable()
     --New totals table
     local total_row = {};
 	local w = LT_SummaryPanel:GetWidth();
-	table.insert(cols, {name="Name", width=w*0.25, align="LEFT", sort="asc"});
+	--table.insert(cols, {name="Name", width=w*0.25, align="LEFT", sort="asc"});
+    table.insert(cols, {name="Name", width=w*0.25, align="LEFT", sort="desc"});
 	table.insert(cols, {name="Class", width=w*0.15, align="LEFT", sortnext=1});
 	table.insert(cols, {name="Attendance", width=w*0.15, align="LEFT", sortnext=1, comparesort=function(a, b, col)
 		local a1 = LT_GetAttendance(a);
@@ -167,7 +168,7 @@ function LT_Main_SetupTable()
 	st:Refresh();
     
     --Added for totals table.
-    local st1 = ScrollingTable:CreateST(total_row, 1, 15, {r=0.3, g=0.3, b=0.4}, LT_TotalPanel);
+    local st1 = ScrollingTable:CreateST1(total_row, 1, 15, {r=0.3, g=0.3, b=0.4}, LT_TotalPanel);
     st1.frame:ClearAllPoints();
 	st1.frame:SetAllPoints(LT_TotalPanel);
 	LT_Main_ST1 = st1;

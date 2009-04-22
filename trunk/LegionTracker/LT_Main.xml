@@ -67,7 +67,7 @@
       <Frame name="LT_TotalPanel">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508888-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
-          <AbsDimension x="578" y="25" />
+          <AbsDimension x="549" y="25" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
@@ -170,7 +170,7 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="330" y="-378" />
+              <AbsDimension x="330" y="-377" />
             </Offset>
           </Anchor>
         </Anchors>
