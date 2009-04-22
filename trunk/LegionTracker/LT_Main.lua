@@ -42,6 +42,7 @@ function LT_SlashHandler(args)
         LT_Print("show - Displays the main window.", "yellow");
         LT_Print("startloot - Starts accepting loot whispers.", "yellow");
         LT_Print("timer - Display timer commands.", "yellow");
+        LT_Print("version - Broadcasts a LT version check.", "yellow");
         LT_Print("vote - Show vote window.", "yellow");
 	else
 		if args == "show" then
