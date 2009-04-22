@@ -1,7 +1,7 @@
 /* Some default table properties */
 table {
 	text-align: left;
-	font-size: 12px;
+	font-size: 11px;
 	font-family: verdana;
 	border-collapse: collapse;
 }
