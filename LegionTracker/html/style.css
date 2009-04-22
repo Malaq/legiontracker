@@ -42,6 +42,10 @@ a {
 	color: #557FAA;
 }
 
+img {
+	border-style: none;
+}
+
 /*******************************
  *         Main 'frame'        *
  *******************************/
@@ -120,6 +124,10 @@ legend {
 	font-weight: bold;
 	color: #545494;
 	font-size: 24px;
+}
+
+#topbar img {
+	margin-left: 180px;
 }
 
 /*******************************
