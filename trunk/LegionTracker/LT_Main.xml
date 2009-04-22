@@ -3,7 +3,7 @@
   <Frame name="LT_Main" movable="true" enableMouse="true">
     <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508883-59c2-4f83-ae10-27aaad48391b" />-->
     <Size>
-      <AbsDimension x="613" y="389" />
+      <AbsDimension x="613" y="414" />
     </Size>
     <Anchors>
       <Anchor point="CENTER" relativeTo="UIParent">
@@ -64,6 +64,30 @@
       </Layer>
     </Layers>
     <Frames>
+      <Frame name="LT_TotalPanel">
+        <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508888-59c2-4f83-ae10-27aaad48391b" />-->
+        <Size>
+          <AbsDimension x="578" y="25" />
+        </Size>
+        <Anchors>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="20" y="-347" />
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+          <BackgroundInsets>
+            <AbsInset left="5" right="5" top="5" bottom="5" />
+          </BackgroundInsets>
+          <TileSize>
+            <AbsValue val="16" />
+          </TileSize>
+          <EdgeSize>
+            <AbsValue val="16" />
+          </EdgeSize>
+        </Backdrop>
+      </Frame>
       <Button name="$parentButton3" text="View Votes">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508884-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
@@ -72,7 +96,7 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="167" y="-347" />
+              <AbsDimension x="167" y="-378" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -93,13 +117,6 @@
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
         </HighlightTexture>
         <ButtonText name="$parentText">
-          <Anchors>
-            <Anchor point="CENTER">
-              <Offset>
-                <AbsDimension x="0" y="1" />
-              </Offset>
-            </Anchor>
-          </Anchors>
           <FontHeight>
             <AbsValue val="10" />
           </FontHeight>
@@ -116,7 +133,7 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="20" y="-347" />
+              <AbsDimension x="20" y="-378" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -137,13 +154,6 @@
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
         </HighlightTexture>
         <ButtonText name="$parentText">
-          <Anchors>
-            <Anchor point="CENTER">
-              <Offset>
-                <AbsDimension x="0" y="1" />
-              </Offset>
-            </Anchor>
-          </Anchors>
           <FontHeight>
             <AbsValue val="10" />
           </FontHeight>
@@ -160,7 +170,7 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="330" y="-345" />
+              <AbsDimension x="330" y="-378" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -173,7 +183,7 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="498" y="-347" />
+              <AbsDimension x="498" y="-377" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -194,13 +204,6 @@
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
         </HighlightTexture>
         <ButtonText name="$parentText">
-          <Anchors>
-            <Anchor point="CENTER">
-              <Offset>
-                <AbsDimension x="0" y="1" />
-              </Offset>
-            </Anchor>
-          </Anchors>
           <FontHeight>
             <AbsValue val="10" />
           </FontHeight>
@@ -251,13 +254,6 @@
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
         </HighlightTexture>
         <ButtonText name="$parentText">
-          <Anchors>
-            <Anchor point="CENTER">
-              <Offset>
-                <AbsDimension x="0" y="1" />
-              </Offset>
-            </Anchor>
-          </Anchors>
           <FontHeight>
             <AbsValue val="10" />
           </FontHeight>
@@ -328,13 +324,6 @@
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
         </HighlightTexture>
         <ButtonText name="$parentText">
-          <Anchors>
-            <Anchor point="CENTER">
-              <Offset>
-                <AbsDimension x="0" y="1" />
-              </Offset>
-            </Anchor>
-          </Anchors>
           <FontHeight>
             <AbsValue val="10" />
           </FontHeight>
@@ -372,13 +361,6 @@
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
         </HighlightTexture>
         <ButtonText name="$parentText">
-          <Anchors>
-            <Anchor point="CENTER">
-              <Offset>
-                <AbsDimension x="0" y="1" />
-              </Offset>
-            </Anchor>
-          </Anchors>
           <FontHeight>
             <AbsValue val="10" />
           </FontHeight>
@@ -453,13 +435,6 @@
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
         </HighlightTexture>
         <ButtonText name="$parentText">
-          <Anchors>
-            <Anchor point="CENTER">
-              <Offset>
-                <AbsDimension x="0" y="1" />
-              </Offset>
-            </Anchor>
-          </Anchors>
           <FontHeight>
             <AbsValue val="10" />
           </FontHeight>

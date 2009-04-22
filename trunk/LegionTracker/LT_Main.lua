@@ -5,6 +5,7 @@ LT_Main_SortIndex = 1;
 LT_PlayerList = nil;
 LT_NameLookup = {};
 LT_Main_ST = nil;
+LT_Main_ST1 = nil;
 
 function LT_OnLoad()
 	LT_Main:SetParent(UIParent);
@@ -111,6 +112,8 @@ end
 
 function LT_Main_SetupTable()
 	local cols = {};
+    --New totals table
+    local total_row = {};
 	local w = LT_SummaryPanel:GetWidth();
 	table.insert(cols, {name="Name", width=w*0.25, align="LEFT", sort="asc"});
 	table.insert(cols, {name="Class", width=w*0.15, align="LEFT", sortnext=1});
@@ -142,16 +145,49 @@ function LT_Main_SetupTable()
 	table.insert(cols, {name="Off", width=w*0.06, align="CENTER", sortnext=1});
 	table.insert(cols, {name="DE'd", width=w*0.06, align="CENTER", sortnext=1});
 	table.insert(cols, {name="Unassigned", width=w*0.14, align="CENTER", sortnext=1});
+    
+    --new columns
+    table.insert(total_row, {name="", width=w*0.25, align="LEFT", ""});
+	table.insert(total_row, {name="", width=w*0.15, align="LEFT", ""});
+	table.insert(total_row, {name="", width=w*0.15, align="LEFT", ""});
+	table.insert(total_row, {name="", width=w*0.06, align="CENTER", ""});
+	table.insert(total_row, {name="", width=w*0.06, align="CENTER", ""});
+	table.insert(total_row, {name="", width=w*0.06, align="CENTER", ""});
+	table.insert(total_row, {name="", width=w*0.06, align="CENTER", ""});
+	table.insert(total_row, {name="", width=w*0.14, align="CENTER", ""});
+    --end new columns
 
-	local num_rows = math.floor(LT_SummaryPanel:GetHeight() / 15) - 1;
+	--local num_rows = math.floor(LT_SummaryPanel:GetHeight() / 15) - 1;
+    local num_rows = math.floor(LT_SummaryPanel:GetHeight() / 15);
     local st = ScrollingTable:CreateST(cols, num_rows, 15, {r=0.3, g=0.3, b=0.4}, LT_SummaryPanel);
 	st.frame:ClearAllPoints();
 	st.frame:SetAllPoints(LT_SummaryPanel);
 	LT_Main_ST = st;
 	st:SetData({});
 	st:Refresh();
+    
+    --Added for totals table.
+    local st1 = ScrollingTable:CreateST(total_row, 1, 15, {r=0.3, g=0.3, b=0.4}, LT_TotalPanel);
+    st1.frame:ClearAllPoints();
+	st1.frame:SetAllPoints(LT_TotalPanel);
+	LT_Main_ST1 = st1;
+	st1:SetData({});
+	st1:Refresh();
 
 	st:RegisterEvents({
+		OnClick = function(row_frame, cell_frame, data, cols, row, realrow, column)
+			if (realrow) then
+                if (data[realrow].is_total ~= true) then
+				    LT_Char_ShowPlayer(GetGuildRosterInfo(realrow));
+                else
+                    LT_AllLoot:ToggleShow();
+                end
+			end
+		end
+	});
+    
+    --Totals Event
+    st1:RegisterEvents({
 		OnClick = function(row_frame, cell_frame, data, cols, row, realrow, column)
 			if (realrow) then
                 if (data[realrow].is_total ~= true) then
@@ -356,6 +392,7 @@ end
 function LT_RedrawPlayerList()
 	if (LT_Main:IsShown()) then
 	    LT_Main_ST:Refresh();
+        LT_Main_ST1:Refresh();
     end
 end
 
@@ -389,6 +426,8 @@ function LT_UpdatePlayerList()
     
     if (LT_Main:IsShown() and non_nil == true) then
         local st = LT_Main_ST;
+        local st1 = LT_Main_ST1;
+        local totals = {};
         local data = {};
     
         local num_members = GetNumGuildMembers(false);
@@ -396,10 +435,14 @@ function LT_UpdatePlayerList()
             table.insert(data, LT_Main_CreateRow(i));
         end
 
-		table.insert(data, LT_Main_CreateTotalRow());
+		--table.insert(data, LT_Main_CreateTotalRow());
+        --Added for totals
+        table.insert(totals, LT_Main_CreateTotalRow());
     
         st:SetData(data);
         st:Refresh();
+        st1:SetData(totals);
+        st1:Refresh();
     end
 end
 
