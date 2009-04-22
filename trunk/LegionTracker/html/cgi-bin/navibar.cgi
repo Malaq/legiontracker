@@ -23,12 +23,12 @@ print "</A><br>";
 
 print "<form method=\"GET\" action=\"char.shtml\">\n";
 print "<font color=#FFFFFF>Enter a character name:</font><br>";
-print "<input type=\"text\" name=\"data\"><br>";
+print "<input type=\"text\" name=\"data\" size=\"15\"><br>";
 #print "<input type=\"submit\" value=\"Search\" />\n<br>";
 print "</form>\n";
 print "<form method=\"GET\" action=\"item.shtml\">\n";
 print "<font color=#FFFFFF>Enter an item name:</font><br>";
-print "<input type=\"text\" name=\"data\"><br>";
+print "<input type=\"text\" name=\"data\" size=\"15\"><br>";
 #print "<input type=\"submit\" value=\"Search\" />\n<br>";
 print "</form>\n";
 print "<br>";

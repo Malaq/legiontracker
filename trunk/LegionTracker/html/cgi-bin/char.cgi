@@ -5,15 +5,6 @@ use CGI qw(:standard);
 use CGI::Carp qw(warningsToBrowser fatalsToBrowser);
 use DBI;
 
-sub URLEncode {
-my $theURL = $_[0];
-$theURL =~ s/([\W])/"%" . uc(sprintf("%2.2x",ord($1)))/eg;
-return $theURL;
-}
-
-# Tells the browser that we're outputting HTML
-print "Content-type: text/html\n\n";
-
 # Setup our DB connection
 my $database = 'legiontracker_tg';
 my $username = 'legiontracker_tg';
@@ -21,6 +12,165 @@ my $password = 'legio3';
 my $hostname = 'fdb1.awardspace.com';
 my $dbport = '3306';
 my $mainchar = '';
+
+sub URLEncode {
+my $theURL = $_[0];
+$theURL =~ s/([\W])/"%" . uc(sprintf("%2.2x",ord($1)))/eg;
+return $theURL;
+}
+
+# Database handle
+my $dbh2 = DBI->connect("dbi:mysql:database=$database;host=$hostname;port=$dbport", $username, $password) or print $DBI::errstr;
+
+sub dayRange {
+	#Code added to display date range
+	my $tempdate = shift;
+	
+	my $sql_datediff = 
+		$dbh2->prepare("SELECT DATEDIFF(LOCALTIME(), DATE( ? ) ) RANGE;");
+	$sql_datediff->bind_param(1, $tempdate);
+	$sql_datediff->execute() or die $dbh2->errstr;
+
+	my $row2 = $sql_datediff->fetchrow_hashref();
+	if ( $row2->{RANGE} <= "7" )
+	{
+		#$range = "7";
+		$sql_datediff->finish();
+		return "7";
+	}
+	elsif ( $row2->{RANGE} <= "30" )
+	{
+		#$range = "30";
+		$sql_datediff->finish();
+		return "30";
+	}
+	elsif ( $row2->{RANGE} <= "60" )
+	{
+		#$range = "60";
+		$sql_datediff->finish();
+		return "60";
+	}
+	else
+	{
+		#$range = "61+";
+		$sql_datediff->finish();
+		return "61+";
+	}
+	$sql_datediff->finish();
+	return "";
+}
+
+sub sumTable {
+	my $temprange = shift;
+	my $temp_char = shift;
+
+	#create table here
+#my $sql_text = 
+my $sum_attn_stmt = "";
+my $sum_loot_stmt = "";
+
+if ( $temprange ne "0" )
+{
+$sum_loot_stmt =
+	$dbh2->prepare(
+	"select " .
+	"IFNULL(sum(if(spec='Main', 1, 0)),0) Main_Spec,  " .
+	"IFNULL(sum(if(spec='Alt', 1, 0)),0) Alt_Spec,  " .
+	"IFNULL(sum(if(spec='Off', 1, 0)),0) Off_Spec " .
+	"from ITEMS_LOOTED il, RAID_CALENDAR rc, `CHARACTER` chr " .
+	"where chr.char_id = il.char_id " .
+	"and rc.raid_id = il.raid_id " .
+	"and rc.date >= DATE(DATE_SUB(LOCALTIME(),INTERVAL ? DAY )) " .
+	"and rc.scheduled = 1 " .
+	"and chr.name = ? ;");		
+$sum_attn_stmt =
+	$dbh2->prepare(
+	"select concat(floor((sum(length(REPLACE(ra.ATTENDANCE,'0','')))*100)/(sum(length(ra.ATTENDANCE)))),'%') ATTENDANCE, " .
+	"concat(concat(sum(length(REPLACE(ra.ATTENDANCE, '0', ''))),'/'),sum(length(ra.ATTENDANCE))) val " .
+	"from RAID_ATTENDANCE ra, RAID_CALENDAR rc, `CHARACTER` chr " .
+	"where ra.raid_id = rc.raid_id " .
+	"and chr.char_id = ra.char_id " .
+	"and rc.date >= DATE(DATE_SUB(LOCALTIME(),INTERVAL ? DAY )) " .
+	"and ra.ATTENDANCE Regexp '[[:digit:]]+' <> 0 " .
+	"and rc.scheduled = 1 " .
+	"and chr.name = ? ;");
+}
+else
+{
+$sum_loot_stmt =
+	$dbh2->prepare(
+	"select " .
+	"IFNULL(sum(if(spec='Main', 1, 0)),0) Main_Spec,  " .
+	"IFNULL(sum(if(spec='Alt', 1, 0)),0) Alt_Spec,  " .
+	"IFNULL(sum(if(spec='Off', 1, 0)),0) Off_Spec " .
+	"from ITEMS_LOOTED il, RAID_CALENDAR rc, `CHARACTER` chr " .
+	"where chr.char_id = il.char_id " .
+	"and rc.raid_id = il.raid_id " .
+	"and rc.scheduled = 1 " .
+	"and chr.name = ? ;");		
+$sum_attn_stmt =
+	$dbh2->prepare(
+	"select concat(floor((sum(length(REPLACE(ra.ATTENDANCE,'0','')))*100)/(sum(length(ra.ATTENDANCE)))),'%') ATTENDANCE, " .
+	"concat(concat(sum(length(REPLACE(ra.ATTENDANCE, '0', ''))),'/'),sum(length(ra.ATTENDANCE))) val " .
+	"from RAID_ATTENDANCE ra, RAID_CALENDAR rc, `CHARACTER` chr " .
+	"where ra.raid_id = rc.raid_id " .
+	"and chr.char_id = ra.char_id " .
+	"and rc.scheduled = 1 " .
+	"and ra.ATTENDANCE Regexp '[[:digit:]]+' <> 0 " .
+	"and chr.name = ? ;");
+}
+
+if ( $temprange ne "0" )
+{
+$sum_loot_stmt->bind_param(1, $temprange);
+$sum_loot_stmt->bind_param(2, $temp_char);
+$sum_attn_stmt->bind_param(1, $temprange);
+$sum_attn_stmt->bind_param(2, $temp_char);
+}
+else
+{
+$sum_loot_stmt->bind_param(1, $temp_char);
+$sum_attn_stmt->bind_param(1, $temp_char);
+}
+
+$sum_loot_stmt->execute() or die $dbh2->errstr;
+my $rowl = $sum_loot_stmt->fetchrow_hashref();
+$sum_attn_stmt->execute() or die $dbh2->errstr;
+my $rowa = $sum_attn_stmt->fetchrow_hashref();
+
+print "<TD>";
+if ( $temprange ne "0" )
+{
+print "<B>$temprange Day</B>";
+}
+else
+{
+print "<B>Lifetime</B>";
+}
+print "</TD>";
+print "<TD>";
+print "$rowa->{ATTENDANCE}"; #Attendance
+print "</TD>";
+print "<TD>";
+print "$rowa->{val}"; #Attendance
+print "</TD>";
+print "<TD>";
+print "$rowl->{Main_Spec}"; #Main spec
+print "</TD>";
+print "<TD>";
+print "$rowl->{Alt_Spec}"; #Alt spec
+print "</TD>";
+print "<TD>";
+print "$rowl->{Off_Spec}"; #Off spec
+print "</TD>";
+$sum_loot_stmt->finish();
+$sum_attn_stmt->finish();
+}
+
+# Tells the browser that we're outputting HTML
+print "Content-type: text/html\n\n";
+
+
 
 # Database handle
 my $dbh = DBI->connect("dbi:mysql:database=$database;host=$hostname;port=$dbport", $username, $password) or print $DBI::errstr;
@@ -48,7 +198,7 @@ utf8::encode($utf8name);
 $utf8name = URLEncode($utf8name);
 print "<table>";
 print "<TR>";
-print "<TD rowspan=\"2\">";
+print "<TD rowspan=\"5\">";
 print "<B>Name:</B> <A HREF=\"http://www.wowarmory.com/character-sheet.xml?r=Medivh&n=$utf8name\" TITLE=\"CHAR_ID=$row->{char_id}\" TARGET=\"_blank\">$row->{name}</A><BR>";
 print "<B>Class:</B> $row->{class} <BR>";
 print "<B>Rank:</B> $row->{rank} <BR>";
@@ -65,9 +215,24 @@ if (( $rank eq "Alt" ) || ( $rank eq "Officer Alt" ))
 {
 	print "<B>Main:</B>";
 	print "</TD>";
+	print "<TD>";
+	#blank
+	print "</TD>";
+	print "<TD>";
+	print "Attendance";
+	print "</TD>";
+	print "<TD>";
+	print "MS";
+	print "</TD>";
+	print "<TD>";
+	print "AS";
+	print "</TD>";
+	print "<TD>";
+	print "OS";
+	print "</TD>";
 	print "</TR>";
 	print "<TR>";
-	print "<TD>";
+	print "<TD rowspan=\"4\">";
 	#Mains
 	my $sql_text = 
 	my $main_statement =
@@ -93,9 +258,27 @@ else
 {
 	print "<B>Alts:</B>";
 	print "</TD>";
+	print "<TD>";
+	#blank
+	print "</TD>";
+	print "<TD>";
+	print "Attendance";
+	print "</TD>";
+	print "<TD>";
+	print "Values";
+	print "</TD>";
+	print "<TD>";
+	print "MS";
+	print "</TD>";
+	print "<TD>";
+	print "AS";
+	print "</TD>";
+	print "<TD>";
+	print "OS";
+	print "</TD>";
 	print "</TR>";
 	print "<TR>";
-	print "<TD>";
+	print "<TD rowspan=\"4\">";
 	
 	#Alts
 	my $sql_text = 
@@ -117,8 +300,28 @@ else
 	}
 	$alt_statement->finish();
 }
+my $tempchar = "";
+if ( $mainchar ne "" )
+{
+$tempchar = $mainchar;
+}
+else
+{
+$tempchar = $char_name;
+}
 print "</TD>";
+sumTable("7",$tempchar);
 print "</TR>";
+print "<TR>";
+sumTable("30",$tempchar);
+print "</TR>";
+print "<TR>";
+sumTable("60",$tempchar);
+print "</TR>";
+print "<TR>";
+sumTable("0",$tempchar);
+print "</TR>";
+
 print "</TABLE>";
 print "</fieldset>";
 #End Alts
@@ -140,15 +343,22 @@ print <<STRINGDELIM;
 	<thead>
 	<tr>
 		<th>Date</th>
-		<TH>Weekday</TH>
+		<TH>Range</TH>
+		<TH>Day</TH>
 		<th>Attendance (10 min increments)</th>
+		<th>Value</th>
 		<th>Percent</th>
 	</tr>
 	</thead>	
 STRINGDELIM
 
 my $sql_text = <<STRINGDELIM;
-SELECT rc.RAID_ID, rc.DATE, date_format(rc.DATE,'%a') WEEKDAY, ra.ATTENDANCE, concat(FLOOR(IFNULL(length(REPLACE(ra.ATTENDANCE, '0', ''))*100/length(ra.ATTENDANCE),'0')),'%') PERCENT
+SELECT rc.RAID_ID, 
+rc.DATE, 
+date_format(rc.DATE,'%a') WEEKDAY, 
+ra.ATTENDANCE, 
+if(ra.ATTENDANCE Regexp '[[:digit:]]+'<>0, concat(concat(length(REPLACE(ra.ATTENDANCE, '0', '')),'/'),length(ra.ATTENDANCE)), 'n/a') val, 
+if(ra.ATTENDANCE Regexp '[[:digit:]]+'<>0, concat(FLOOR(IFNULL(length(REPLACE(ra.ATTENDANCE, '0', ''))*100/length(ra.ATTENDANCE),'0')),'%'), 'n/a') PERCENT
 from `CHARACTER` chr, RAID_ATTENDANCE ra, RAID_CALENDAR rc
 where ra.RAID_ID = rc.RAID_ID
 and chr.CHAR_ID = ra.CHAR_ID
@@ -170,17 +380,21 @@ $attn_statement->execute() or die $dbh->errstr;
 
 print "<TBODY>";
 while (my $row = $attn_statement->fetchrow_hashref()) {
+	#Added Range
+	my $range = dayRange($row->{DATE});
+	
 	my $attn = $row->{ATTENDANCE};
 	$attn =~ s|0|~|g;
-	#$attn =~ s|1|<div style='width:10px;height:10px;background-color:green;display:inline-block'></div>|g;
-	#$attn =~ s|~|<div style='width:10px;height:10px;background-color:red;display:inline-block'></div>|g;
-	#$attn =~ s|1|<td style='background-color:green;'></td>|g;
-	#$attn =~ s|~|<td style='background-color:red;'></td>|g;
 	$attn =~ s|1|<img src=\"images/greenbox.JPG\">|g;
 	$attn =~ s|~|<img src=\"images/redbox.JPG\">|g;
 	print <<STRINGDELIM;
 	        <TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='raiddetail.shtml?data=$row->{RAID_ID}'\">
-			<td><A HREF=\"raiddetail.shtml?data=$row->{RAID_ID}\" TITLE=\"RAID_ID=$row->{RAID_ID}\">$row->{DATE}</A></td><TD>$row->{WEEKDAY}</TD><td>$attn</td><td>$row->{PERCENT}</td>
+			<td><A HREF=\"raiddetail.shtml?data=$row->{RAID_ID}\" TITLE=\"RAID_ID=$row->{RAID_ID}\">$row->{DATE}</A></td>
+			<td>$range</td>
+			<TD>$row->{WEEKDAY}</TD>
+			<td>$attn</td>
+			<td>$row->{val}</td>
+			<td>$row->{PERCENT}</td>
 		</tr>
 STRINGDELIM
 }
@@ -188,6 +402,9 @@ print <<STRINGDELIM;
 </TBODY>
 </table>
 STRINGDELIM
+print "<script type=\"text/javascript\">";
+print "var t = new ScrollableTable(document.getElementById('attnDetail'),360,800);";
+print "</script>";
 print "</fieldset>";
 
 $attn_statement->finish();
@@ -203,8 +420,8 @@ my $loot_statement =
 			"WHERE il.RAID_ID = rc.RAID_ID " .
 			"AND il.CHAR_ID = chr.CHAR_ID " .
 			"AND it.ITEM_ID = il.ITEM_ID " .
-			"AND rc.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 60 " .
-			"DAY ) ) " .
+			#"AND rc.DATE > DATE( DATE_SUB( LOCALTIME( ) , INTERVAL 60 " .
+			#"DAY ) ) " .
 			"AND il.SPEC <> 'Unassigned' " .
 			"AND il.SPEC not like 'DE%' " .
 			"AND chr.NAME = ? " .
@@ -220,6 +437,7 @@ print "<TR>";
 print "<TH><U><B>Name</B></U></TH>";
 print "<TH><U><B>Item Name</B></U></TH>";
 print "<TH><U><B>Date</B></U></TH>";
+print "<TH><U><B>Range</B></U></TH>";
 print "<TH><U><B>Spec</B></U></TH>";
 print "<TH><U><B>Zone</B></U></TH>";
 print "<TH><U><B>SubZone</B></U></TH>";
@@ -228,9 +446,15 @@ print "</THEAD>\n";
 print "<TBODY>";
 while (my $row = $loot_statement->fetchrow_hashref()) {
 	my $url = URLEncode($row->{ITEM_NAME}); 
+	my $range = dayRange($row->{TIMESTAMP});
 	print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='item.shtml?data=$url'\">";
-	print "<TD>$row->{NAME}</TD><TD><a href=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\">$row->{ITEM_NAME}</a></TD><TD>$row->{TIMESTAMP}</TD>";
-	print "<TD>$row->{SPEC}</TD><TD>$row->{ZONE}</TD><TD>$row->{SUBZONE}</TD>";
+	print "<TD>$row->{NAME}</TD>";
+	print "<TD><a href=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\">$row->{ITEM_NAME}</a></TD>";
+	print "<TD>$row->{TIMESTAMP}</TD>";
+	print "<TD>$range</TD>";
+	print "<TD>$row->{SPEC}</TD>";
+	print "<TD>$row->{ZONE}</TD>";
+	print "<TD>$row->{SUBZONE}</TD>";
 	print "</TR>\n";
 	print "\n";
 }
@@ -242,4 +466,5 @@ print "</TABLE>";
 print "</fieldset>";
 #print "</HTML>";
 $loot_statement->finish();
+$dbh2->disconnect();
 $dbh->disconnect();
