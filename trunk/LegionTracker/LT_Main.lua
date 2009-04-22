@@ -37,12 +37,12 @@ function LT_SlashHandler(args)
 		LT_Print("Legion Tracker", "yellow");
 		LT_Print("-------------------------------------", "yellow");
 		LT_Print("attendance - Display attendance commands.", "yellow");
-        LT_Print("hide       - Hides the main window.", "yellow");
-        LT_Print("loot       - Display loot commands.", "yellow");
-        LT_Print("show       - Displays the main window.", "yellow");
-        LT_Print("startloot  - Starts accepting loot whispers.", "yellow");
-        LT_Print("timer      - Display timer commands.", "yellow");
-        LT_Print("vote       - Show vote window.", "yellow");
+        LT_Print("hide - Hides the main window.", "yellow");
+        LT_Print("loot - Display loot commands.", "yellow");
+        LT_Print("show - Displays the main window.", "yellow");
+        LT_Print("startloot - Starts accepting loot whispers.", "yellow");
+        LT_Print("timer - Display timer commands.", "yellow");
+        LT_Print("vote - Show vote window.", "yellow");
 	else
 		if args == "show" then
 		    LT_Main:Show();
