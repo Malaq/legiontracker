@@ -63,6 +63,7 @@ if ( $row->{ITEM_ID} ne "" ) {
 					"(select ITEM_ID, count(*) all_dusted from ITEMS_LOOTED where ITEM_ID = $row->{ITEM_ID} AND SPEC = 'DE\\'d' group by ITEM_ID) total_dusted " .
 					"ON total_dusted.ITEM_ID = it.ITEM_ID " .
 					"WHERE it.ITEM_ID = $row->{ITEM_ID};");
+		#$dust_statement->bind_param(1, '%'.$item_name.'%');
 		$dust_statement->execute() or die $dbh->errstr;
 		my $row2 = $dust_statement->fetchrow_hashref();
 	print "<B>Percent Dusted:</B> $row2->{percent_dust}% <BR>";

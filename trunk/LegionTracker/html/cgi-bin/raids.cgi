@@ -61,7 +61,7 @@ my $list_statement =
 			"LEFT JOIN " .
 		        "(SELECT raid_id, count(item_id) numb " .
 			 "FROM ITEMS_LOOTED " .
-			 "WHERE spec = 'DE\\'d' " .
+			 "WHERE spec in ('DE\\'d', 'Off') " .
 			 "GROUP BY raid_id) de " .
 			"ON de.raid_id = rc.raid_id " .
 			"LEFT JOIN " .
