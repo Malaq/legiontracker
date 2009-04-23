@@ -175,7 +175,7 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
     end
     
     if (cmd.type == "Start") then
-        LT_OfficerLoot_AwardedItems = {};
+        --LT_OfficerLoot_AwardedItems = {};
         LT_OfficerLoot_ZoneData = {};
         self.whisper_id = cmd.whisper_id;
         self:StartNewItems(cmd.items, cmd.item_links);

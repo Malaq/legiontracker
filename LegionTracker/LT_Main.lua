@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.62"
+﻿LT_VERSION = "Legion Tracker 0.70"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -220,10 +220,10 @@ function LT_Main_DropdownInit()
 	end
     UIDropDownMenu_AddButton(info, 1);
     
-    info.text = "Epics (no badges)"
+    info.text = "Epics+ (no badges)"
 	info.func = function()
-		LT_Loot_SetFilter("Epic !Emblem !Abyss");
-		UIDropDownMenu_SetText(LT_LootFilterSelect, "Epics (no badges)");
+		LT_Loot_SetFilter("!Poor !Uncommon !Common !Rare !Emblem !Abyss");
+		UIDropDownMenu_SetText(LT_LootFilterSelect, "Epics+ (no badges)");
 	end
     UIDropDownMenu_AddButton(info, 1);
 end
