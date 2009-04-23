@@ -60,6 +60,7 @@ function LT_Loot_SlashHandler(args)
 		debugprofilestart();
 		for i = 1, 1000 do
 			LT_Loot_SetFilter("Epic !Emblem");
+            --LT_Loot_SetFilter("!Poor !Uncommon !Common !Rare !Emblem");
 		end
 		LT_Print("1000 setfilters: "..(debugprofilestop()/1000));
 	elseif cmd == "prof lootui" then
@@ -98,6 +99,8 @@ function Loot_OnEvent(this, event, arg1)
             -- Does the player exist in the awarded items table?
             if (LT_OfficerLoot_AwardedItems[player] ~= nil) then
                 if (LT_OfficerLoot_AwardedItems[player][name] ~= nil) then
+                    --MLCMIN
+                    LT_OfficerLoot_AwardedItems[player][name] = nil;
                     return
                 end
             end
@@ -119,15 +122,14 @@ function Loot_OnEvent(this, event, arg1)
         if (this == "AWARD") then
             LT_LootTable[lootId]["zone"] = LT_OfficerLoot_ZoneData["ZONE"];
 		    LT_LootTable[lootId]["subzone"] = LT_OfficerLoot_ZoneData["SUBZONE"];
+            if (LT_Loot_SavedSpecs[player] and LT_Loot_SavedSpecs[player][GetItemInfo(itemString)]) then
+                LT_LootTable[lootId]["spec"] = LT_Loot_SavedSpecs[player][GetItemInfo(itemString)];
+            end
         else
     		LT_LootTable[lootId]["zone"] = GetRealZoneText();
 		    LT_LootTable[lootId]["subzone"] = GetSubZoneText();
         end
         LT_LootTable[lootId]["lootId"] = lootId;
-        
-        if (LT_Loot_SavedSpecs[player] and LT_Loot_SavedSpecs[player][GetItemInfo(itemString)]) then
-            LT_LootTable[lootId]["spec"] = LT_Loot_SavedSpecs[player][GetItemInfo(itemString)];
-        end
         
         LT_Loot_OnChange();
     elseif event == "VARIABLES_LOADED" then
