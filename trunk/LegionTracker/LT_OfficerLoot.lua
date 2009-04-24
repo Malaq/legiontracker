@@ -640,8 +640,7 @@ function LT_OfficerLoot:Display()
             self.table_frames[i]:Hide();
         else
             self.table_ids[i]:SetText(string.format("Loot %d of %d", id, #self.items));
-            local _, link = GetItemInfo(self.item_links[id]);
-            self.table_labels[i]:SetText(link);
+            self.table_labels[i]:SetText(self.item_links[id]);
             self.table_frames[i]:Show();
             self.tables[i]:SetData(self:GetTable(id));
             
