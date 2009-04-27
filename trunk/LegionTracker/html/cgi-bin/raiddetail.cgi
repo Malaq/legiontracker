@@ -34,69 +34,19 @@ print "<font size=\"6\" face=\"Monotype Corsiva\"><B>$char_name</B></font>";
 
 # Raid Summary
 my $raid_query =
-	$dbh->prepare("SELECT rc.DATE, rc.SCHEDULED, rc.ATTENDANCE_COUNT, IFNULL(ALL_LOOT.numb,0) ALN, IFNULL(MAIN_LOOT.numb,0) MLN, IFNULL(ALT_LOOT.numb,0) TLN, IFNULL(OFF_LOOT.numb,0) OLN, IFNULL(DE_LOOT.numb,0) DLN, DURATION.tic " .
-			"FROM RAID_CALENDAR rc " .
-			"LEFT JOIN " .
-			"(" .
-			"SELECT raid_id, count(item_id) numb " .
-			"FROM ITEMS_LOOTED " .
-			"where spec <> 'Unassigned' " .
-			"GROUP BY raid_id " .
-			") ALL_LOOT " .
-			"ON ALL_LOOT.raid_id = rc.raid_id " .
-			"LEFT JOIN " .
-			"(" .
-			"SELECT raid_id, count(item_id) numb " .
-			"FROM ITEMS_LOOTED " .
-			"where spec <> 'Unassigned' " .
-			"AND spec = 'Main' " .
-			"GROUP BY raid_id " .
-			") MAIN_LOOT " .
-			"ON MAIN_LOOT.raid_id = rc.raid_id " .
-			"LEFT JOIN " .
-			"(" .
-			"SELECT raid_id, count(item_id) numb " .
-			"FROM ITEMS_LOOTED " .
-			"where spec <> 'Unassigned' " .
-			"AND spec = 'Alt' " .
-			"GROUP BY raid_id " .
-			") ALT_LOOT " .
-			"ON ALT_LOOT.raid_id = rc.raid_id " .
-			"LEFT JOIN " .
-			"(" .
-			"SELECT raid_id, count(item_id) numb " .
-			"FROM ITEMS_LOOTED " .
-			"where spec <> 'Unassigned' " .
-			"AND spec = 'Off' " .
-			"GROUP BY raid_id " .
-			") OFF_LOOT " .
-			"ON OFF_LOOT.raid_id = rc.raid_id " .
-			"LEFT JOIN " .
-			"(" .
-			"SELECT raid_id, count(item_id) numb " .
-			"FROM ITEMS_LOOTED " .
-			"where spec <> 'Unassigned' " .
-			"AND spec = 'DE\\'d' " .
-			"GROUP BY raid_id " .
-			") DE_LOOT " .
-			"ON DE_LOOT.raid_id = rc.raid_id " .
-			"LEFT JOIN " .
-			"(" .
-			#Change this multiplier if you start extracting tics
-			"SELECT raid_id, SEC_TO_TIME((max(length(ATTENDANCE))-1)*600) tic " .
-			"FROM RAID_ATTENDANCE ra, `CHARACTER` chr " .
-			"where ra.raid_id = ? " .
-			"and ra.CHAR_ID = chr.CHAR_ID " .
-			#"and chr.rank not in ('Friend','Alt','Officer Alt') " .
-			"AND INSTR(ra.ATTENDANCE, '1') > 0 " .
-			"GROUP BY raid_id " .
-			") DURATION " .
-			"ON ALL_LOOT.raid_id = rc.raid_id " .
-			"WHERE rc.RAID_ID = ? " .
-			"GROUP BY rc.RAID_ID;");
+	$dbh->prepare(
+		"select rc.raid_id, " .
+		"rc.DATE, " .
+		"rc.SCHEDULED, " .
+		"rc.ATTENDANCE_COUNT, " .
+		"SEC_TO_TIME((length(max(ra.ATTENDANCE))-1)*600) tic " .
+		"from RAID_CALENDAR rc, RAID_ATTENDANCE ra " .
+		"where rc.raid_id = ra.raid_id " .
+		"and ATTENDANCE Regexp '[[:digit:]]+' <> 0 " .
+		"and rc.raid_id = ? " .
+		"group by rc.raid_id;");
 
 $raid_query->bind_param(1, $raid_id);
-$raid_query->bind_param(2, $raid_id);
 $raid_query->execute() or die $dbh->errstr;
 my $row = $raid_query->fetchrow_hashref();
 print "<div id=\'rdraidsummary\'>";
@@ -114,7 +64,26 @@ print "Raiders Available: <B>$row->{ATTENDANCE_COUNT}</B><br>";
 print "Raid Duration: <B>$row->{tic}</B><br>";
 print "</fieldset>";
 print "</div>";
+$raid_query->finish();
+
 #print "Epics Dropped: <B>$row->{TOTAL_LOOT}</B><br>";
+my $raid_query =
+	$dbh->prepare(
+		"select rc.raid_id, " .
+		"IFNULL(sum(if(spec<>'Unassigned', 1, 0)),0) ALN, " .
+		"IFNULL(sum(if(spec='Main', 1, 0)),0) MLN, " .
+		"IFNULL(sum(if(spec='Alt', 1, 0)),0) TLN, " .
+		"IFNULL(sum(if(spec='Off', 1, 0)),0) OLN, " .
+		"IFNULL(sum(if(spec='DE''d', 1, 0)),0) DLN " .
+		"from RAID_CALENDAR rc, ITEMS_LOOTED il " .
+		"where rc.raid_id = il.raid_id " .
+		"and rc.raid_id = ? " .
+		"group by rc.raid_id;");
+
+$raid_query->bind_param(1, $raid_id);
+$raid_query->execute() or die $dbh->errstr;
+my $row = $raid_query->fetchrow_hashref();
+
 print "<div id=\'rdepicsdropped\'>";
 print "<fieldset style=\"width: 200px;\">";
 print "<legend>Epics Dropped: <B>$row->{ALN}</B></legend>";
