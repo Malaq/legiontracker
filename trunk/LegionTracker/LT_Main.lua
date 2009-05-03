@@ -6,11 +6,18 @@ LT_PlayerList = nil;
 LT_NameLookup = {};
 LT_Main_ST = nil;
 LT_Main_ST1 = nil;
+local LT_LDB = LibStub("LibDataBroker-1.1", true)
+local LT_LDBIcon = LibStub("LibDBIcon-1.0", true)
+LT_savedVarTable = {};
 
 function LT_OnLoad()
 	LT_Main:SetParent(UIParent);
     --Makes Esc Work?
     tinsert(UISpecialFrames, this:GetName());
+    --Minimap icon?
+    if LT_LDB then
+        LT_createLDB();
+    end
     this:RegisterEvent("VARIABLES_LOADED");
     this:RegisterEvent("GUILD_ROSTER_UPDATE");
     this:RegisterEvent("CHAT_MSG_SYSTEM");
@@ -531,6 +538,10 @@ function LT_Main_StartLootWhispers()
         return;
     end
     
+    --Test to try to change the icon.
+    --LT_LDB.icon = "Interface\\AddOns\\LegionTracker\\Icons\\LT_map_gold";
+    --LT_LDBIcon:Refresh("LT_LDB", LT_savedVarTable);
+    
     LT_OfficerLoot:ForcePopup();
     local items = {};
     local item_links = {};
@@ -563,4 +574,41 @@ function LT_TableSize(table)
         num = num+1;
     end
     return num;
+end
+
+function LT_createLDB()
+    --local L_BT_LEFT = L["|cffffff00Click|r to toggle bar lock"]
+	--local L_BT_RIGHT = L["|cffffff00Right-click|r to open the options menu"]
+    
+    local LT_LDB = LibStub("LibDataBroker-1.1"):NewDataObject("LegionTracker", {
+            type = "launcher",
+            label = "LegionTracker",
+            OnClick = function(_, msg)
+                if msg == "LeftButton" then
+                    if (LT_Main:IsShown()) then
+                        LT_Main:Hide();
+                    else
+                        LT_Main:Show();
+                    end
+                elseif msg == "RightButton" then
+                    if (LT_OfficerLoot_Frame:IsShown()) then
+                        LT_OfficerLoot_Frame:Hide();
+                    else
+                        LT_Main_ViewVotes();
+                    end
+                end
+            end,
+            icon = "Interface\\AddOns\\LegionTracker\\Icons\\LT_map_silver",
+            --icon = "Interface\\Icons\\INV_Jewelry_Talisman_08",
+            OnTooltipShow = function(tooltip)
+			    if not tooltip or not tooltip.AddLine then return end
+			    tooltip:AddLine("LegionTracker")
+			    tooltip:AddLine("Left click - Toggle main window.")
+			    tooltip:AddLine("Right click - View vote screen.")
+            end,
+    })
+    if LT_LDBIcon then
+        LT_LDBIcon:Register("LT_LDB", LT_LDB, LT_savedVarTable);
+    end
+    LT_LDBIcon:Show("LT_LDB");
 end
