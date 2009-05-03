@@ -403,7 +403,8 @@ print <<STRINGDELIM;
 </table>
 STRINGDELIM
 print "<script type=\"text/javascript\">";
-print "var t = new ScrollableTable(document.getElementById('attnDetail'),360,800);";
+#print "var t = new ScrollableTable(document.getElementById('attnDetail'),360,800);";
+print "var t = new ScrollableTable(document.getElementById('attnDetail'),360);";
 print "</script>";
 print "</fieldset>";
 
