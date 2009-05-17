@@ -386,6 +386,7 @@ while (my $row = $attn_statement->fetchrow_hashref()) {
 	my $attn = $row->{ATTENDANCE};
 	$attn =~ s|0|~|g;
 	$attn =~ s|1|<img src=\"images/greenbox.JPG\">|g;
+	$attn =~ s|2|<img src=\"images/yellowbox.JPG\">|g;
 	$attn =~ s|~|<img src=\"images/redbox.JPG\">|g;
 	print <<STRINGDELIM;
 	        <TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='raiddetail.shtml?data=$row->{RAID_ID}'\">

@@ -10,14 +10,17 @@ print "Content-type: text/html\n\n";
 
 print "<fieldset>";
 print "<legend>Navigation</legend>";
+print "<A HREF=\"index.shtml\" STYLE=\"text-decoration:none\">";
+print "<B>Roster</B>";
+print "</A><br>";
 print "<A HREF=\"allchars.shtml\" STYLE=\"text-decoration:none\">";
-print "<B>Characters</B>";
+print "<B>All Characters</B>";
 print "</A><br>";
 print "<A HREF=\"raids.shtml\" STYLE=\"text-decoration:none\">";
-print "<B>Raids</B>";
+print "<B>All Raids</B>";
 print "</A><br>";
 print "<A HREF=\"allitems.shtml\" STYLE=\"text-decoration:none\">";
-print "<B>Items</B>";
+print "<B>All Items</B>";
 print "</A><br>";
 #print "</fieldset>";
 

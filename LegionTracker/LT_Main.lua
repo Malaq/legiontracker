@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.71"
+﻿LT_VERSION = "Legion Tracker 0.80"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -8,16 +8,16 @@ LT_Main_ST = nil;
 LT_Main_ST1 = nil;
 local LT_LDB = LibStub("LibDataBroker-1.1", true)
 local LT_LDBIcon = LibStub("LibDBIcon-1.0", true)
-LT_savedVarTable = {};
+LT_MinimapIcon = {};
 
 function LT_OnLoad()
 	LT_Main:SetParent(UIParent);
     --Makes Esc Work?
     tinsert(UISpecialFrames, this:GetName());
     --Minimap icon?
-    if LT_LDB then
-        LT_createLDB();
-    end
+    --if LT_LDB then
+    --    LT_createLDB();
+    --end
     this:RegisterEvent("VARIABLES_LOADED");
     this:RegisterEvent("GUILD_ROSTER_UPDATE");
     this:RegisterEvent("CHAT_MSG_SYSTEM");
@@ -155,7 +155,7 @@ function LT_Main_SetupTable()
 	table.insert(cols, {name="DE'd", width=w*0.06, align="CENTER", sortnext=1});
 	table.insert(cols, {name="Unassigned", width=w*0.14, align="CENTER", sortnext=1});
     
-    --new columns
+    --total columns
     table.insert(total_row, {name="", width=w*0.25, align="LEFT", ""});
 	table.insert(total_row, {name="", width=w*0.15, align="LEFT", ""});
 	table.insert(total_row, {name="", width=w*0.15, align="LEFT", ""});
@@ -164,7 +164,7 @@ function LT_Main_SetupTable()
 	table.insert(total_row, {name="", width=w*0.06, align="CENTER", ""});
 	table.insert(total_row, {name="", width=w*0.06, align="CENTER", ""});
 	table.insert(total_row, {name="", width=w*0.14, align="CENTER", ""});
-    --end new columns
+    --end total columns
 
 	--local num_rows = math.floor(LT_SummaryPanel:GetHeight() / 15) - 1;
     local num_rows = math.floor(LT_SummaryPanel:GetHeight() / 15);
@@ -517,6 +517,10 @@ function LT_Main_OnEvent(this, event, arg1, arg2)
         LT_Attendance_OnChange();
     elseif (event == "VARIABLES_LOADED") then
         LT_UpdatePlayerList();
+        LT_MinimapIcon = LT_savedVarTable;
+        if LT_LDB then
+            LT_createLDB();
+        end
     elseif (event == "CHAT_MSG_WHISPER") then
         LT_OfficerLoot:OnEvent(event, arg1, arg2);
     elseif (event == "CHAT_MSG_SYSTEM") then
@@ -608,7 +612,7 @@ function LT_createLDB()
             end,
     })
     if LT_LDBIcon then
-        LT_LDBIcon:Register("LT_LDB", LT_LDB, LT_savedVarTable);
+        LT_LDBIcon:Register("LT_LDB", LT_LDB, LT_MinimapIcon);
     end
     LT_LDBIcon:Show("LT_LDB");
 end

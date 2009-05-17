@@ -58,8 +58,10 @@ function LT_Char_DrawTimeline()
             block.texture:SetAllPoints(block);
             if (string.char(attendance:byte(i)) == "0") then
                 block.texture:SetTexture(0, 0.0, 0.0);
-            else
+            elseif (string.char(attendance:byte(i)) == "1") then
                 block.texture:SetTexture(0.1, 1, 0.1);
+            elseif (string.char(attendance:byte(i)) == "2") then
+                block.texture:SetTexture(1, 1, 0.1);
             end
             block:ClearAllPoints();
             block:SetPoint("TOPLEFT", LT_Timeline, "TOPLEFT", (i - 1) * entry_width + 5, -3);
@@ -68,13 +70,37 @@ function LT_Char_DrawTimeline()
                 local attendance = LT_GetRawAttendance(index);
 				local newchar;
                 if (string.char(attendance:byte(i)) == "1") then
-					newchar = "0";
+					newchar = "2";
+                elseif (string.char(attendance:byte(i)) == "2") then
+                    newchar = "0";
                 else
                     newchar = "1";
                 end
 				attendance = string.sub(attendance, 1, i-1)..newchar..string.sub(attendance, i+1);
                 GuildRosterSetOfficerNote(LT_GetPlayerIndexFromName(LT_GetMainName(index)), attendance);
 				LT_Attendance_OnChange();
+            end);
+            block:SetScript("OnEnter", function()
+                local index = LT_GetPlayerIndexFromName(LT_Char_CurPlayer);
+                local attendance = LT_GetRawAttendance(index);
+                block_tooltip:ClearAllPoints();
+                block_tooltip:SetPoint("CENTER", block);
+                block_tooltip:SetOwner(block, "ANCHOR_CURSOR");
+                block_tooltip:ClearLines();
+                --block_tooltip:AddLine("TESTING...",1,1,1); 
+                if (string.char(attendance:byte(i)) == "1") then
+					block_tooltip:AddLine("In Raid"); 
+                elseif (string.char(attendance:byte(i)) == "2") then
+                    block_tooltip:AddLine("Sitting"); 
+                else
+                    block_tooltip:AddLine("Offline"); 
+                end
+                block_tooltip:Show();
+            end);
+            block:SetScript("OnLeave", function()
+                --block_tooltip:ClearAllPoints();
+                --block_tooltip:ClearLines();
+                block_tooltip:Hide();
             end);
            
         end
@@ -136,4 +162,7 @@ function LT_Char_OnLoad()
 	LT_LootUI:SetupFrame(LT_LootListPanel);
     -- Makes ESC work
     tinsert(UISpecialFrames, this:GetName());
+    block_tooltip = CreateFrame("GameTooltip", "LT_BlockToolTip", UIParent, "GameTooltipTemplate");
+    --block_tooltip = CreateFrame("GameTooltip", "LT_BlockToolTip");
+    block_tooltip:Hide();
 end
