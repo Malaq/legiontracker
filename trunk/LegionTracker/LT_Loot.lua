@@ -99,7 +99,6 @@ function Loot_OnEvent(this, event, arg1)
             -- Does the player exist in the awarded items table?
             if (LT_OfficerLoot_AwardedItems[player] ~= nil) then
                 if (LT_OfficerLoot_AwardedItems[player][name] ~= nil) then
-                    --MLCMIN
                     LT_OfficerLoot_AwardedItems[player][name] = nil;
                     return
                 end
