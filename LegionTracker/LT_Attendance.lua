@@ -17,7 +17,7 @@ function LT_GetAttendees()
     local guildCount = GetNumGuildMembers(true);
     for i = 1, guildCount do 
         local _, _, _, _, _, _, _, onote = GetGuildRosterInfo(i);
-        if (string.find(onote, "1") ~= nil) then
+        if (string.find(onote, "1") ~= nil) and (string.find(onote, "2") ~= nil) then
             count = count + 1;
         end
     end
@@ -199,7 +199,7 @@ function LT_Attendance_Raid_Group(playerName, raidCount)
     for i = 1, raidCount do --What group?
         rname, _, rsubgroup = GetRaidRosterInfo(i);
         if (rname == playerName) then
-            LT_Print(playerName.." is in group: "..rsubgroup);
+            --LT_Print(playerName.." is in group: "..rsubgroup);
             return rsubgroup;
         end
     end
