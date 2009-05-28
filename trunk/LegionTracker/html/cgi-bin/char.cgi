@@ -222,6 +222,9 @@ if (( $rank eq "Alt" ) || ( $rank eq "Officer Alt" ))
 	print "Attendance";
 	print "</TD>";
 	print "<TD>";
+	print "Values";
+	print "</TD>";
+	print "<TD>";
 	print "MS";
 	print "</TD>";
 	print "<TD>";

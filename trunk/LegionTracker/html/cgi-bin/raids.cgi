@@ -55,7 +55,7 @@ print "<font size=\"6\" face=\"Monotype Corsiva\"><B>$char_name</B></font>";
 
 # Raid table
 my $list_statement =
-	$dbh->prepare("SELECT rc.RAID_ID, rc.DATE, date_format(rc.DATE, '%a') DAYOFWEEK, rc.ATTENDANCE_COUNT, IFNULL(total_loot.numb,0) DROPS, " .
+	$dbh->prepare("SELECT rc.RAID_ID, rc.DATE, date_format(rc.DATE, '%a') DAYOFWEEK, rc.ATTENDANCE_COUNT, IFNULL(total_members.numb,'n/a') MEMBERS, IFNULL(total_loot.numb,0) DROPS, " .
 			"concat(IFNULL(floor((de.numb*100)/total_loot.numb),0),'%') SATURATION " .
 			"FROM `RAID_CALENDAR` rc " .
 			"LEFT JOIN " .
@@ -70,6 +70,12 @@ my $list_statement =
 			 "WHERE spec <> 'Unassigned' " .
 			 "GROUP BY raid_id) total_loot " .
 			"ON total_loot.raid_id = rc.raid_id " .
+			"LEFT JOIN " .
+			"(SELECT raid_id, count(*) numb " .
+			 "FROM RAID_ATTENDANCE " .
+			 "WHERE ATTENDANCE Regexp '[[:digit:]]+' <> 0 " .
+			 "GROUP BY raid_id) total_members " .
+			"ON total_members.raid_id = rc.raid_id " .
 			"WHERE rc.SCHEDULED = 1 " .
 			"GROUP BY raid_id " .
 			"ORDER BY rc.DATE desc;");
@@ -84,6 +90,7 @@ print "<TR>";
 print "<TH WIDTH=100><U><B>Raid Date</B></U></TH>";
 print "<TH WIDTH=75><U><B>Weekday</B></U></TH>";
 print "<TH WIDTH=100><U><B>Members Available</B></U></TH>";
+print "<TH WIDTH=75><U><B>Members</B></U></TH>";
 print "<TH WIDTH=100><U><B>Epics Dropped</B></U></TH>";
 print "<TH WIDTH=100><U><B>Loot Saturation</B></U></TH>";
 print "<TH><U><B>Zones Raided</B></U></TH>";
@@ -101,6 +108,9 @@ while (my $row = $list_statement->fetchrow_hashref()) {
 	print "$row->{DAYOFWEEK}";
 	print "</TD>";
 	attendanceColor($row->{ATTENDANCE_COUNT});
+	print "<TD>";
+	print "$row->{MEMBERS}";
+	print "</TD>";
 	print "<TD>";
 	print "$row->{DROPS}";
 	print "</TD>";

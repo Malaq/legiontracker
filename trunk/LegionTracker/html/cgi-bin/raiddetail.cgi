@@ -110,8 +110,9 @@ my $attendance_stmt =
 			"WHERE ra.CHAR_ID = chr.CHAR_ID " .
 			"AND ra.RAID_ID = ? " .
 			"and chr.rank not in ('Alt','Officer Alt') " .
-			"AND ra.CHAR_ID in (select ra1.CHAR_ID from RAID_ATTENDANCE ra1 where ra1.RAID_ID = ? AND INSTR(ra1.ATTENDANCE, '1') > 0 " .
-			"UNION select ra2.CHAR_ID from RAID_ATTENDANCE ra2 where ra2.RAID_ID = ? AND INSTR(ra2.ATTENDANCE, '0') > 0) " .
+			"and ra.ATTENDANCE Regexp '[[:digit:]]+' <> 0 " .
+			#"AND ra.CHAR_ID in (select ra1.CHAR_ID from RAID_ATTENDANCE ra1 where ra1.RAID_ID = ? AND INSTR(ra1.ATTENDANCE, '1') > 0 " .
+			#"UNION select ra2.CHAR_ID from RAID_ATTENDANCE ra2 where ra2.RAID_ID = ? AND INSTR(ra2.ATTENDANCE, '0') > 0) " .
 			"ORDER BY chr.NAME;");
 
 $attendance_stmt->bind_param(1, $raid_id);

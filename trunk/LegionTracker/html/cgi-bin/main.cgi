@@ -250,6 +250,13 @@ DELIMETER
 		$counter = $counter+1;
 	}
 	print "</TBODY>";
+	print "<tfoot>";
+	print "<TR>";
+	print "<TD>";
+	print "Total Raiders: $counter";
+	print "</TD>";
+	print "</TR>";
+	print "</tfoot>";
 	print "</TABLE>";
 	#print "<script type=\"text/javascript\">";
 	#print "var t = new ScrollableTable(document.getElementById('mainTable'),100);";
