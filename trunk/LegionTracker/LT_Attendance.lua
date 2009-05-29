@@ -17,7 +17,7 @@ function LT_GetAttendees()
     local guildCount = GetNumGuildMembers(true);
     for i = 1, guildCount do 
         local _, _, _, _, _, _, _, onote = GetGuildRosterInfo(i);
-        if (string.find(onote, "1") ~= nil) and (string.find(onote, "2") ~= nil) then
+        if (string.find(onote, "1") ~= nil) or (string.find(onote, "2") ~= nil) then
             count = count + 1;
         end
     end
