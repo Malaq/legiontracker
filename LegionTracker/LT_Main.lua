@@ -8,7 +8,6 @@ LT_Main_ST = nil;
 LT_Main_ST1 = nil;
 local LT_LDB = LibStub("LibDataBroker-1.1", true)
 local LT_LDBIcon = LibStub("LibDBIcon-1.0", true)
-LT_MinimapIcon = {};
 
 function LT_OnLoad()
 	LT_Main:SetParent(UIParent);
@@ -517,10 +516,10 @@ function LT_Main_OnEvent(this, event, arg1, arg2)
         LT_Attendance_OnChange();
     elseif (event == "VARIABLES_LOADED") then
         LT_UpdatePlayerList();
-        LT_MinimapIcon = LT_savedVarTable;
-        if LT_LDB then
-            LT_createLDB();
+        if (LT_savedVarTable == nil) then
+            LT_savedVarTable = {};
         end
+        LT_createLDB();
     elseif (event == "CHAT_MSG_WHISPER") then
         LT_OfficerLoot:OnEvent(event, arg1, arg2);
     elseif (event == "CHAT_MSG_SYSTEM") then
@@ -612,7 +611,7 @@ function LT_createLDB()
             end,
     })
     if LT_LDBIcon then
-        LT_LDBIcon:Register("LT_LDB", LT_LDB, LT_MinimapIcon);
+        LT_LDBIcon:Register("LT_LDB", LT_LDB, LT_savedVarTable);
     end
     LT_LDBIcon:Show("LT_LDB");
 end
