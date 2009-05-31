@@ -137,9 +137,9 @@ while (my $row = $attendance_stmt->fetchrow_hashref()) {
 	#$attn =~ s|~|<div style='width:10px;height:10px;background-color:red;display:inline-block'></div>|g;
 	#$attn =~ s|1|<td style='background-color:green;'></td>|g;
 	#$attn =~ s|~|<td style='background-color:red;'></td>|g;
-	$attn =~ s|1|<img src=\"images/greenbox.JPG\">|g;
-	$attn =~ s|2|<img src=\"images/yellowbox.JPG\">|g;
-	$attn =~ s|~|<img src=\"images/redbox.JPG\">|g;
+	$attn =~ s|1|<img src=\"images/greenbox.JPG\" TITLE=\"Online - In Raid\">|g;
+	$attn =~ s|2|<img src=\"images/yellowbox.JPG\" TITLE=\"Online - Sitting\">|g;
+	$attn =~ s|~|<img src=\"images/redbox.JPG\" TITLE=\"Offline\">|g;
 	print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='char.shtml?data=$row->{NAME}'\">";
 	print "<td><A HREF=\"char.shtml?data=$row->{NAME}\"><B>$row->{NAME}</B></A></td>";
 	print "<td>$row->{CLASS}</td>";

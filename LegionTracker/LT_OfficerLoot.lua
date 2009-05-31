@@ -379,9 +379,9 @@ end
 function LT_OfficerLoot:SendInstructions(channel, player)
     local instructions = {
         "To bid for an item, send a tell in the following format:",
-        "[Item][Replacing] spec (main/alt/off) comments",
-        "For example, if you want to bid for a Grim Toll, you could send: ",
-        " \124cffa335ee\124Hitem:40256:0:0:0:0:0:0:0:0\124h[Grim Toll]\124h\124r  \124cffa335ee\124Hitem:34472:0:0:0:0:0:0:0:0\124h[Shard of Contempt]\124h\124r Main best in slot"
+        "[Item],[Replacing], spec (main/alt/off), comments",
+        "For example, if you want to bid for a Grim Toll, ",
+        "You could send: \124cffa335ee\124Hitem:40256:0:0:0:0:0:0:0:0\124h[Grim Toll]\124h\124r,  \124cffa335ee\124Hitem:34472:0:0:0:0:0:0:0:0\124h[Shard of Contempt]\124h\124r, Main, best in slot"
     };
     
     for i = 1, #instructions do
@@ -476,7 +476,7 @@ function LT_OfficerLoot:OnEvent(event, arg1, arg2)
         end
         
         if (self.bids[GetItemInfo(item)] == nil) then
-            SendChatMessage(item.." isn't an item being bid on...", "WHISPER", nil, player);
+            SendChatMessage("Error: "..item.." isn't an item being bid on...", "WHISPER", nil, player);
             return;
         end
 
