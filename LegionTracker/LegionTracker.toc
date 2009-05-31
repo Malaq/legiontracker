@@ -1,7 +1,7 @@
 ## Interface: 30100
 ## Title: LegionTracker
 ## Author: Malaaq, Happyduude
-## Version: 0.6
+## Version: 0.73
 ## eMail: legiontracker@googlegroups.com
 ## URL: n/a
 ## DefaultState: Enabled
@@ -9,6 +9,7 @@
 ## SavedVariables: LT_LootTable,LT_PlayerLootTable,LT_UniqueLootId,LT_TimerInterval,LT_LastRunVersion,LT_savedVarTable
 embeds.xml
 LT_LootUI.lua
+LT_Credits.lua
 LT_Main.lua
 LT_Settings.lua
 LT_Attendance.lua
@@ -19,6 +20,7 @@ LT_Export.lua
 LT_PlayerSelect.lua
 LT_OfficerLoot.lua
 LT_AllLoot.lua
+LT_Credits.xml
 LT_Timer_Settings.xml
 LT_Main.xml
 LT_Char.xml

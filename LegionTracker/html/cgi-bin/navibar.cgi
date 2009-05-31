@@ -34,7 +34,10 @@ print "<font color=#FFFFFF>Enter an item name:</font><br>";
 print "<input type=\"text\" name=\"data\" size=\"15\"><br>";
 #print "<input type=\"submit\" value=\"Search\" />\n<br>";
 print "</form>\n";
-print "<br>";
+#print "<br>";
+print "<A HREF=\"credits.shtml\" STYLE=\"text-decoration:none\">";
+print "<B>Credits</B>";
+print "</A><br>";
 print "</fieldset>";
 
 print "<fieldset>";
