@@ -206,17 +206,17 @@ my $statement =
 <TH><U><B>Class</B></U></TH>
 <TH><U><B>Rank</B></U></TH>
 <TH><U><B>7 Day Attn</B></U></TH>
-<TH><U><B>MS</B></U></TH>
-<TH><U><B>AS</B></U></TH>
-<TH><U><B>OS</B></U></TH>
+<TH title=\"Main Spec Loot\"><U><B>MS</B></U></TH>
+<TH title=\"Alternate Spec Loot\"><U><B>AS</B></U></TH>
+<TH title=\"Off Spec Loot\"><U><B>OS</B></U></TH>
 <TH><U><B>30 Day Attn</B></U></TH>
-<TH><U><B>MS</B></U></TH>
-<TH><U><B>AS</B></U></TH>
-<TH><U><B>OS</B></U></TH>
+<TH title=\"Main Spec Loot\"><U><B>MS</B></U></TH>
+<TH title=\"Alternate Spec Loot\"><U><B>AS</B></U></TH>
+<TH title=\"Off Spec Loot\"><U><B>OS</B></U></TH>
 <TH><U><B>60 Day Attn</B></U></TH>
-<TH><U><B>MS</B></U></TH>
-<TH><U><B>AS</B></U></TH>
-<TH><U><B>OS</B></U></TH></TR>\n
+<TH title=\"Main Spec Loot\"><U><B>MS</B></U></TH>
+<TH title=\"Alternate Spec Loot\"><U><B>AS</B></U></TH>
+<TH title=\"Off Spec Loot\"><U><B>OS</B></U></TH></TR>\n
 </thead>
 <tbody>
 DELIMETER
