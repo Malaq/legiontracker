@@ -1,4 +1,18 @@
-﻿function LT_Settings_VersionCheck()
+﻿function LT_Settings_OnLoad()
+    LT_Credits:SetParent(UIParent);
+    tinsert(UISpecialFrames, this:GetName());
+    this:RegisterEvent("VARIABLES_LOADED");
+    this:Hide();
+end
+
+function LT_Settings_OnEvent(this, event, arg1, arg2)
+    if (event == "VARIABLES_LOADED") then
+        LT_Settings:SetFrameLevel(100);
+    end
+end
+    
+
+function LT_Settings_VersionCheck()
     --SendChatMessage("Running version check...", "OFFICER");
     --LT_Print("LegionTracker: Running version check...", "yellow");
     --LT_Print(UnitName("player").. ": " ..LT_VERSION);

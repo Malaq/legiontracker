@@ -31,20 +31,20 @@ sub dayRange {
 	$sql_datediff->bind_param(1, $tempdate);
 	$sql_datediff->execute() or die $dbh2->errstr;
 
-	my $row2 = $sql_datediff->fetchrow_hashref();
-	if ( $row2->{RANGE} <= "7" )
+	my $row2 = $sql_datediff->fetchrow_arrayref();
+	if ( $row2->[0] <= "7" )
 	{
 		#$range = "7";
 		$sql_datediff->finish();
 		return "7";
 	}
-	elsif ( $row2->{RANGE} <= "30" )
+	elsif ( $row2->[0] <= "30" )
 	{
 		#$range = "30";
 		$sql_datediff->finish();
 		return "30";
 	}
-	elsif ( $row2->{RANGE} <= "60" )
+	elsif ( $row2->[0] <= "60" )
 	{
 		#$range = "60";
 		$sql_datediff->finish();
