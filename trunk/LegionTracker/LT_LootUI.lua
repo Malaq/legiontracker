@@ -60,7 +60,7 @@ function LT_LootUI:CreateRow(id)
 
 				{
 					value = function()
-						local types = {"Poor", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Artifact"};
+						local types = {"Poor", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Artifact", "Heirloom"};
 						local _, _, rarity = GetItemInfo(self.loots[id].itemString);
 						return types[rarity+1];
 					end,

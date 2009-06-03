@@ -104,7 +104,7 @@ foreach $line (@lines) {
 
 
 	} elsif ($type eq '$') { # Loot info
-		($player, $item_name, $item_id, $date, $spec, $zone, $subzone) = split(/;/, $data);
+		($player, $item_name, $item_id, $date, $spec, $zone, $subzone, $rarity) = split(/;/, $data);
 
 		# Debug output
 		print "**Item info**\tPlayer: $player\titem: $item_name\tzone: $zone\n";
@@ -117,12 +117,44 @@ foreach $line (@lines) {
 		$row=$statement->fetchrow_hashref;
 		$char_id = "$row->{CHAR_ID}";
 
-		my $statement = 
-			$dbh->prepare("INSERT INTO `ITEM`(`ITEM_ID`, `ITEM_NAME`) " .
-					"VALUES(?, ?);");
+		$temp_id = "";
+		$temp_rarity = "";
+		my $statement =
+			$dbh->prepare("SELECT `ITEM_ID`, `RARITY` FROM `ITEM` " .
+					"WHERE `ITEM_ID`=?;");
 		$statement->bind_param(1, $item_id);
-		$statement->bind_param(2, $item_name);
-		$statement->execute or print "$item_name already exists in the database.\n";
+		$statement->execute() or die $dbh->errstr;
+		$row=$statement->fetchrow_hashref;
+		$temp_rarity = "$row->{RARITY}";
+		$temp_id = "$row->{ITEM_ID}";
+
+		if ($temp_id eq $item_id) {
+			print "$item_name already exists in the database.\n";
+		} else {
+			my $statement = 
+				$dbh->prepare("INSERT INTO `ITEM`(`ITEM_ID`, `ITEM_NAME`) " .
+						"VALUES(?, ?);");
+			$statement->bind_param(1, $item_id);
+			$statement->bind_param(2, $item_name);
+			$statement->execute or print "$item_name already exists in the database.  Error, this shouldn't happen.\n";
+		}
+		
+		if ($temp_rarity eq $rarity) {
+			print "$item_name already set to $temp_rarity. Skipping update.\n";
+		} else {
+			if ($rarity ne "") {
+				print "Updating $item_name rarity to $rarity.\n";
+				my $statement = 
+					$dbh->prepare("UPDATE `ITEM` " .
+							"SET RARITY = ? " .
+							"WHERE item_id = ?");
+				$statement->bind_param(1, $rarity);
+				$statement->bind_param(2, $item_id);
+				$statement->execute or print "$item_name - $item_id error. Failure updating rarity to $rarity.\n";
+			} else {
+				print "WARNING: No rarity given for $item_name - $item_id.\n";
+			}
+		}
 
 		my $statement =
 			$dbh->prepare("INSERT INTO `ITEMS_LOOTED`(`CHAR_ID`, `ITEM_ID`, `RAID_ID`, `TIMESTAMP`, `SPEC`, `ZONE`, `SUBZONE`) " .

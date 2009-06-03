@@ -125,9 +125,32 @@ function LT_Main_SetupTable()
 	--table.insert(cols, {name="Name", width=w*0.25, align="LEFT", sort="asc"});
     table.insert(cols, {name="Name", width=w*0.25, align="LEFT", sort="desc"});
 	table.insert(cols, {name="Class", width=w*0.15, align="LEFT", sortnext=1});
-	table.insert(cols, {name="Attendance", width=w*0.15, align="LEFT", sortnext=1, comparesort=function(a, b, col)
+	table.insert(cols, {name="Attend.", width=w*0.08, align="LEFT", sortnext=1, comparesort=function(a, b, col)
 		local a1 = LT_GetAttendance(a);
 		local b1 = LT_GetAttendance(b);
+
+		if (tonumber(a1) and tonumber(b1)) then
+			a1 = tonumber(a1);
+			b1 = tonumber(b1);
+		else
+			a1 = ""..a1;
+			b1 = ""..b1;
+		end
+
+		if (a1 == b1) then
+			return LT_Main_ST:CompareSort(a, b, col);
+		end
+
+		local direction = LT_Main_ST.cols[col].sort or LT_Main_ST.cols[col].defaultsort or "asc";
+		if (direction:lower() == "asc") then
+			return a1 > b1;
+		else
+			return a1 < b1;
+		end
+	end});
+    table.insert(cols, {name="Sitting", width=w*0.08, align="CENTER", sortnext=1, comparesort=function(a, b, col)
+		local a1 = LT_GetAttendance(a, true);
+		local b1 = LT_GetAttendance(b, true);
 
 		if (tonumber(a1) and tonumber(b1)) then
 			a1 = tonumber(a1);
@@ -357,6 +380,17 @@ function LT_Main_CreateRow(id)
 						end
 					end
 				},
+                { -- Sitting %
+                    value = function()
+                        local sitting = LT_GetAttendance(id,true);
+                        if ( sitting == "" ) then
+                            return "N/A";
+                        else
+                            return ""..sitting.."%";
+                        end
+                    end,
+                    color = {r=1, g=0.5, b=0};
+                },
 				{ -- Main
 					value = function()
 						return LT_Loot_GetLootCount(1, GetGuildRosterInfo(id));

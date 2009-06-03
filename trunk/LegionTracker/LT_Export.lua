@@ -22,12 +22,22 @@
             local spec = LT_Char_Loots[i]["spec"];
             local zone = LT_Char_Loots[i]["zone"];
             local subzone = LT_Char_Loots[i]["subzone"];
-            local itemName = GetItemInfo(item);
+            local itemName, _, rarity = GetItemInfo(item);
             local _, blizItemId = strsplit(":",item);
+            rarity = LT_Export_ConvertRarity(rarity);
             
             --export_label:Insert("<"..itemName..";"..blizItemId..";"..spec..";"..ltime..";"..zone..";"..subzone..">");
-            export_label:Insert("$"..name..";"..itemName..";"..blizItemId..";"..ltime..";"..spec..";"..zone..";"..subzone.."\n");
+            export_label:Insert("$"..name..";"..itemName..";"..blizItemId..";"..ltime..";"..spec..";"..zone..";"..subzone..";"..rarity.."\n");
         end
         --export_label:Insert("\n");
+    end
+end
+
+function LT_Export_ConvertRarity(value)
+    if (value >= 0) and (value <=8) then
+        local types = {"Poor", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Artifact", "Heirloom"};
+        return types[value+1];
+    else
+        return "Unknown";
     end
 end
