@@ -148,7 +148,11 @@ function LT_GetAttendance(playerIndex, bench)
     if (rank == "Alt") or (rank == "Officer Alt") then
         local pname = LT_GetPlayerIndexFromName(onote);
         if (pname ~= nil) then
-            return LT_GetAttendance(pname);
+            if (bench) then
+                return LT_GetAttendance(pname,true);
+            else
+                return LT_GetAttendance(pname);
+            end
         end
     end
     
