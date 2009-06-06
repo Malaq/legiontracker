@@ -14,6 +14,11 @@ print "Content-type: text/html\n\n";
 my $rowcolor = '#463C2B';
 #my $rowcolor = 'silver';
 
+sub round {
+    my($number) = shift;
+    return int($number + .5);
+}
+
 #Class Coloring
 sub classColor {
 	my $tempclass = shift;
@@ -61,7 +66,7 @@ sub attendanceColor {
 	} else {
 		$attendance_type = 'low_attendance';
 	}
-	print "<TD class='$attendance_type' align=\"right\">$attendance</TD>";
+	print "<TD class='$attendance_type' align=\"right\">$attendance%</TD>";
 }
 
 #Loot Coloring
@@ -107,7 +112,7 @@ my $statement =
             " " .
             "LEFT JOIN " .
             "(select chr.char_id, " .
-            "concat(floor((sum(length(REPLACE(ra.ATTENDANCE,'0','')))*100)/(sum(length(ra.ATTENDANCE)))),'%') ATTENDANCE, " .
+            "floor((sum(length(REPLACE(ra.ATTENDANCE,'0','')))*100)/(sum(length(ra.ATTENDANCE)))) ATTENDANCE, " .
             "concat(concat(sum(length(REPLACE(ra.ATTENDANCE, '0', ''))),'/'),sum(length(ra.ATTENDANCE))) val " .
             "from RAID_ATTENDANCE ra, RAID_CALENDAR rc, `CHARACTER` chr " .
             "where ra.raid_id = rc.raid_id  " .
@@ -133,7 +138,7 @@ my $statement =
             " " .
             "LEFT JOIN " .
             "(select chr.char_id, " .
-            "concat(floor((sum(length(REPLACE(ra.ATTENDANCE,'0','')))*100)/(sum(length(ra.ATTENDANCE)))),'%') ATTENDANCE, " .
+            "floor((sum(length(REPLACE(ra.ATTENDANCE,'0','')))*100)/(sum(length(ra.ATTENDANCE)))) ATTENDANCE, " .
             "concat(concat(sum(length(REPLACE(ra.ATTENDANCE, '0', ''))),'/'),sum(length(ra.ATTENDANCE))) val " .
             "from RAID_ATTENDANCE ra, RAID_CALENDAR rc, `CHARACTER` chr " .
             "where ra.raid_id = rc.raid_id " . 
@@ -159,7 +164,7 @@ my $statement =
             " " .
             "LEFT JOIN " .
             "(select chr.char_id, " .
-            "concat(floor((sum(length(REPLACE(ra.ATTENDANCE,'0','')))*100)/(sum(length(ra.ATTENDANCE)))),'%') ATTENDANCE, " .
+            "floor((sum(length(REPLACE(ra.ATTENDANCE,'0','')))*100)/(sum(length(ra.ATTENDANCE)))) ATTENDANCE, " .
             "concat(concat(sum(length(REPLACE(ra.ATTENDANCE, '0', ''))),'/'),sum(length(ra.ATTENDANCE))) val " .
             "from RAID_ATTENDANCE ra, RAID_CALENDAR rc, `CHARACTER` chr " .
             "where ra.raid_id = rc.raid_id  " .
@@ -223,6 +228,18 @@ DELIMETER
 
 	$statement->execute() or die $dbh->errstr;
 	my $counter = 0;
+	my $ms7d = 0;
+	my $as7d = 0;
+	my $os7d = 0;
+	my $avg7d = 0;
+	my $ms30d = 0;
+	my $as30d = 0;
+	my $os30d = 0;
+	my $avg30d = 0;	
+	my $ms60d = 0;
+	my $as60d = 0;
+	my $os60d = 0;
+	my $avg60d = 0;
 	while (my $row = $statement->fetchrow_hashref()) {
 		#print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='char.shtml?data=$row->{NAME}'\">";
 		print "<TR id=\"check_$counter\" onClick=\"toggle($counter);\" onMouseOver=\"this.className='highlight'\" onMouseOut=\"mouseHighlight($counter);\">";
@@ -248,13 +265,40 @@ DELIMETER
 		lootColor($row->{'60OS'});
 		print "</TR>\n";
 		$counter = $counter+1;
+		$avg7d = $avg7d+$row->{'7day'};
+		$ms7d = $ms7d+$row->{'7MS'};
+		$as7d = $as7d+$row->{'7AS'};
+		$os7d = $os7d+$row->{'7OS'};
+		$avg30d = $avg30d+$row->{'30day'};	
+		$ms30d = $ms30d+$row->{'30MS'};
+		$as30d = $as30d+$row->{'30AS'};
+		$os30d = $os30d+$row->{'30OS'};
+		$avg60d = $avg60d+$row->{'60day'};
+		$ms60d = $ms60d+$row->{'60MS'};
+		$as60d = $as60d+$row->{'60AS'};
+		$os60d = $os60d+$row->{'60OS'};
 	}
 	print "</TBODY>";
+	$avg7d = round($avg7d/$counter);
+	$avg30d = round($avg30d/$counter);
+	$avg60d = round($avg60d/$counter);
 	print "<tfoot>";
 	print "<TR>";
-	print "<TD>";
+	print "<TD colspan=\"3\">";
 	print "Total Raiders: $counter";
 	print "</TD>";
+	attendanceColor($avg7d);
+	lootColor($ms7d);
+	lootColor($as7d);
+	lootColor($os7d);
+	attendanceColor($avg30d);
+	lootColor($ms30d);
+	lootColor($as30d);
+	lootColor($os30d);
+	attendanceColor($avg60d);
+	lootColor($ms60d);
+	lootColor($as60d);
+	lootColor($os60d);
 	print "</TR>";
 	print "</tfoot>";
 	print "</TABLE>";

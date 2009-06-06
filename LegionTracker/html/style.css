@@ -11,7 +11,6 @@ table thead  {
 }
 
 table thead tr,
-table tfoot tr,
 table thead tr th{
 	background: #171717;
 	color: #C5BCAC;
@@ -28,6 +27,10 @@ td {
 	border-bottom: none;
 	padding-right: 15px;
 	white-space: nowrap;
+}
+
+table tfoot tr td{
+	border-top: 3px solid #35354F;
 }
 
 body {
