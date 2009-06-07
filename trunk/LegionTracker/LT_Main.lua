@@ -8,6 +8,7 @@ LT_Main_ST = nil;
 LT_Main_ST1 = nil;
 local LT_LDB = LibStub("LibDataBroker-1.1", true)
 local LT_LDBIcon = LibStub("LibDBIcon-1.0", true)
+LT_raiderFilter = false;
 
 function LT_OnLoad()
 	LT_Main:SetParent(UIParent);
@@ -126,8 +127,10 @@ function LT_Main_SetupTable()
     table.insert(cols, {name="Name", width=w*0.25, align="LEFT", sort="desc"});
 	table.insert(cols, {name="Class", width=w*0.15, align="LEFT", sortnext=1});
 	table.insert(cols, {name="Attend.", width=w*0.08, align="LEFT", sortnext=1, comparesort=function(a, b, col)
-		local a1 = LT_GetAttendance(a);
-		local b1 = LT_GetAttendance(b);
+		--local a1 = LT_GetAttendance(a);
+		--local b1 = LT_GetAttendance(b);
+        local a1 = LT_GetAttendance(LT_GetPlayerIndexFromName(LT_Main_ST.data[a].cols[1].charname()));
+		local b1 = LT_GetAttendance(LT_GetPlayerIndexFromName(LT_Main_ST.data[b].cols[1].charname()));
 
 		if (tonumber(a1) and tonumber(b1)) then
 			a1 = tonumber(a1);
@@ -149,8 +152,10 @@ function LT_Main_SetupTable()
 		end
 	end});
     table.insert(cols, {name="Sitting", width=w*0.08, align="CENTER", sortnext=1, comparesort=function(a, b, col)
-		local a1 = LT_GetAttendance(a, true);
-		local b1 = LT_GetAttendance(b, true);
+        --local a1 = LT_GetAttendance(a, true);
+		--local b1 = LT_GetAttendance(b, true);
+        local a1 = LT_GetAttendance(LT_GetPlayerIndexFromName(LT_Main_ST.data[a].cols[1].charname()),true);
+		local b1 = LT_GetAttendance(LT_GetPlayerIndexFromName(LT_Main_ST.data[b].cols[1].charname()),true);
 
 		if (tonumber(a1) and tonumber(b1)) then
 			a1 = tonumber(a1);
@@ -209,7 +214,9 @@ function LT_Main_SetupTable()
 		OnClick = function(row_frame, cell_frame, data, cols, row, realrow, column)
 			if (realrow) then
                 if (data[realrow].is_total ~= true) then
-				    LT_Char_ShowPlayer(GetGuildRosterInfo(realrow));
+                    --LT_Char_ShowPlayer(GetGuildRosterInfo(realrow));
+                    --LT_Print("cols1"..data[realrow].[name]);
+                    LT_Char_ShowPlayer(data[realrow].cols[1].charname());
                 else
                     LT_AllLoot:ToggleShow();
                 end
@@ -338,8 +345,14 @@ function LT_Main_CreateTotalRow()
 	return row;
 end
 
-function LT_Main_CreateRow(id)
-	local row = _G["LT_Main_SummaryRow"..id];
+function LT_Main_CreateRow(id,manual_rowid)
+    --LT_Print("id = "..id.." rowid = "..rowid);
+    local row = _G["LT_Main_SummaryRow"..id];
+    if (manual_rowid == nil) then
+        row = _G["LT_Main_SummaryRow"..id];
+    else
+        row = _G["LT_Main_SummaryRow"..manual_rowid];
+    end
 	if (row == nil) then
 		row = {
 			["cols"] = {
@@ -358,6 +371,10 @@ function LT_Main_CreateRow(id)
                         else
                             return {r=0.4, g=0.4, b=0.4};
                         end
+                    end,
+                    charname = function()
+                        local name = GetGuildRosterInfo(id);
+                        return name;
                     end
 				},
 				{ -- Class
@@ -426,7 +443,12 @@ function LT_Main_CreateRow(id)
 				},
 			}
 		};
-		_G["LT_Main_SummaryRow"..id] = row;
+        if (manual_rowid == nil) then
+        	_G["LT_Main_SummaryRow"..id] = row;
+        else
+            _G["LT_Main_SummaryRow"..manual_rowid] = row;
+        end
+		--_G["LT_Main_SummaryRow"..id] = row;
 	end
 	return row;
 end
@@ -465,7 +487,7 @@ function LT_UpdatePlayerList()
             non_nil = false;
         end
     end
-    
+
     if (LT_Main:IsShown() and non_nil == true) then
         local st = LT_Main_ST;
         local st1 = LT_Main_ST1;
@@ -473,8 +495,28 @@ function LT_UpdatePlayerList()
         local data = {};
     
         local num_members = GetNumGuildMembers(false);
+        --Added logic for raider filter
+        --local x = 1;
         for i = 1, num_members do
-            table.insert(data, LT_Main_CreateRow(i));
+            if (LT_raiderFilter) then
+                local name,rank = GetGuildRosterInfo(i);
+                if (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "Friend") then
+                    --LT_Print("inserting: i: "..i.." x: "..x);
+                    table.insert(data, LT_Main_CreateRow(i));
+                    --table.insert(data, name);
+                    --x=x+1;
+                elseif (rank == "Alt") or (rank == "Officer Alt") then
+                    local mainRank = GetGuildRosterInfo(LT_GetPlayerIndexFromName(LT_GetMainName(i)));
+                    if (mainRank ~= "Friend") then
+                        --LT_Print("inserting: i: "..i.." x: "..x);
+                        table.insert(data, LT_Main_CreateRow(i));
+                        --table.insert(data, name);
+                        --x=x+1;
+                    end
+                end
+            else
+                table.insert(data, LT_Main_CreateRow(i));
+            end
         end
 
 		--table.insert(data, LT_Main_CreateTotalRow());
