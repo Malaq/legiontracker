@@ -3,7 +3,7 @@
   <Frame name="LT_Settings" movable="true" enableMouse="true">
     <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508883-59c2-4f83-ae10-27aaad48391b" />-->
     <Size>
-      <AbsDimension x="307" y="164" />
+      <AbsDimension x="343" y="212" />
     </Size>
     <Anchors>
       <Anchor point="CENTER" relativeTo="UIParent">
@@ -67,12 +67,12 @@
       <Frame name="$parentPanel2">
         <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508888-59c2-4f83-ae10-27aaad48391b" />-->
         <Size>
-          <AbsDimension x="97" y="98" />
+          <AbsDimension x="173" y="97" />
         </Size>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="27" y="-19" />
+              <AbsDimension x="18" y="-41" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -88,15 +88,51 @@
           </EdgeSize>
         </Backdrop>
         <Frames>
-          <Frame name="$parentLabel1">
-            <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
+          <Button name="$parentButton3" text="Reset Attendance">
+            <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508884-59c2-4f83-ae10-27aaad48391b" />-->
             <Size>
-              <AbsDimension x="67" y="18" />
+              <AbsDimension x="128" y="20" />
             </Size>
             <Anchors>
               <Anchor point="TOPLEFT">
                 <Offset>
-                  <AbsDimension x="14" y="-13" />
+                  <AbsDimension x="12" y="-36" />
+                </Offset>
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnClick>LT_ResetAttendance();</OnClick>
+            </Scripts>
+            <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
+              <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+            </NormalTexture>
+            <PushedTexture file="Interface\Buttons\UI-Panel-Button-Down">
+              <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+            </PushedTexture>
+            <DisabledTexture file="Interface\Buttons\UI-Panel-Button-Disabled">
+              <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+            </DisabledTexture>
+            <HighlightTexture file="Interface\Buttons\UI-Panel-Button-Highlight" alphaMode="ADD">
+              <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
+            </HighlightTexture>
+            <ButtonText name="$parentText">
+              <FontHeight>
+                <AbsValue val="10" />
+              </FontHeight>
+            </ButtonText>
+            <NormalFont style="GameFontNormal" />
+            <HighlightFont style="GameFontHighlight" />
+            <DisabledFont style="GameFontDisable" />
+          </Button>
+          <Frame name="$parentLabel1">
+            <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508885-59c2-4f83-ae10-27aaad48391b" />-->
+            <Size>
+              <AbsDimension x="56" y="18" />
+            </Size>
+            <Anchors>
+              <Anchor point="TOPLEFT">
+                <Offset>
+                  <AbsDimension x="12" y="-12" />
                 </Offset>
               </Anchor>
             </Anchors>
@@ -129,7 +165,7 @@
             <Anchors>
               <Anchor point="TOPLEFT">
                 <Offset>
-                  <AbsDimension x="12" y="-65" />
+                  <AbsDimension x="97" y="-62" />
                 </Offset>
               </Anchor>
             </Anchors>
@@ -161,17 +197,17 @@
           <Button name="$parentComponent5" text="Reset Loot">
             <!--<FrameSkin skinid="dcb143e1-a4ab-4e7c-b934-1efa40101d21" frameid="2d508884-59c2-4f83-ae10-27aaad48391b" />-->
             <Size>
-              <AbsDimension x="75" y="20" />
+              <AbsDimension x="79" y="20" />
             </Size>
             <Anchors>
               <Anchor point="TOPLEFT">
                 <Offset>
-                  <AbsDimension x="12" y="-37" />
+                  <AbsDimension x="12" y="-62" />
                 </Offset>
               </Anchor>
             </Anchors>
             <Scripts>
-              <OnClick>LT_ResetLootButton()
+              <OnClick>LT_ResetLootButton();
 </OnClick>
             </Scripts>
             <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
@@ -205,7 +241,7 @@
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="130" y="-19" />
+              <AbsDimension x="197" y="-41" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -268,7 +304,8 @@
             </Anchors>
             <Scripts>
               <OnClick>LT_Timer_Settings:Show();
-LT_Settings:Hide();</OnClick>
+LT_Settings:Hide();
+</OnClick>
             </Scripts>
             <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
               <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -338,7 +375,7 @@ LT_Settings:Hide();</OnClick>
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="170" y="-123" />
+              <AbsDimension x="237" y="-171" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -376,7 +413,7 @@ LT_Settings:Hide();
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="265" y="-19" />
+              <AbsDimension x="306" y="-15" />
             </Offset>
           </Anchor>
         </Anchors>
@@ -413,7 +450,7 @@ LT_Settings:Hide();
         <Anchors>
           <Anchor point="TOPLEFT">
             <Offset>
-              <AbsDimension x="27" y="-123" />
+              <AbsDimension x="255" y="-145" />
             </Offset>
           </Anchor>
         </Anchors>

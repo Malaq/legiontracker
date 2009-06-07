@@ -358,6 +358,21 @@ function LT_OfficerLoot:OnEnter(table_id, row_frame, cell_frame, data, cols, row
         self.vote_tooltip:AddLine("Comment:");
         self.vote_tooltip:AddLine(temp_comment,1,1,1);
         self.vote_tooltip:Show();
+    elseif (column == 2 and realrow ~= nil) then
+        --Hyjacking your vote_tooltip for use on ranks
+        self.vote_tooltip:ClearAllPoints();
+        self.vote_tooltip:SetPoint("CENTER", UIParent);
+        self.vote_tooltip:SetOwner(row_frame, "ANCHOR_CURSOR");
+        self.vote_tooltip:ClearLines();
+        local temp_comment = "";
+        if (bids[realrow].main) then
+            temp_comment = ""..bids[realrow].rank.." of: "..bids[realrow].main;
+        else
+            temp_comment = bids[realrow].rank;
+        end
+        self.vote_tooltip:AddLine("Rank:");
+        self.vote_tooltip:AddLine(temp_comment,1,1,1);
+        self.vote_tooltip:Show();
     end
     
     
@@ -417,6 +432,16 @@ function LT_OfficerLoot:OnReceiveBid(prefix, message, distr, sender)
 end
 
 function LT_OfficerLoot:AddBid(item, player, spec, replacing, comments)
+    local playerIndex = LT_GetPlayerIndexFromName(player);
+    local mainname = "";
+    if (playerIndex ~= nil) then
+        _,rank = GetGuildRosterInfo(playerIndex);
+        mainname = LT_GetMainName(playerIndex);
+    else
+        rank = "Not in guild.";
+        mainname = player;
+    end
+    
     local bid = {};
     bid.player = player;
     bid.replacing = replacing;
@@ -424,6 +449,10 @@ function LT_OfficerLoot:AddBid(item, player, spec, replacing, comments)
     bid.spec = spec;
     bid.votes = {};
     bid.item = item;
+    bid.rank = rank;
+    if (player ~= mainname) then
+        bid.main = mainname;
+    end
     self:SendOfficerMessage("LT_OfficerLoot_Bid", self:Serialize(bid));
 end
 
