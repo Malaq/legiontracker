@@ -496,22 +496,15 @@ function LT_UpdatePlayerList()
     
         local num_members = GetNumGuildMembers(false);
         --Added logic for raider filter
-        --local x = 1;
         for i = 1, num_members do
             if (LT_raiderFilter) then
                 local name,rank = GetGuildRosterInfo(i);
                 if (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "Friend") then
-                    --LT_Print("inserting: i: "..i.." x: "..x);
                     table.insert(data, LT_Main_CreateRow(i));
-                    --table.insert(data, name);
-                    --x=x+1;
                 elseif (rank == "Alt") or (rank == "Officer Alt") then
-                    local mainRank = GetGuildRosterInfo(LT_GetPlayerIndexFromName(LT_GetMainName(i)));
-                    if (mainRank ~= "Friend") then
-                        --LT_Print("inserting: i: "..i.." x: "..x);
+                    local _,mainRank = GetGuildRosterInfo(LT_GetPlayerIndexFromName(LT_GetMainName(i)));
+                    if (mainRank ~= "Friend") and (LT_MainOfflineCheckBox:GetChecked() ~= 1) then
                         table.insert(data, LT_Main_CreateRow(i));
-                        --table.insert(data, name);
-                        --x=x+1;
                     end
                 end
             else
