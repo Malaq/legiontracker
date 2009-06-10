@@ -72,7 +72,7 @@ function LT_LootUI:CreateRow(id)
 				},
 
 				{
-					value = ""
+					value = "X"
 				}
 			}
 		};	
