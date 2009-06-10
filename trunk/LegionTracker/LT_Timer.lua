@@ -240,7 +240,9 @@ function LT_TimerToggle()
         
     elseif (LT_TIMER_TOGGLE == false) then
         StaticPopupDialogs["Reset Warning"] = {
-        text = "Do you want to reset all loot and attendance before starting the timer?",
+        --text = "Do you want to reset all loot and attendance before starting the timer?",
+        text = "LegionTracker: RESET ATTENDANCE/LOOT before starting timer?\nAre you sure, this process can not be reversed.",
+        
         button1 = "Yes",
         button2 = "No",
         OnAccept = function()

@@ -101,6 +101,20 @@ function LT_LootUI:OnClick(row_frame, cell_frame, data, cols, row, realrow, colu
 		end
 	elseif (column == 4 and realrow) then
         LT_PlayerSelect:Show(self.loots[realrow].player, self.loots[realrow].lootId);
+--    elseif (column == 7 and realrow) then
+--        StaticPopupDialogs["Delete Item"] = {
+--        text = "LegionTracker: You are about to delete: "..self.loots[realrow].itemString..", are you sure?",
+--        button1 = "Yes",
+--        button2 = "No",
+--        OnAccept = function()
+--            --LT_LootTable[realrow] = {};
+--            self.loots[realrow] = {};
+--        end,
+--        timeout = 0,
+--        whileDead = 1,
+--        hideOnEscape = 1
+--        };
+--        StaticPopup_Show("Delete Item");
     end
 end
 

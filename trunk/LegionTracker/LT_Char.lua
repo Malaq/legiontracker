@@ -18,6 +18,7 @@ function LT_Char_ShowPlayer(name)
 
     LT_Char:Show();
     LT_Char_UpdateFrame();
+    LT_CharPopulateTicInfo();
 
 end         
 
@@ -165,4 +166,26 @@ function LT_Char_OnLoad()
     block_tooltip = CreateFrame("GameTooltip", "LT_BlockToolTip", UIParent, "GameTooltipTemplate");
     --block_tooltip = CreateFrame("GameTooltip", "LT_BlockToolTip");
     block_tooltip:Hide();
+end
+
+function LT_CharPopulateTicInfo()
+    local attendance = LT_GetRawAttendance(LT_GetPlayerIndexFromName(LT_Char_CurPlayer));
+    --Test if the o-note is valid.  Just 1's and 0's.
+    local test = string.find(attendance, "%D");
+    if (test ~= nil) then
+        LT_CharTicNumberLabel:SetText("");
+        LT_CharTicDurationLabel:SetText("");
+        return "";
+    end
+    local total = string.len(attendance);
+    LT_CharTicNumberLabel:SetText("Ticks: "..total);
+
+    local duration = 0;
+    if (total > 0) then
+        duration = (total-1)*LT_TimerInterval["total"];
+    end
+    local TIMER_SEC = mod(duration,60);
+    local TIMER_MIN = mod(floor(duration/60),60);
+    local TIMER_HR = floor(duration/3600);
+    LT_CharTicDurationLabel:SetText(string.format("%02d:%02d:%02d", TIMER_HR, TIMER_MIN, TIMER_SEC));
 end

@@ -538,7 +538,7 @@ end
 
 function LT_ResetAll()
     StaticPopupDialogs["Reset Warning"] = {
-    text = "You are about to reset all attendance and loot data, are you sure?  This process can not be reversed.",
+    text = "LegionTracker: RESET ATTENDANCE/LOOT?\nAre you sure, this process can not be reversed.",
     button1 = "Yes",
     button2 = "No",
     OnAccept = function()
@@ -555,7 +555,7 @@ end
 
 function LT_ResetLootButton()
     StaticPopupDialogs["Reset Warning"] = {
-    text = "LegionTracker: You are about to reset all loot data, are you sure?  This process can not be reversed.",
+    text = "LegionTracker: RESET LOOT?\nAre you sure, this process can not be reversed.",
     button1 = "Yes",
     button2 = "No",
     OnAccept = function()

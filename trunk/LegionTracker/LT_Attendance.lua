@@ -45,6 +45,22 @@ function LT_AttendanceTic()
     end
 end
 
+function LT_AttendanceResetButton()
+    StaticPopupDialogs["Reset Attendance"] = {
+    text = "LegionTracker: RESET ATTENDANCE?\nAre you sure, this process can not be reversed.",
+    button1 = "Yes",
+    button2 = "No",
+    OnAccept = function()
+        LT_ResetAttendance();
+    end,
+    timeout = 5,
+    whileDead = 1,
+    hideOnEscape = 1
+    };
+    
+    StaticPopup_Show("Reset Attendance");
+end
+
 function LT_ResetAttendance()
     local count = 0;
     guildCount = GetNumGuildMembers(true);
