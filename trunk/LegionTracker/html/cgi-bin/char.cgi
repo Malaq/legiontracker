@@ -6,12 +6,18 @@ use CGI::Carp qw(warningsToBrowser fatalsToBrowser);
 use DBI;
 
 # Setup our DB connection
-my $database = 'legiontracker_tg';
-my $username = 'legiontracker_tg';
+#my $database = 'legiontracker_tg';
+#my $username = 'legiontracker_tg';
+my $database = 'tris_lt_tgguild';
+my $username = 'tris_lt_tgguild';
 my $password = 'legio3';
-my $hostname = 'fdb1.awardspace.com';
+#my $hostname = 'fdb1.awardspace.com';
+my $hostname = 'fdb2.awardspace.com';
 my $dbport = '3306';
+
 my $mainchar = '';
+
+my $piechart = '';
 
 sub URLEncode {
 my $theURL = $_[0];
@@ -27,7 +33,7 @@ sub dayRange {
 	my $tempdate = shift;
 	
 	my $sql_datediff = 
-		$dbh2->prepare("SELECT DATEDIFF(LOCALTIME(), DATE( ? ) ) RANGE;");
+		$dbh2->prepare("SELECT DATEDIFF(LOCALTIME(), DATE( ? ) ) ;");
 	$sql_datediff->bind_param(1, $tempdate);
 	$sql_datediff->execute() or die $dbh2->errstr;
 
@@ -85,8 +91,9 @@ $sum_loot_stmt =
 	"and chr.name = ? ;");		
 $sum_attn_stmt =
 	$dbh2->prepare(
-	"select concat(floor((sum(length(REPLACE(ra.ATTENDANCE,'0','')))*100)/(sum(length(ra.ATTENDANCE)))),'%') ATTENDANCE, " .
-	"concat(concat(sum(length(REPLACE(ra.ATTENDANCE, '0', ''))),'/'),sum(length(ra.ATTENDANCE))) val " .
+	"select floor((sum(length(REPLACE(ra.ATTENDANCE,'0','')))*100)/(sum(length(ra.ATTENDANCE)))) ATTENDANCE, " .
+	"concat(concat(sum(length(REPLACE(ra.ATTENDANCE, '0', ''))),'/'),sum(length(ra.ATTENDANCE))) val, " .
+	"floor((sum(length(REPLACE(REPLACE(ra.ATTENDANCE,'0',''),'1','')))*100)/(sum(length(ra.ATTENDANCE)))) SITTING " .
 	"from RAID_ATTENDANCE ra, RAID_CALENDAR rc, `CHARACTER` chr " .
 	"where ra.raid_id = rc.raid_id " .
 	"and chr.char_id = ra.char_id " .
@@ -110,8 +117,9 @@ $sum_loot_stmt =
 	"and chr.name = ? ;");		
 $sum_attn_stmt =
 	$dbh2->prepare(
-	"select concat(floor((sum(length(REPLACE(ra.ATTENDANCE,'0','')))*100)/(sum(length(ra.ATTENDANCE)))),'%') ATTENDANCE, " .
-	"concat(concat(sum(length(REPLACE(ra.ATTENDANCE, '0', ''))),'/'),sum(length(ra.ATTENDANCE))) val " .
+	"select floor((sum(length(REPLACE(ra.ATTENDANCE,'0','')))*100)/(sum(length(ra.ATTENDANCE)))) ATTENDANCE, " .
+	"concat(concat(sum(length(REPLACE(ra.ATTENDANCE, '0', ''))),'/'),sum(length(ra.ATTENDANCE))) val, " .
+	"floor((sum(length(REPLACE(REPLACE(ra.ATTENDANCE,'0',''),'1','')))*100)/(sum(length(ra.ATTENDANCE)))) SITTING " .
 	"from RAID_ATTENDANCE ra, RAID_CALENDAR rc, `CHARACTER` chr " .
 	"where ra.raid_id = rc.raid_id " .
 	"and chr.char_id = ra.char_id " .
@@ -149,7 +157,7 @@ print "<B>Lifetime</B>";
 }
 print "</TD>";
 print "<TD>";
-print "$rowa->{ATTENDANCE}"; #Attendance
+print "$rowa->{ATTENDANCE}%"; #Attendance
 print "</TD>";
 print "<TD>";
 print "$rowa->{val}"; #Attendance
@@ -163,6 +171,10 @@ print "</TD>";
 print "<TD>";
 print "$rowl->{Off_Spec}"; #Off spec
 print "</TD>";
+$raiding=$rowa->{ATTENDANCE} - $rowa->{SITTING};
+$sitting=$rowa->{SITTING};
+$offline=100 - $rowa->{ATTENDANCE};
+$piechart = "http://chart.apis.google.com/chart?cht=p3&chf=bg,s,000000&chco=00FF00,FFFF00,FF0000&chtt=$temprange+Day+Chart&chd=t:$raiding,$sitting,$offline&chs=280x100&chl=Raiding+($raiding%)|Sitting+($sitting%)|Offline+($offline%)";
 $sum_loot_stmt->finish();
 $sum_attn_stmt->finish();
 }
@@ -317,6 +329,7 @@ sumTable("7",$tempchar);
 print "</TR>";
 print "<TR>";
 sumTable("30",$tempchar);
+$phpiechart=$piechart;
 print "</TR>";
 print "<TR>";
 sumTable("60",$tempchar);
@@ -326,6 +339,7 @@ sumTable("0",$tempchar);
 print "</TR>";
 
 print "</TABLE>";
+print "<img src=\"$phpiechart\" alt=\"30 Day Chart\" />";
 print "</fieldset>";
 #End Alts
 
