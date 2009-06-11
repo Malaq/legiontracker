@@ -9,12 +9,11 @@ use DBI;
 print "Content-type: text/html\n\n";
 
 # Setup our DB connection
-#my $database = 'legiontracker_tg';
-#my $username = 'legiontracker_tg';
-my $database = 'tris_lt_tgguild';
-my $username = 'tris_lt_tgguild';
+my $database = 'legiontracker_tg';
+my $username = 'legiontracker_tg';
+#my $database = 'tris_lt_tgguild';
+#my $username = 'tris_lt_tgguild';
 my $password = 'legio3';
-#my $hostname = 'fdb1.awardspace.com';
 my $hostname = 'fdb2.awardspace.com';
 my $dbport = '3306';
 
