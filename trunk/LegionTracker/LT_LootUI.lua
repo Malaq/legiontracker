@@ -109,8 +109,9 @@ function LT_LootUI:OnClick(row_frame, cell_frame, data, cols, row, realrow, colu
         button2 = "No",
         OnAccept = function()
 				local loot_id = self.loots[realrow].lootId;
-            LT_LootTable[loot_id] = nil;
-				LT_PlayerLootTable[self.player][loot_id] = nil;
+				local player = self.loots[realrow].player;
+            			LT_LootTable[loot_id] = nil;
+				LT_PlayerLootTable[player][loot_id] = nil;
 				LT_Loot_OnChange();
         end,
         timeout = 0,
