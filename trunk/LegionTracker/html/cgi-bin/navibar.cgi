@@ -20,7 +20,7 @@ print "<A HREF=\"raids.shtml\" STYLE=\"text-decoration:none\">";
 print "<B>All Raids</B>";
 print "</A><br>";
 print "<A HREF=\"allitems.shtml\" STYLE=\"text-decoration:none\">";
-print "<B>All Items</B>";
+print "<B>All Loot</B>";
 print "</A><br>";
 #print "</fieldset>";
 

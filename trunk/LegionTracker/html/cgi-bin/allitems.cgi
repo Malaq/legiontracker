@@ -35,10 +35,11 @@ print "<font size=\"6\" face=\"Monotype Corsiva\"><B>$char_name</B></font>";
 
 # Loot table
 my $list_statement =
-	$dbh->prepare("SELECT it.ITEM_NAME, it.ITEM_ID, min(rc.DATE) First_Loot, max(rc.DATE) Last_Looted, count(*) COUNT " .
+	$dbh->prepare("SELECT it.ITEM_NAME, it.ITEM_ID, min(rc.DATE) First_Loot, max(rc.DATE) Last_Looted, count(*) COUNT, it.rarity " .
 		"FROM `ITEM` it, `ITEMS_LOOTED` il, RAID_CALENDAR rc " .
 		"where it.ITEM_ID = il.ITEM_ID " .
 		"and il.RAID_ID = rc.RAID_ID " .
+		"and it.rarity in ('Epic','Legendary') " .
 		"group by il.ITEM_ID " .
 		"order by it.ITEM_NAME;");
 
@@ -52,6 +53,7 @@ print "<THEAD>";
 print "<TR>";
 print "<TH WIDTH=200><U><B>Item Name</B></U></TH>";
 print "<TH WIDTH=20><U><B>Count</B></U></TH>";
+print "<TH WIDTH=20><U><B>Rarity</B></U></TH>";
 print "<TH WIDTH=100><U><B>First Looted</B></U></TH>";
 print "<TH WIDTH=100><U><B>Last Looted</B></U></TH>";
 print "</TR>\n";
@@ -61,6 +63,7 @@ while (my $row = $list_statement->fetchrow_hashref()) {
 	print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='item.shtml?data=$url'\">";
 	print "<TD><A HREF=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\" TARGET=\"_blank\">$row->{ITEM_NAME}</A></TD>";
 	print "<TD>$row->{COUNT}</TD>";
+	print "<TD>$row->{rarity}</TD>";
 	print "<TD>$row->{First_Loot}</TD>";
 	print "<TD>$row->{Last_Looted}</TD>";
 	print "</TR>\n";

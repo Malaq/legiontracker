@@ -79,6 +79,7 @@ legend {
 .high_attendance { color:#00FF00; }
 .medium_attendance { color:yellow; }
 .low_attendance { color:red; }
+.sitting_neutral { color:#FF7D0A; }
 
 /* Loot */
 .loot { color:violet; }
