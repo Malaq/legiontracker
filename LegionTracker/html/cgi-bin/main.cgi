@@ -59,14 +59,29 @@ sub classColor {
 sub attendanceColor {
 	my $attendance = shift;
 	my $attendance_type = '';
-	if ($attendance > 85) {
+	if ($attendance > 84) {
 		$attendance_type = 'high_attendance';
-	} elsif ($attendance > 60) {
+	} elsif ($attendance > 59) {
 		$attendance_type = 'medium_attendance';
 	} else {
 		$attendance_type = 'low_attendance';
 	}
 	print "<TD class='$attendance_type' align=\"right\">$attendance%</TD>";
+}
+
+#Sitting Coloring
+sub sittingColor {
+	my $attendance = shift;
+#	my $attendance_type = '';
+#	if ($attendance > 84) {
+#		$attendance_type = 'high_attendance';
+#	} elsif ($attendance > 59) {
+#		$attendance_type = 'medium_attendance';
+#	} else {
+#		$attendance_type = 'low_attendance';
+#	}
+	#print "<TD class='$attendance_type' align=\"right\">$attendance%</TD>";
+	print "<TD class='sitting_neutral' align=\"right\">$attendance%</TD>";
 }
 
 #Loot Coloring
@@ -99,14 +114,17 @@ my $statement =
 	$dbh->prepare(
 	    "SELECT chr.NAME, chr.CLASS, chr.RANK, " .
             "IFNULL(7da.ATTENDANCE,'0') 7day,  " .
+            "IFNULL(7da.SITTING,'0') 7sit,  " .
             "IFNULL(7dl.Main_Spec,0) 7MS,  " .
             "IFNULL(7dl.Alt_Spec,0) 7AS,  " .
             "IFNULL(7dl.Off_Spec,0) 7OS,  " .
             "IFNULL(30da.ATTENDANCE,'0') 30day,  " .
+            "IFNULL(30da.SITTING,'0') 30sit,  " .
             "IFNULL(30dl.Main_Spec,0) 30MS,  " .
             "IFNULL(30dl.Alt_Spec,0) 30AS,  " .
             "IFNULL(30dl.Off_Spec,0) 30OS, " .
             "IFNULL(60da.ATTENDANCE,'0') 60day,  " .
+            "IFNULL(60da.SITTING,'0') 60sit,  " .
             "IFNULL(60dl.Main_Spec,0) 60MS,  " .
             "IFNULL(60dl.Alt_Spec,0) 60AS,  " .
             "IFNULL(60dl.Off_Spec,0) 60OS " .
@@ -115,6 +133,7 @@ my $statement =
             "LEFT JOIN " .
             "(select chr.char_id, " .
             "floor((sum(length(REPLACE(ra.ATTENDANCE,'0','')))*100)/(sum(length(ra.ATTENDANCE)))) ATTENDANCE, " .
+	    "floor(sum(length(REPLACE(REPLACE(ra.ATTENDANCE,'0',''),'1',''))*100)/(sum(length(ra.ATTENDANCE)))) SITTING, " .
             "concat(concat(sum(length(REPLACE(ra.ATTENDANCE, '0', ''))),'/'),sum(length(ra.ATTENDANCE))) val " .
             "from RAID_ATTENDANCE ra, RAID_CALENDAR rc, `CHARACTER` chr " .
             "where ra.raid_id = rc.raid_id  " .
@@ -141,6 +160,7 @@ my $statement =
             "LEFT JOIN " .
             "(select chr.char_id, " .
             "floor((sum(length(REPLACE(ra.ATTENDANCE,'0','')))*100)/(sum(length(ra.ATTENDANCE)))) ATTENDANCE, " .
+	    "floor(sum(length(REPLACE(REPLACE(ra.ATTENDANCE,'0',''),'1',''))*100)/(sum(length(ra.ATTENDANCE)))) SITTING, " .
             "concat(concat(sum(length(REPLACE(ra.ATTENDANCE, '0', ''))),'/'),sum(length(ra.ATTENDANCE))) val " .
             "from RAID_ATTENDANCE ra, RAID_CALENDAR rc, `CHARACTER` chr " .
             "where ra.raid_id = rc.raid_id " . 
@@ -167,6 +187,7 @@ my $statement =
             "LEFT JOIN " .
             "(select chr.char_id, " .
             "floor((sum(length(REPLACE(ra.ATTENDANCE,'0','')))*100)/(sum(length(ra.ATTENDANCE)))) ATTENDANCE, " .
+	    "floor(sum(length(REPLACE(REPLACE(ra.ATTENDANCE,'0',''),'1',''))*100)/(sum(length(ra.ATTENDANCE)))) SITTING, " .
             "concat(concat(sum(length(REPLACE(ra.ATTENDANCE, '0', ''))),'/'),sum(length(ra.ATTENDANCE))) val " .
             "from RAID_ATTENDANCE ra, RAID_CALENDAR rc, `CHARACTER` chr " .
             "where ra.raid_id = rc.raid_id  " .
@@ -213,14 +234,17 @@ my $statement =
 <TH><U><B>Class</B></U></TH>
 <TH><U><B>Rank</B></U></TH>
 <TH><U><B>7 Day Attn</B></U></TH>
+<TH title=\"7 Day Benched %\"><U><B>Sit</B></U></TH>
 <TH title=\"Main Spec Loot\"><U><B>MS</B></U></TH>
 <TH title=\"Alternate Spec Loot\"><U><B>AS</B></U></TH>
 <TH title=\"Off Spec Loot\"><U><B>OS</B></U></TH>
 <TH><U><B>30 Day Attn</B></U></TH>
+<TH title=\"30 Day Benched %\"><U><B>Sit</B></U></TH>
 <TH title=\"Main Spec Loot\"><U><B>MS</B></U></TH>
 <TH title=\"Alternate Spec Loot\"><U><B>AS</B></U></TH>
 <TH title=\"Off Spec Loot\"><U><B>OS</B></U></TH>
 <TH><U><B>60 Day Attn</B></U></TH>
+<TH title=\"60 Day Benched %\"><U><B>Sit</B></U></TH>
 <TH title=\"Main Spec Loot\"><U><B>MS</B></U></TH>
 <TH title=\"Alternate Spec Loot\"><U><B>AS</B></U></TH>
 <TH title=\"Off Spec Loot\"><U><B>OS</B></U></TH></TR>\n
@@ -234,14 +258,17 @@ DELIMETER
 	my $as7d = 0;
 	my $os7d = 0;
 	my $avg7d = 0;
+	my $avg7sit= 0;
 	my $ms30d = 0;
 	my $as30d = 0;
 	my $os30d = 0;
 	my $avg30d = 0;	
+	my $avg30sit= 0;
 	my $ms60d = 0;
 	my $as60d = 0;
 	my $os60d = 0;
 	my $avg60d = 0;
+	my $avg60sit= 0;
 	while (my $row = $statement->fetchrow_hashref()) {
 		#print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='char.shtml?data=$row->{NAME}'\">";
 		print "<TR id=\"check_$counter\" onClick=\"toggle($counter);\" onMouseOver=\"this.className='highlight'\" onMouseOut=\"mouseHighlight($counter);\">";
@@ -252,52 +279,64 @@ DELIMETER
 		print "<TD class='rank'>$row->{RANK}</TD>";
 		#7 day stats
 		attendanceColor($row->{'7day'});
+		sittingColor($row->{'7sit'});
 		lootColor($row->{'7MS'});
 		lootColor($row->{'7AS'});
 		lootColor($row->{'7OS'});
 		#30 day stats
 		attendanceColor($row->{'30day'});
+		sittingColor($row->{'30sit'});
 		lootColor($row->{'30MS'});
 		lootColor($row->{'30AS'});
 		lootColor($row->{'30OS'});
 		#60 day stats
 		attendanceColor($row->{'60day'});
+		sittingColor($row->{'60sit'});
 		lootColor($row->{'60MS'});
 		lootColor($row->{'60AS'});
 		lootColor($row->{'60OS'});
 		print "</TR>\n";
 		$counter = $counter+1;
 		$avg7d = $avg7d+$row->{'7day'};
+		$avg7sit = $avg7sit+$row->{'7sit'};
 		$ms7d = $ms7d+$row->{'7MS'};
 		$as7d = $as7d+$row->{'7AS'};
 		$os7d = $os7d+$row->{'7OS'};
 		$avg30d = $avg30d+$row->{'30day'};	
+		$avg30sit = $avg30sit+$row->{'30sit'};	
 		$ms30d = $ms30d+$row->{'30MS'};
 		$as30d = $as30d+$row->{'30AS'};
 		$os30d = $os30d+$row->{'30OS'};
 		$avg60d = $avg60d+$row->{'60day'};
+		$avg60sit = $avg60sit+$row->{'60sit'};
 		$ms60d = $ms60d+$row->{'60MS'};
 		$as60d = $as60d+$row->{'60AS'};
 		$os60d = $os60d+$row->{'60OS'};
 	}
 	print "</TBODY>";
 	$avg7d = round($avg7d/$counter);
+	$avg7sit = round($avg7sit/$counter);
 	$avg30d = round($avg30d/$counter);
+	$avg30sit = round($avg30sit/$counter);
 	$avg60d = round($avg60d/$counter);
+	$avg60sit = round($avg60sit/$counter);
 	print "<tfoot>";
 	print "<TR>";
 	print "<TD colspan=\"3\">";
 	print "Total Raiders: $counter";
 	print "</TD>";
 	attendanceColor($avg7d);
+	sittingColor($avg7sit);
 	lootColor($ms7d);
 	lootColor($as7d);
 	lootColor($os7d);
 	attendanceColor($avg30d);
+	sittingColor($avg30sit);
 	lootColor($ms30d);
 	lootColor($as30d);
 	lootColor($os30d);
 	attendanceColor($avg60d);
+	sittingColor($avg60sit);
 	lootColor($ms60d);
 	lootColor($as60d);
 	lootColor($os60d);
