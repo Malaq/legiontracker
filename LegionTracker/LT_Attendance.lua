@@ -39,6 +39,9 @@ function LT_AttendanceTic()
     end
     LT_AttendanceCheckList = {};
     LT_Print("Attendance updated for " ..guildCount.. " players.");
+    
+    --Consider removing next line to fix performance of having
+    --the window open during a tick during raid.
     LT_Attendance_OnChange();
     if (LT_FirstTic) then
         LT_FirstTic = false;
