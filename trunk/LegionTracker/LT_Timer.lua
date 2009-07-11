@@ -264,7 +264,7 @@ function LT_TimerToggle()
         OnCancel = function()
             LT_TIMER_START = time();
             LT_TIME_OF_LAST_TIC = time();
-            LT_AttendanceTic();
+            --LT_AttendanceTic();
             local timer_label = getglobal("LT_Main".."Timer".."Label");
             timer_label:SetTextColor(0, 1, 1);
             timer_label:SetText("Starting timer...");
