@@ -9,6 +9,7 @@ LT_Main_ST1 = nil;
 local LT_LDB = LibStub("LibDataBroker-1.1", true)
 local LT_LDBIcon = LibStub("LibDBIcon-1.0", true)
 LT_raiderFilter = false;
+LT_Rows_Shown = 0;
 
 function LT_OnLoad()
 	LT_Main:SetParent(UIParent);
@@ -295,7 +296,9 @@ function LT_Main_CreateTotalRow()
 					value = "*Totals*",
 				},
 				{ -- Class
-					value = "--";
+					value = function()
+                        return "Rows: "..LT_Main_GetRows();
+                    end
 				},
 				{ -- Attendance
 					value = "--";
@@ -474,6 +477,7 @@ end
 
 function LT_UpdatePlayerList()
     LT_NameLookup = {};
+    LT_CleanUp = {};
     
     -- This always needs to be done regardless of whether or not
     -- we're shown, because attendance and loot depend on the lookup.
@@ -493,24 +497,42 @@ function LT_UpdatePlayerList()
         local st1 = LT_Main_ST1;
         local totals = {};
         local data = {};
+        local counter = 1;
     
         local num_members = GetNumGuildMembers(false);
         --Added logic for raider filter
         for i = 1, num_members do
             if (LT_raiderFilter) then
-                local name,rank = GetGuildRosterInfo(i);
+                local name,rank,_,_,_,_,_,_,online = GetGuildRosterInfo(i);
                 if (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "Friend") then
-                    table.insert(data, LT_Main_CreateRow(i));
+                    table.insert(data, LT_Main_CreateRow(i));                    
+                    LT_CleanUp[name] = # data;
                 elseif (rank == "Alt") or (rank == "Officer Alt") then
-                    local _,mainRank = GetGuildRosterInfo(LT_GetPlayerIndexFromName(LT_GetMainName(i)));
-                    if (mainRank ~= "Friend") and (LT_MainOfflineCheckBox:GetChecked() ~= 1) then
-                        table.insert(data, LT_Main_CreateRow(i));
+                    local _,mainRank,_,_,_,_,_,_,mainOnline = GetGuildRosterInfo(LT_GetPlayerIndexFromName(LT_GetMainName(i)));
+                    --if (mainRank ~= "Friend") and (LT_MainOfflineCheckBox:GetChecked() ~= 1) then
+                    if (mainRank ~= "Friend") then
+                        if (online == 1) and (mainOnline ~= 1) then
+                            table.insert(data, LT_Main_CreateRow(i));
+                            LT_CleanUp[name] = # data;
+                            LT_CleanUp[counter] = LT_GetMainName(i);--LT_GetMainName(i);
+                            counter = counter+1;
+                        end
                     end
                 end
             else
                 table.insert(data, LT_Main_CreateRow(i));
             end
         end
+        
+        if (LT_MainOfflineCheckBox:GetChecked() == 1) then
+            for i=1,counter-1 do
+                local value = LT_CleanUp[i];
+                table.remove(data,LT_CleanUp[value]);
+            end
+        end
+        
+        --Populate the global variable 
+        LT_Rows_Shown = # data;
 
 		--table.insert(data, LT_Main_CreateTotalRow());
         --Added for totals
@@ -521,6 +543,11 @@ function LT_UpdatePlayerList()
         st1:SetData(totals);
         st1:Refresh();
     end
+end
+
+function LT_Main_GetRows()
+    --LT_Print(LT_Rows_Shown);
+    return LT_Rows_Shown;
 end
 
 function LT_GetMainName(playerIndex)
