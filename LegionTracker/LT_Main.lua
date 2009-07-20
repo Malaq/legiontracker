@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.75"
+﻿LT_VERSION = "Legion Tracker 0.76"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -267,7 +267,8 @@ end
 
 function LT_GetClassColor(class)
 	if (class == nil) then
-		return {r=1, g=1, b=1};
+		--return {r=1, g=1, b=1};
+        return {r=0.5, g=0.5, b=0.5};
 	end
 
     local color_class = string.upper(class);

@@ -31,6 +31,38 @@
         end
         --export_label:Insert("\n");
     end
+
+    --Handle unguilded chars
+    local unguildedLoot = {};
+    local LT_Char_Loots = {};
+    for id, info in pairs(LT_LootTable) do
+        if (info["spec"] ~= "Unassigned" and LT_NameLookup[info["player"]] == nil and unguildedLoot[info["player"]] == nil) then
+        --if (LT_NameLookup[info["player"]] == nil and unguildedLoot[info["player"]] == nil) then
+            --Make sure we dont record them twice
+            unguildedLoot[info["player"]] = 1;
+            --Get all their loots
+            local LT_Char_Loots = LT_Loot_GetLoots(info["player"]);
+            --Insert their player record
+            export_label:Insert("@"..info["player"]..";Unguilded;Friend;Friend\n");
+            --LT_Print("@"..info["player"]..";Unknown;Friend;Unguilded");
+            --Insert their loot records
+            for i=1, #LT_Char_Loots do
+                local item = LT_Char_Loots[i]["itemString"];
+                local ltime = date("%Y-%m-%d %H:%M:%S", LT_Char_Loots[i].time);--LT_Char_Loots[i]["time"];
+                --local player = LT_LootTable[i]["player"];
+                local spec = LT_Char_Loots[i]["spec"];
+                local zone = LT_Char_Loots[i]["zone"];
+                local subzone = LT_Char_Loots[i]["subzone"];
+                local itemName, _, rarity = GetItemInfo(item);
+                local _, blizItemId = strsplit(":",item);
+                rarity = LT_Export_ConvertRarity(rarity);
+                if (spec ~= "Unassigned") then
+                    export_label:Insert("$"..info["player"]..";"..itemName..";"..blizItemId..";"..ltime..";"..spec..";"..zone..";"..subzone..";"..rarity.."\n");
+                    --LT_Print("$"..info["player"]..";"..itemName..";"..blizItemId..";"..ltime..";"..spec..";"..zone..";"..subzone..";"..rarity);
+                end
+            end
+        end
+    end
 end
 
 function LT_Export_ConvertRarity(value)

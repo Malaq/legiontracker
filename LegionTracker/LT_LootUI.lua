@@ -5,14 +5,14 @@ function LT_LootUI:CreateRow(id)
 	if (row == nil) then
 		row = {
 			["cols"] = {
-				{ 
+				{ --Item
 					value = function() 
 						local _, link = GetItemInfo(self.loots[id].itemString);
 						return link;
 					end
 				},
 
-				{
+				{ --Zone - Subzone
 					value = function()
 						local ret = self.loots[id].zone;
 						if (self.loots[id].subzone ~= "") then
@@ -23,23 +23,27 @@ function LT_LootUI:CreateRow(id)
 					color = {r = 0.4, g = 0.7, b = 0.9}
 				},
 
-				{
+				{ --Timestamp
 					value = function()
 						return date("%b %d %H:%M", self.loots[id].time);
 					end,
 				},
 
-				{
+				{ --Player
 					value = function()
 						return self.loots[id].player;
 					end,
 					color = function()
-						local _, _, _, _, class = GetGuildRosterInfo(LT_GetPlayerIndexFromName(self.loots[id].player));
-						return LT_GetClassColor(class);
+                        if (LT_GetPlayerIndexFromName(self.loots[id].player) ~= nil) then
+						    local _, _, _, _, class = GetGuildRosterInfo(LT_GetPlayerIndexFromName(self.loots[id].player));
+                            return LT_GetClassColor(class);
+                        else
+                            return LT_GetClassColor();
+                        end
 					end
 				},
 
-				{
+				{ --Spec
 					value = function()
 						return self.loots[id].spec;
 					end,
@@ -58,7 +62,7 @@ function LT_LootUI:CreateRow(id)
 					end
 				},
 
-				{
+				{ --Quality
 					value = function()
 						local types = {"Poor", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Artifact", "Heirloom"};
 						local _, _, rarity = GetItemInfo(self.loots[id].itemString);
@@ -71,7 +75,7 @@ function LT_LootUI:CreateRow(id)
 					end
 				},
 
-				{
+				{ --Delete Button
 					value = "X"
 				}
 			}
