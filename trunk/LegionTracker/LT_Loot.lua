@@ -247,7 +247,8 @@ function LT_Loot_GetLoots(player_name)
     local loots = {};
 	if (player_name == nil) then
 		for loot_id, loot in pairs(LT_LootTable) do
-            if LT_GetPlayerIndexFromName(loot.player) ~= nil and LT_Loot_Filter(loot) then
+            --if LT_GetPlayerIndexFromName(loot.player) ~= nil and LT_Loot_Filter(loot) then
+            if LT_Loot_Filter(loot) then
 			    table.insert(loots, loot)
             end
 		end
