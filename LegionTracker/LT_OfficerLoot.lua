@@ -709,3 +709,11 @@ function LT_OfficerLoot:ScrollWheel(dir)
         LT_OfficerLoot:ScrollUp();
     end
 end
+
+function LT_OfficerLoot:IsLootRunning()
+    if (#self.items > 0) then
+        return 1;
+    else
+        return 0;
+    end
+end

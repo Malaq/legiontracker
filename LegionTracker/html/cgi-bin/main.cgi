@@ -210,7 +210,7 @@ my $statement =
             "and rc.scheduled = 1  " .
             "group by chr.char_id) 60dl " .
             "ON 60dl.CHAR_ID = chr.CHAR_ID " .
-            "WHERE chr.RANK not in ('Friend','Alt','Officer Alt', '') " . 
+            "WHERE chr.RANK not in ('Friend','Alt','Officer Alt','P.U.G.','') " . 
             "AND chr.DATE_REMOVED IS NULL " . 
             "ORDER BY chr.NAME;");
 
