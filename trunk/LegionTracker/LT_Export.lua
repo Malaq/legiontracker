@@ -43,7 +43,8 @@
             --Get all their loots
             local LT_Char_Loots = LT_Loot_GetLoots(info["player"]);
             --Insert their player record
-            export_label:Insert("@"..info["player"]..";Unguilded;Friend;Friend\n");
+            --export_label:Insert("@"..info["player"]..";Unguilded;Friend;Friend\n");
+            export_label:Insert("@"..info["player"]..";Unknown;P.U.G.;P.U.G.\n");
             --LT_Print("@"..info["player"]..";Unknown;Friend;Unguilded");
             --Insert their loot records
             for i=1, #LT_Char_Loots do

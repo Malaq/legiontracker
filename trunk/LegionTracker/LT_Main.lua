@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.76"
+﻿LT_VERSION = "Legion Tracker 0.77"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -510,8 +510,9 @@ function LT_UpdatePlayerList()
                     LT_CleanUp[name] = # data;
                 elseif (rank == "Alt") or (rank == "Officer Alt") then
                     local _,mainRank,_,_,_,_,_,_,mainOnline = GetGuildRosterInfo(LT_GetPlayerIndexFromName(LT_GetMainName(i)));
-                    --if (mainRank ~= "Friend") and (LT_MainOfflineCheckBox:GetChecked() ~= 1) then
-                    if (mainRank ~= "Friend") then
+                    if (mainRank ~= "Friend") and (LT_MainOfflineCheckBox:GetChecked() ~= 1) then
+                    --Attempt to show alts instead of mains if the alt is online.
+                    --if (mainRank ~= "Friend") then
                         if (online == 1) and (mainOnline ~= 1) then
                             table.insert(data, LT_Main_CreateRow(i));
                             LT_CleanUp[name] = # data;
@@ -525,12 +526,13 @@ function LT_UpdatePlayerList()
             end
         end
         
-        if (LT_MainOfflineCheckBox:GetChecked() == 1) then
-            for i=1,counter-1 do
-                local value = LT_CleanUp[i];
-                table.remove(data,LT_CleanUp[value]);
-            end
-        end
+        --Attempted logic to show alts instead of mains if the alt is online
+--        if (LT_MainOfflineCheckBox:GetChecked() == 1) then
+--            for i=1,counter-1 do
+--                local value = LT_CleanUp[i];
+--                table.remove(data,LT_CleanUp[value]);
+--            end
+--        end
         
         --Populate the global variable 
         LT_Rows_Shown = # data;
@@ -634,7 +636,13 @@ function LT_Main_StartLootWhispers()
     --LT_OfficerLoot_AwardedItems = {};
     --LT_OfficerLoot_ZoneData = {};
     if (GetNumLootItems() == 0) then
-        LT_Print("Error: must have the loot window open.");
+        LT_Print("LT_Error: must have the loot window open.");
+        return;
+    end
+    
+    if (LT_OfficerLoot:IsLootRunning() == 1) then
+        LT_Print("LT_Error: loot is already running.  Please finish awarding loot before starting another loot distribution.");
+        LT_Main_ViewVotes();
         return;
     end
     

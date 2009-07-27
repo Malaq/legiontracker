@@ -70,29 +70,53 @@ foreach $line (@lines) {
 		# Debug output
 		print "**Attendance Info**\tPlayer: $player\tClass: $class\tAttendance: $attendance\tRank: $rank\n";
 
-		my $statement =
-			$dbh->prepare("INSERT INTO `CHARACTER`(`NAME`, `CLASS`, `DATE_JOINED`) " .
-					"VALUES(?, ?, ?);");
-		$statement->bind_param(1, $player);
-		$statement->bind_param(2, $class);
-		$statement->bind_param(3, $date);
-		$statement->execute() or print "$player already exists.\n";
+		if ($rank eq 'Unguilded') {
+			my $statement =
+				$dbh->prepare("INSERT INTO `CHARACTER`(`NAME`, `CLASS`) " .
+						"VALUES(?, ?);");
+			$statement->bind_param(1, $player);
+			$statement->bind_param(2, $class);
+			$statement->execute() or print "$player already exists.\n";
+		}
+		else
+		{
+			my $statement =
+				$dbh->prepare("INSERT INTO `CHARACTER`(`NAME`, `CLASS`, `DATE_JOINED`) " .
+						"VALUES(?, ?, ?);");
+			$statement->bind_param(1, $player);
+			$statement->bind_param(2, $class);
+			$statement->bind_param(3, $date);
+			$statement->execute() or print "$player already exists.\n";
+		}
+
 
 		my $statement =
-			$dbh->prepare("SELECT CHAR_ID FROM `CHARACTER` " .
+			$dbh->prepare("SELECT CHAR_ID, RANK FROM `CHARACTER` " .
 					"WHERE `NAME`=?;");
 		$statement->bind_param(1, $player);
 		$statement->execute() or die $dbh->errstr;
 		$row=$statement->fetchrow_hashref;
 		$char_id = "$row->{CHAR_ID}";
+		$old_rank = "$row->{RANK}";
 
-		my $statement =
-			$dbh->prepare("UPDATE `CHARACTER` " .
-					"SET `RANK`=? " .
-					"WHERE CHAR_ID=?;");
-		$statement->bind_param(1, $rank);
-		$statement->bind_param(2, $char_id);
-		$statement->execute or die $dbh->errstr;
+		if (($old_rank eq 'P.U.G.') && ($rank ne 'P.U.G.')) {
+			my $statement =
+				$dbh->prepare("UPDATE `CHARACTER` " .
+						"SET `RANK`=?, `DATE_JOINED`=? " .
+						"WHERE CHAR_ID=?;");
+			$statement->bind_param(1, $rank);
+			$statement->bind_param(2, $date);
+			$statement->bind_param(3, $char_id);
+			$statement->execute or die $dbh->errstr;
+		} else {
+			my $statement =
+				$dbh->prepare("UPDATE `CHARACTER` " .
+						"SET `RANK`=? " .
+						"WHERE CHAR_ID=?;");
+			$statement->bind_param(1, $rank);
+			$statement->bind_param(2, $char_id);
+			$statement->execute or die $dbh->errstr;
+		}
 
 		print "CHAR_ID = $char_id\n";
 		
@@ -182,7 +206,8 @@ my $statement =
 		      "where raidmax.raid_id <> (select max(RAID_ID) from RAID_CALENDAR) " .
 		      "and chr.CHAR_ID = raidmax.CHAR_ID " .
 		      "and raidmax.RAID_ID = rc.RAID_ID " .
-		      ") removed ON removed.CHAR_ID = chr1.CHAR_ID;");
+		      ") removed ON removed.CHAR_ID = chr1.CHAR_ID " .
+		      "where chr1.rank <> 'P.U.G.';");
 $statement->execute() or die $dbh->errstr;
 while (my $row = $statement->fetchrow_hashref()) {
 	print "Updating $row->{CHAR_ID} setting removed_date to $row->{DATE}.\n";
