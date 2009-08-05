@@ -1,9 +1,9 @@
-## Interface: 30100
+## Interface: 30200
 ## Title: LegionTracker
 ## Author: Malaaq, Happyduude
 ## Version: 0.77
 ## eMail: legiontracker@googlegroups.com
-## URL: http://tgguild.awardspace.com
+## URL: http://www.legiontracker.com
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: LT_LootTable,LT_PlayerLootTable,LT_UniqueLootId,LT_TimerInterval,LT_LastRunVersion,LT_savedVarTable

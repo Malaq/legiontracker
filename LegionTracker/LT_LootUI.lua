@@ -14,10 +14,17 @@ function LT_LootUI:CreateRow(id)
 
 				{ --Zone - Subzone
 					value = function()
-						local ret = self.loots[id].zone;
-						if (self.loots[id].subzone ~= "") then
-							ret = ret.." - "..self.loots[id].subzone;
-						end
+                        local ret = "";
+                        if (self.loots[id].zone) then
+                            ret = self.loots[id].zone;
+                            if (self.loots[id].subzone ~= "") then
+                                if (self.loots[id].subzone) then
+                                    ret = ret.." - "..self.loots[id].subzone;
+                                end
+                            end
+                        else
+                            ret = "Error - Zone not recorded";
+                        end
 						return ret;
 					end,
 					color = {r = 0.4, g = 0.7, b = 0.9}
