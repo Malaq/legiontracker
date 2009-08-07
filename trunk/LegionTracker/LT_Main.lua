@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.77"
+﻿LT_VERSION = "Legion Tracker 0.78"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -52,6 +52,8 @@ function LT_SlashHandler(args)
         LT_Print("timer - Display timer commands.", "yellow");
         LT_Print("version - Broadcasts a LT version check.", "yellow");
         LT_Print("vote - Show vote window.", "yellow");
+        LT_Print("tableundo - Restore old table data prior to tablecopy.","yellow");
+        LT_Print("tablecopy <player> - Request a copy of the loot data from <player>","yellow");
 	else
 		if args == "show" then
 		    LT_Main:Show();
@@ -71,6 +73,10 @@ function LT_SlashHandler(args)
             LT_Main_StartLootWhispers();
         elseif string.find(args, "^version") ~= nil then
             LT_Settings_VersionCheck();
+        elseif string.find(args, "tablecopy") ~= nil then
+            LT_Settings_Table_Request(args);
+        elseif string.find(args, "tableundo") ~= nil then
+            LT_Settings_Table_Undo();
         elseif string.find(args, "^add") ~= nil then
             LT_OfficerLoot:Add(string.sub(args, 4));
         elseif args == "olt1" then

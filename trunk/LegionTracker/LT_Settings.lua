@@ -23,6 +23,39 @@ function LT_Settings_VersionCheck()
     --LT_OfficerLoot:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd));
 end
 
+function LT_Settings_Table_Request(args)
+    if (string.find(args, " ") == nil) then
+		LT_Print("tablecopy <playername>");
+		return
+	end
+    
+    local targetPlayer = string.sub(args, string.find(args, " ")+1);
+    if (targetPlayer ~= nil) then
+        if (string.lower(targetPlayer) == string.lower(UnitName("player"))) then
+            LT_Print("You can not request a table copy from yourself!","red");
+            return;
+        end
+        LT_Print("Table request: "..targetPlayer,"yellow");
+        LT_OfficerLoot.msg_channel = "WHISPER";
+        LT_OfficerLoot.msg_target = targetPlayer;
+        local cmd = {type = "TableRequest", player = UnitName("player"), target = targetPlayer};
+        LT_OfficerLoot:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd),nil);
+        LT_OfficerLoot.msg_channel = "RAID";
+        LT_OfficerLoot.msg_target = nil;
+    end
+end
+
+function LT_Settings_Table_Undo()
+    if (LT_LootTable_backup ~= nil and LT_PlayerLootTable_backup ~= nil) then
+        LT_Print("Restoring old table data.","yellow");
+        LT_LootTable = LT_LootTable_backup;
+        LT_PlayerLootTable = LT_PlayerLootTable_backup;
+        LT_Print("Restore complete.","yellow");
+    else
+        LT_Print("LT: No data available to restore.  Command failed.","red");
+    end
+end
+
 function LT_OfflineCheckBoxClicked()
     if (LT_MainOfflineCheckBox:GetChecked() == 1) then
         SetGuildRosterShowOffline(true);
