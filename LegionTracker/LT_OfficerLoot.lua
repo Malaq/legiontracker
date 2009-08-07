@@ -1,6 +1,9 @@
 ﻿LT_OfficerLoot = LibStub("AceAddon-3.0"):NewAddon("LT_OfficerLoot", "AceComm-3.0", "AceSerializer-3.0");
 LT_OfficerLoot_AwardedItems = {};
 LT_OfficerLoot_ZoneData = {};
+LT_copyingTable = false;
+LT_LootTable_backup = nil;
+LT_PlayerLootTable_backup = nil;
 
 -- TODO:
 -- - Handle dust?
@@ -153,6 +156,46 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
         self:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd), "GUILD");
     end
     
+    if (cmd.type == "TableRequest") then
+        LT_Print(cmd.player.." is requesting a table copy...","yellow");
+        local approveCopy = false;
+        
+        StaticPopupDialogs["LegionTracker: Table Copy Request"] = {
+        text = "LegionTracker: "..cmd.player.." is requesting a loot table copy.",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function()
+            LT_OfficerLoot:SendTable(cmd.player);
+        end,
+        OnCancel = function()
+            LT_Print("Declined copy to: "..cmd.player);
+            return;
+        end,
+        timeout = 30,
+        whileDead = 1,
+        hideOnEscape = 1
+        };
+        
+        StaticPopup_Show("LegionTracker: Table Copy Request");
+    end
+    
+    if (cmd.type == "TableResponse") then
+        if (cmd.target == UnitName("player") or cmd.target == "BROADCAST") then
+            if (cmd.loottable ~= nil and cmd.playerloottable ~= nil) then
+                LT_Print("Received loot table from: "..cmd.player);
+                LT_LootTable_backup = LT_LootTable;
+                LT_PlayerLootTable_backup = LT_PlayerLootTable;
+                LT_LootTable = cmd.loottable;
+                LT_PlayerLootTable = cmd.playerloottable;
+                LT_Print("Table copy complete, from: "..cmd.player);
+            else
+                LT_Print("Loot data incoming from: "..cmd.player..". This may take a few minutes.");
+            end
+        else
+            LT_Print("This error should not happen. Invalid table copy.","red");
+        end
+    end
+    
     if (cmd.type == "VersionResponse") then
         --LT_Print("Version Response: from: "..cmd.player.." version: "..cmd.version.." LT_VERSION: " ..LT_VERSION);
         if (cmd.target ~= nil) then
@@ -213,6 +256,27 @@ end
 function LT_OfficerLoot:BroadcastNewItems(items, item_links)
     local cmd = {["type"] = "Start", ["items"] = items, ["item_links"] = item_links, ["whisper_id"] = time(), ["real_zone"] = GetRealZoneText(), ["sub_zone"] = GetSubZoneText()};
     self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
+end
+
+function LT_OfficerLoot:SendTable(targetPlayer)
+    if (LT_copyingTable == false) then
+        LT_Print("Sending data to: "..targetPlayer,"yellow");
+        LT_copyingTable = true;
+        self.msg_channel = "WHISPER";
+        self.msg_target = targetPlayer;
+        --Alert them the data is coming
+        local cmd = {type = "TableResponse", target = targetPlayer, player = UnitName("player")};
+        self:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd), "WHISPER", cmd.player);
+        --Actual data send
+        cmd = {type = "TableResponse", loottable = LT_LootTable, playerloottable = LT_PlayerLootTable, target = targetPlayer, player = UnitName("player")};
+        self:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd), "WHISPER", cmd.player);
+        self.msg_channel = "RAID";
+        self.msg_target = nil;
+        LT_copyingTable = false;
+        LT_Print("Table copy to "..targetPlayer.." complete.","yellow");
+    else
+        LT_Print("Copy declined, copy already in progress.","red");
+    end
 end
 
 function LT_OfficerLoot:ForcePopup()
