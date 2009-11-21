@@ -130,7 +130,13 @@ function LT_SingleMemberTic(memberIndex,ticfromalt,altName)
                 local tempName;
                 if (raidCount ~= 0) then --If you are in the raid.
                     if (ticfromalt) then
-                        tempName = altName;
+                        if (UnitInRaid(altName)) then
+                            tempName = altName;
+                        elseif (UnitInRaid(name)) then
+                            tempName = name;
+                        else
+                            tempName = altName;
+                        end
                     else
                         tempName = name;
                     end
@@ -142,10 +148,12 @@ function LT_SingleMemberTic(memberIndex,ticfromalt,altName)
                             --Errored, but we dont want to stop attendance recording.
                             onlineValue = "1";
                         else
+                            --LT_Print(tempName.." 1");
                             onlineValue = "2";
                         end
                     else
                         --Online, but not in raid
+                        --LT_Print(tempName.." 2");
                         onlineValue = "2";
                     end                    
                 end

@@ -138,6 +138,8 @@ function LT_Main_SetupTable()
 		--local b1 = LT_GetAttendance(b);
         local a1 = LT_GetAttendance(LT_GetPlayerIndexFromName(LT_Main_ST.data[a].cols[1].charname()));
 		local b1 = LT_GetAttendance(LT_GetPlayerIndexFromName(LT_Main_ST.data[b].cols[1].charname()));
+        --local a1 = 0;
+        --local b1 = 0;
 
 		if (tonumber(a1) and tonumber(b1)) then
 			a1 = tonumber(a1);
@@ -163,6 +165,8 @@ function LT_Main_SetupTable()
 		--local b1 = LT_GetAttendance(b, true);
         local a1 = LT_GetAttendance(LT_GetPlayerIndexFromName(LT_Main_ST.data[a].cols[1].charname()),true);
 		local b1 = LT_GetAttendance(LT_GetPlayerIndexFromName(LT_Main_ST.data[b].cols[1].charname()),true);
+        --local a1 = 0;
+        --local b1 = 0;
 
 		if (tonumber(a1) and tonumber(b1)) then
 			a1 = tonumber(a1);
