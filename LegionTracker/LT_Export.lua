@@ -22,12 +22,17 @@
             local spec = LT_Char_Loots[i]["spec"];
             local zone = LT_Char_Loots[i]["zone"];
             local subzone = LT_Char_Loots[i]["subzone"];
-            local itemName, _, rarity = GetItemInfo(item);
-            local _, blizItemId = strsplit(":",item);
-            rarity = LT_Export_ConvertRarity(rarity);
-            
-            --export_label:Insert("<"..itemName..";"..blizItemId..";"..spec..";"..ltime..";"..zone..";"..subzone..">");
-            export_label:Insert("$"..name..";"..itemName..";"..blizItemId..";"..ltime..";"..spec..";"..zone..";"..subzone..";"..rarity.."\n");
+            if (GetItemInfo(item) ~= nil) then
+                local itemName, tempItemLink, rarity, iLevel, _, iType, iSubType, _, iEquipLoc = GetItemInfo(item);
+                --local _, blizItemId = strsplit(":",item);
+                local _, blizItemId = strsplit(":",tempItemLink);
+                rarity = LT_Export_ConvertRarity(rarity);
+                
+                --export_label:Insert("$"..name..";"..itemName..";"..blizItemId..";"..ltime..";"..spec..";"..zone..";"..subzone..";"..rarity.."\n");
+                export_label:Insert("$"..name..";"..itemName..";"..blizItemId..";"..ltime..";"..spec..";"..zone..";"..subzone..";"..rarity..";"..iLevel..";"..iType..";"..iSubType..";"..iEquipLoc.."\n");
+            else
+                LT_Print("ERROR DURING EXPORT!!! ITEM: "..item.." could not be extracted.","yellow");
+            end
         end
         --export_label:Insert("\n");
     end
@@ -54,12 +59,18 @@
                 local spec = LT_Char_Loots[i]["spec"];
                 local zone = LT_Char_Loots[i]["zone"];
                 local subzone = LT_Char_Loots[i]["subzone"];
-                local itemName, _, rarity = GetItemInfo(item);
-                local _, blizItemId = strsplit(":",item);
-                rarity = LT_Export_ConvertRarity(rarity);
-                if (spec ~= "Unassigned") then
-                    export_label:Insert("$"..info["player"]..";"..itemName..";"..blizItemId..";"..ltime..";"..spec..";"..zone..";"..subzone..";"..rarity.."\n");
-                    --LT_Print("$"..info["player"]..";"..itemName..";"..blizItemId..";"..ltime..";"..spec..";"..zone..";"..subzone..";"..rarity);
+                if (GetItemInfo(item) ~= nil) then
+                    local itemName, tempItemLink, rarity, iLevel, _, iType, iSubType, _, iEquipLoc = GetItemInfo(item);
+                    --local itemName, _, rarity = GetItemInfo(item);
+                    local _, blizItemId = strsplit(":",tempItemLink);
+                    rarity = LT_Export_ConvertRarity(rarity);
+                    if (spec ~= "Unassigned") then
+                        --export_label:Insert("$"..info["player"]..";"..itemName..";"..blizItemId..";"..ltime..";"..spec..";"..zone..";"..subzone..";"..rarity.."\n");
+                        export_label:Insert("$"..info["player"]..";"..itemName..";"..blizItemId..";"..ltime..";"..spec..";"..zone..";"..subzone..";"..rarity..";"..iLevel..";"..iType..";"..iSubType..";"..iEquipLoc.."\n");
+                        --LT_Print("$"..info["player"]..";"..itemName..";"..blizItemId..";"..ltime..";"..spec..";"..zone..";"..subzone..";"..rarity);
+                    end
+                else
+                    LT_Print("ERROR DURING EXPORT!!! ITEM: "..item.." could not be extracted.","yellow");
                 end
             end
         end
