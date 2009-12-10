@@ -438,7 +438,7 @@ $attn_statement->finish();
 print "<fieldset>";
 print "<legend>Loot Details (<B>$char_name</B>):</legend>";
 my $loot_statement =
-	$dbh->prepare("SELECT chr.NAME, it.ITEM_ID, it.ITEM_NAME, il.TIMESTAMP, il.SPEC, il.ZONE, il.SUBZONE, rc.SCHEDULED " .
+	$dbh->prepare("SELECT chr.NAME, it.ITEM_ID, it.ITEM_NAME, il.TIMESTAMP, il.SPEC, il.ZONE, il.SUBZONE, rc.SCHEDULED, it.ITEM_LEVEL " .
 			"FROM `CHARACTER` chr, ITEMS_LOOTED il, RAID_CALENDAR rc, ITEM it " .
 			"WHERE il.RAID_ID = rc.RAID_ID " .
 			"AND il.CHAR_ID = chr.CHAR_ID " .
@@ -460,6 +460,7 @@ print "<THEAD>";
 print "<TR>";
 print "<TH><U><B>Name</B></U></TH>";
 print "<TH><U><B>Item Name</B></U></TH>";
+print "<TH><U><B>Item Level</B></U></TH>";
 print "<TH><U><B>Date</B></U></TH>";
 print "<TH><U><B>Range</B></U></TH>";
 print "<TH><U><B>Spec</B></U></TH>";
@@ -481,6 +482,7 @@ while (my $row = $loot_statement->fetchrow_hashref()) {
 	}
 	print "<TD>$row->{NAME}</TD>";
 	print "<TD><a href=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\">$row->{ITEM_NAME}</a></TD>";
+	print "<TD>$row->{ITEM_LEVEL}</TD>";
 	print "<TD>$row->{TIMESTAMP}</TD>";
 	print "<TD>$range</TD>";
 	print "<TD>$row->{SPEC}</TD>";
