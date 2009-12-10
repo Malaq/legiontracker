@@ -211,6 +211,7 @@ my $statement =
             "WHERE chr.RANK not in ('Friend','Alt','Officer Alt','P.U.G.', '') " . 
             "AND chr.DATE_REMOVED IS NULL " . 
 	    "OR chr.RANK = 'Alt' " .
+            "AND chr.DATE_REMOVED IS NULL " . 
 	    "AND IFNULL(30dl.Main_Spec,0) > 0 " .
             "ORDER BY chr.NAME;");
 

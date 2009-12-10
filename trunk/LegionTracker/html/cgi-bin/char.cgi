@@ -110,7 +110,7 @@ $sum_loot_stmt =
 	"from ITEMS_LOOTED il, RAID_CALENDAR rc, `CHARACTER` chr " .
 	"where chr.char_id = il.char_id " .
 	"and rc.raid_id = il.raid_id " .
-	"and rc.scheduled = 1 " .
+	#"and rc.scheduled = 1 " .
 	"and chr.name = ? ;");		
 $sum_attn_stmt =
 	$dbh2->prepare(
@@ -120,7 +120,7 @@ $sum_attn_stmt =
 	"from RAID_ATTENDANCE ra, RAID_CALENDAR rc, `CHARACTER` chr " .
 	"where ra.raid_id = rc.raid_id " .
 	"and chr.char_id = ra.char_id " .
-	"and rc.scheduled = 1 " .
+	#"and rc.scheduled = 1 " .
 	"and ra.ATTENDANCE Regexp '[[:digit:]]+' <> 0 " .
 	"and chr.name = ? ;");
 }
@@ -372,14 +372,15 @@ rc.DATE,
 date_format(rc.DATE,'%a') WEEKDAY, 
 ra.ATTENDANCE, 
 if(ra.ATTENDANCE Regexp '[[:digit:]]+'<>0, concat(concat(length(REPLACE(ra.ATTENDANCE, '0', '')),'/'),length(ra.ATTENDANCE)), 'n/a') val, 
-if(ra.ATTENDANCE Regexp '[[:digit:]]+'<>0, concat(FLOOR(IFNULL(length(REPLACE(ra.ATTENDANCE, '0', ''))*100/length(ra.ATTENDANCE),'0')),'%'), 'n/a') PERCENT
+if(ra.ATTENDANCE Regexp '[[:digit:]]+'<>0, concat(FLOOR(IFNULL(length(REPLACE(ra.ATTENDANCE, '0', ''))*100/length(ra.ATTENDANCE),'0')),'%'), 'n/a') PERCENT,
+rc.scheduled SCHEDULED
 from `CHARACTER` chr, RAID_ATTENDANCE ra, RAID_CALENDAR rc
 where ra.RAID_ID = rc.RAID_ID
 and chr.CHAR_ID = ra.CHAR_ID
 and chr.NAME = ?
-and rc.scheduled = 1
 order by rc.DATE desc;
 STRINGDELIM
+#and rc.scheduled = 1
 
 my $attn_statement = $dbh->prepare( $sql_text );
 if (( $rank eq "Alt") || ( $rank eq "Officer Alt" ))
@@ -402,16 +403,22 @@ while (my $row = $attn_statement->fetchrow_hashref()) {
 	$attn =~ s|1|<img src=\"images/greenbox.JPG\" TITLE=\"Online - In Raid\">|g;
 	$attn =~ s|2|<img src=\"images/yellowbox.JPG\" TITLE=\"Online - Sitting\">|g;
 	$attn =~ s|~|<img src=\"images/redbox.JPG\" TITLE=\"Offline\">|g;
-	print <<STRINGDELIM;
-	        <TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='raiddetail.shtml?data=$row->{RAID_ID}'\">
-			<td><A HREF=\"raiddetail.shtml?data=$row->{RAID_ID}\" TITLE=\"RAID_ID=$row->{RAID_ID}\">$row->{DATE}</A></td>
-			<td>$range</td>
-			<TD>$row->{WEEKDAY}</TD>
-			<td>$attn</td>
-			<td>$row->{val}</td>
-			<td>$row->{PERCENT}</td>
-		</tr>
-STRINGDELIM
+	if ($row->{SCHEDULED} eq "1")
+	{	
+		print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='raiddetail.shtml?data=$row->{RAID_ID}'\">";
+	}
+	else
+	{
+		print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='alert'\" class=\"alert\" onclick=\"location.href='raiddetail.shtml?data=$row->{RAID_ID}'\">";
+	}
+	print "<td><A HREF=\"raiddetail.shtml?data=$row->{RAID_ID}\" TITLE=\"RAID_ID=$row->{RAID_ID}\">$row->{DATE}</A></td>";
+	print "		<td>$range</td>";
+	print "		<TD>$row->{WEEKDAY}</TD>";
+	print "		<td>$attn</td>";
+	print "		<td>$row->{val}</td>";
+	print "		<td>$row->{PERCENT}</td>";
+	print "	</tr>";
+
 }
 print <<STRINGDELIM;
 </TBODY>
@@ -431,7 +438,7 @@ $attn_statement->finish();
 print "<fieldset>";
 print "<legend>Loot Details (<B>$char_name</B>):</legend>";
 my $loot_statement =
-	$dbh->prepare("SELECT chr.NAME, it.ITEM_ID, it.ITEM_NAME, il.TIMESTAMP, il.SPEC, il.ZONE, il.SUBZONE " .
+	$dbh->prepare("SELECT chr.NAME, it.ITEM_ID, it.ITEM_NAME, il.TIMESTAMP, il.SPEC, il.ZONE, il.SUBZONE, rc.SCHEDULED " .
 			"FROM `CHARACTER` chr, ITEMS_LOOTED il, RAID_CALENDAR rc, ITEM it " .
 			"WHERE il.RAID_ID = rc.RAID_ID " .
 			"AND il.CHAR_ID = chr.CHAR_ID " .
@@ -464,7 +471,14 @@ print "<TBODY>";
 while (my $row = $loot_statement->fetchrow_hashref()) {
 	my $url = URLEncode($row->{ITEM_NAME}); 
 	my $range = dayRange($row->{TIMESTAMP});
-	print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='item.shtml?data=$url'\">";
+	if ($row->{SCHEDULED} eq "1")
+	{
+		print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='item.shtml?data=$url'\">";
+	}
+	else
+	{
+		print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='alert'\" class=\"alert\" onclick=\"location.href='item.shtml?data=$url'\">";
+	}
 	print "<TD>$row->{NAME}</TD>";
 	print "<TD><a href=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\">$row->{ITEM_NAME}</a></TD>";
 	print "<TD>$row->{TIMESTAMP}</TD>";
