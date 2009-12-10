@@ -122,7 +122,9 @@ my $statement =
             "IFNULL(30dl.Alt_Spec,0) 30AS,  " .
             "IFNULL(30dl.Off_Spec,0) 30OS, " .
 	    "IFNULL(tier_list.old_tier,0) old_tier, " .
-	    "IFNULL(tier_list.new_tier,0) new_tier " .
+	    "IFNULL(tier_list.new_tier,0) new_tier, " .
+	    "IFNULL(tier_list.old_contested,0) old_contested, " .
+	    "IFNULL(tier_list.new_contested,0) new_contested " .
             "FROM `CHARACTER` chr " .
             " " .
             "LEFT JOIN " .
@@ -182,7 +184,9 @@ my $statement =
             "LEFT JOIN " .
 	    "(select chr.char_id,  " .
 	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1, 0)),0) Old_Tier, " .
-	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1, 0)),0) New_Tier " .
+	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1, 0)),0) New_Tier, " .
+	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2 and it.ITEM_EQUIPLOC in ('INVTYPE_TRINKET','INVTYPE_NECK','INVTYPE_CLOAK','INVTYPE_FINGER'),1,0)),0) Old_Contested, " .
+	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2 and it.ITEM_EQUIPLOC in ('INVTYPE_TRINKET','INVTYPE_NECK','INVTYPE_CLOAK','INVTYPE_FINGER'),1,0)),0) New_Contested " .
 	    "from ITEMS_LOOTED il,  " .
 	    "     RAID_CALENDAR rc,  " .
 	    "		 `CHARACTER` chr,  " .
@@ -233,7 +237,9 @@ my $statement =
 <TH title=\"Off Spec Loot\"><U><B>OS</B></U></TH>
 <TH title=\" - \"><U><B> - </B></U></TH>
 <TH title=\"Old i-level\"><U><B>Old i-level</B></U></TH>
-<TH title=\"New i-level\"><U><B>New i-level</B></U></TH></TR>\n
+<TH title=\"New i-level\"><U><B>New i-level</B></U></TH>
+<TH title=\"Trinkets, Necks, Cloaks, Rings\"><U><B>Old contested</B></U></TH>
+<TH title=\"Trinkets, Necks, Cloaks, Rings\"><U><B>New contested</B></U></TH>
 </thead>
 <tbody>
 DELIMETER
@@ -252,6 +258,8 @@ DELIMETER
 	my $avg30sit= 0;
 	my $old_tier_total = 0;
 	my $new_tier_total = 0;
+	my $old_contested_total = 0;
+	my $new_contested_total = 0;
 	while (my $row = $statement->fetchrow_hashref()) {
 		#print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='char.shtml?data=$row->{NAME}'\">";
 		print "<TR id=\"check_$counter\" onClick=\"toggle($counter);\" onMouseOver=\"this.className='highlight'\" onMouseOut=\"mouseHighlight($counter);\">";
@@ -276,6 +284,8 @@ DELIMETER
 		print "<TD> - </TD>";
 		lootColor($row->{'old_tier'});
 		lootColor($row->{'new_tier'});
+		lootColor($row->{'old_contested'});
+		lootColor($row->{'new_contested'});
 		print "</TR>\n";
 		$counter = $counter+1;
 		$avg7d = $avg7d+$row->{'7day'};
@@ -290,6 +300,8 @@ DELIMETER
 		$os30d = $os30d+$row->{'30OS'};
 		$old_tier_total = $old_tier_total+$row->{'old_tier'};
 		$new_tier_total = $new_tier_total+$row->{'new_tier'};
+		$old_contested_total = $old_contested_total+$row->{'old_contested'};
+		$new_contested_total = $new_contested_total+$row->{'new_contested'};
 	}
 	print "</TBODY>";
 	$avg7d = round($avg7d/$counter);
@@ -314,6 +326,8 @@ DELIMETER
 	print "<TD> - </TD>";
 	lootColor($old_tier_total);
 	lootColor($new_tier_total);
+	lootColor($old_contested_total);
+	lootColor($new_contested_total);
 	print "</TR>";
 	print "</tfoot>";
 	print "</TABLE>";
