@@ -56,7 +56,7 @@ print "<font size=\"6\" face=\"Monotype Corsiva\"><B>$char_name</B></font>";
 # Raid table
 my $list_statement =
 	$dbh->prepare("SELECT rc.RAID_ID, rc.DATE, date_format(rc.DATE, '%a') DAYOFWEEK, rc.ATTENDANCE_COUNT, IFNULL(total_members.numb,'n/a') MEMBERS, IFNULL(total_loot.numb,0) DROPS, " .
-			"concat(IFNULL(floor((de.numb*100)/total_loot.numb),0),'%') SATURATION " .
+			"concat(IFNULL(floor((de.numb*100)/total_loot.numb),0),'%') SATURATION, rc.SCHEDULED " .
 			"FROM `RAID_CALENDAR` rc " .
 			"LEFT JOIN " .
 		        "(SELECT raid_id, count(item_id) numb " .
@@ -76,7 +76,6 @@ my $list_statement =
 			 "WHERE ATTENDANCE Regexp '[[:digit:]]+' <> 0 " .
 			 "GROUP BY raid_id) total_members " .
 			"ON total_members.raid_id = rc.raid_id " .
-			"WHERE rc.SCHEDULED = 1 " .
 			"GROUP BY raid_id " .
 			"ORDER BY rc.DATE desc;");
 
@@ -98,7 +97,14 @@ print "</TR>\n";
 print "</THEAD>";
 while (my $row = $list_statement->fetchrow_hashref()) {
 	my $raidid = $row->{RAID_ID};
-	print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='raiddetail.shtml?data=$raidid'\">";
+	if ($row->{SCHEDULED} eq "1")
+	{
+		print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='raiddetail.shtml?data=$raidid'\">";
+	}
+	else
+	{
+		print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='alert'\" class=\"alert\" onclick=\"location.href='raiddetail.shtml?data=$raidid'\">";
+	}
 	print "<TD>";
 	print "<A HREF=\"raiddetail.shtml?data=$raidid\">";
 	print "$row->{DATE}";

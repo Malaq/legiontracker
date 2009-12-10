@@ -128,7 +128,7 @@ foreach $line (@lines) {
 
 
 	} elsif ($type eq '$') { # Loot info
-		($player, $item_name, $item_id, $date, $spec, $zone, $subzone, $rarity) = split(/;/, $data);
+		($player, $item_name, $item_id, $date, $spec, $zone, $subzone, $rarity, $iLevel, $iType, $iSubType, $iEquipLoc) = split(/;/, $data);
 
 		# Debug output
 		print "**Item info**\tPlayer: $player\titem: $item_name\tzone: $zone\n";
@@ -163,22 +163,30 @@ foreach $line (@lines) {
 			$statement->execute or print "$item_name already exists in the database.  Error, this shouldn't happen.\n";
 		}
 		
-		if ($temp_rarity eq $rarity) {
-			print "$item_name already set to $temp_rarity. Skipping update.\n";
-		} else {
-			if ($rarity ne "") {
+		#if ($temp_rarity eq $rarity) {
+		#	print "$item_name already set to $temp_rarity. Skipping update.\n";
+		#} else {
+		#	if ($rarity ne "") {
 				print "Updating $item_name rarity to $rarity.\n";
 				my $statement = 
 					$dbh->prepare("UPDATE `ITEM` " .
-							"SET RARITY = ? " .
+							"SET RARITY = ? , " .
+							"ITEM_LEVEL = ? , " .
+							"ITEM_TYPE = ? , " .
+							"ITEM_SUBTYPE = ? , " .
+							"ITEM_EQUIPLOC = ? " .
 							"WHERE item_id = ?");
 				$statement->bind_param(1, $rarity);
-				$statement->bind_param(2, $item_id);
+				$statement->bind_param(2, $iLevel);
+				$statement->bind_param(3, $iType);
+				$statement->bind_param(4, $iSubType);
+				$statement->bind_param(5, $iEquipLoc);
+				$statement->bind_param(6, $item_id);
 				$statement->execute or print "$item_name - $item_id error. Failure updating rarity to $rarity.\n";
-			} else {
-				print "WARNING: No rarity given for $item_name - $item_id.\n";
-			}
-		}
+		#	} else {
+		#		print "WARNING: No rarity given for $item_name - $item_id.\n";
+		#	}
+		#}
 
 		my $statement =
 			$dbh->prepare("INSERT INTO `ITEMS_LOOTED`(`CHAR_ID`, `ITEM_ID`, `RAID_ID`, `TIMESTAMP`, `SPEC`, `ZONE`, `SUBZONE`) " .
