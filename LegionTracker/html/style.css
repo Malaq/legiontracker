@@ -82,8 +82,12 @@ legend {
 .sitting_neutral { color:#FF7D0A; }
 
 /* Loot */
-.loot { color:violet; }
-.no_loot { color:red; }
+.loot { color:violet;
+	text-align: center
+}
+.no_loot { color:red; 
+	   text-align: center
+}
 
 /* Other columns */
 /*.member_name { color: #557FAA; }*/

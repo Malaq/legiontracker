@@ -108,6 +108,39 @@ my $dbport = '3306';
 # Database handle
 my $dbh = DBI->connect("dbi:mysql:database=$database;host=$hostname;port=$dbport", $username, $password) or print $DBI::errstr;
 
+my $oldilevelmin = '';
+my $oldilevelmax = '';
+my $newilevelmin = '';
+my $newilevelmax = '';
+
+my $ilevelquery1 =
+	$dbh->prepare(
+		"SELECT LOOKUP_VALUE, LOOKUP_VALUE_2 " .
+		"FROM LT_CONFIG_LOOKUPS " .
+		"WHERE LOOKUP_NAME = 'OLD_TIER' " .
+		"ORDER BY LOOKUP_VALUE;");
+
+$ilevelquery1->execute() or die $dbh->errstr;
+while (my $row = $ilevelquery1->fetchrow_hashref()) {
+	$oldilevelmin = $row->{LOOKUP_VALUE};
+	$oldilevelmax = $row->{LOOKUP_VALUE_2};
+}
+
+my $ilevelquery2 =
+	$dbh->prepare(
+		"SELECT LOOKUP_VALUE, LOOKUP_VALUE_2 " .
+		"FROM LT_CONFIG_LOOKUPS " .
+		"WHERE LOOKUP_NAME = 'NEW_TIER' " .
+		"ORDER BY LOOKUP_VALUE;");
+
+$ilevelquery2->execute() or die $dbh->errstr;
+while (my $row = $ilevelquery2->fetchrow_hashref()) {
+	$newilevelmin = $row->{LOOKUP_VALUE};
+	$newilevelmax = $row->{LOOKUP_VALUE_2};
+}
+
+
+
 my $statement =
 	$dbh->prepare(
 	    "SELECT chr.NAME, chr.CLASS, chr.RANK, " .
@@ -124,7 +157,9 @@ my $statement =
 	    "IFNULL(tier_list.old_tier,0) old_tier, " .
 	    "IFNULL(tier_list.new_tier,0) new_tier, " .
 	    "IFNULL(tier_list.old_contested,0) old_contested, " .
-	    "IFNULL(tier_list.new_contested,0) new_contested " .
+	    "IFNULL(tier_list.new_contested,0) new_contested, " .
+	    "IFNULL(tier_list.old_trophy,0) old_trophy, ".
+	    "IFNULL(tier_list.new_trophy,0) new_trophy ".
             "FROM `CHARACTER` chr " .
             " " .
             "LEFT JOIN " .
@@ -182,22 +217,24 @@ my $statement =
             "ON 30dl.CHAR_ID = chr.CHAR_ID " .
             " " .
             "LEFT JOIN " .
-	    "(select chr.char_id,  " .
-	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1, 0)),0) Old_Tier, " .
-	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1, 0)),0) New_Tier, " .
-	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2 and it.ITEM_EQUIPLOC in ('INVTYPE_TRINKET','INVTYPE_NECK','INVTYPE_CLOAK','INVTYPE_FINGER'),1,0)),0) Old_Contested, " .
-	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2 and it.ITEM_EQUIPLOC in ('INVTYPE_TRINKET','INVTYPE_NECK','INVTYPE_CLOAK','INVTYPE_FINGER'),1,0)),0) New_Contested " .
-	    "from ITEMS_LOOTED il,  " .
-	    "     RAID_CALENDAR rc,  " .
-	    "		 `CHARACTER` chr,  " .
-	    "		 ITEM it,  " .
-	    "		 LT_CONFIG_LOOKUPS lcl " .
-	    "where chr.char_id = il.char_id  " . 
-	    "and rc.raid_id = il.raid_id " .
-	    "and il.item_id = it.item_id " .
-	    "and rc.scheduled = 1 " .
-	    "and lcl.GUILD_ID = 1 " .
-	    "group by chr.char_id) tier_list " .	    
+	    "(select chr.char_id,   " .
+	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1, 0)),0) New_Tier,  " .
+	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2 and it.ITEM_EQUIPLOC in ('INVTYPE_TRINKET','INVTYPE_NECK','INVTYPE_CLOAK','INVTYPE_FINGER'),1,0)),0) New_Contested,  " .
+	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.ITEM_NAME like '% Mark of Sanctification', 1, 0)),0) New_Trophy, " .
+	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1, 0)),0) Old_Tier,  " .
+	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2 and it.ITEM_EQUIPLOC in ('INVTYPE_TRINKET','INVTYPE_NECK','INVTYPE_CLOAK','INVTYPE_FINGER'),1,0)),0) Old_Contested,  " .
+	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' and it.ITEM_NAME like 'Regalia of the%' or spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' and it.ITEM_NAME = 'Trophy of the Crusade', 1, 0)),0) Old_Trophy " .
+	    "from ITEMS_LOOTED il,   " .
+	    "     RAID_CALENDAR rc,   " .
+	    "		 `CHARACTER` chr,   " .
+	    "		 ITEM it,   " .
+	    "		 LT_CONFIG_LOOKUPS lcl  " .
+    	    "where chr.char_id = il.char_id   " .
+    	    "and rc.raid_id = il.raid_id  " .
+    	    "and il.item_id = it.item_id  " .
+    	    "and rc.scheduled = 1  " .
+    	    "and lcl.GUILD_ID = 1  " .
+    	    "group by chr.char_id) tier_list " .
 	    "ON tier_list.CHAR_ID = chr.CHAR_ID " .
             "WHERE chr.RANK not in ('Friend','Alt','Officer Alt','P.U.G.', '') " . 
             "AND chr.DATE_REMOVED IS NULL " . 
@@ -236,10 +273,12 @@ my $statement =
 <TH title=\"Alternate Spec Loot\"><U><B>AS</B></U></TH>
 <TH title=\"Off Spec Loot\"><U><B>OS</B></U></TH>
 <TH title=\" - \"><U><B> - </B></U></TH>
-<TH title=\"Old i-level\"><U><B>Old i-level</B></U></TH>
-<TH title=\"New i-level\"><U><B>New i-level</B></U></TH>
-<TH title=\"Trinkets, Necks, Cloaks, Rings\"><U><B>Old contested</B></U></TH>
-<TH title=\"Trinkets, Necks, Cloaks, Rings\"><U><B>New contested</B></U></TH>
+<TH title=\"New i-level\"><U><B>$newilevelmin-$newilevelmax</B></U></TH>
+<TH title=\"Cloaks, Necks, Trinkets, Rings\"><U><B>C,N,T,R</B></U></TH>
+<TH title=\"Trophies or Tier Pieces\"><U><B>Tier</B></U></TH>
+<TH title=\"Old i-level\"><U><B>$oldilevelmin-$oldilevelmax</B></U></TH>
+<TH title=\"Cloaks, Necks, Trinkets, Rings\"><U><B>C,N,T,R</B></U></TH>
+<TH title=\"Trophies or Tier Pieces\"><U><B>Tier</B></U></TH>
 </thead>
 <tbody>
 DELIMETER
@@ -260,6 +299,8 @@ DELIMETER
 	my $new_tier_total = 0;
 	my $old_contested_total = 0;
 	my $new_contested_total = 0;
+	my $old_trophy_count = 0;
+	my $new_trophy_count = 0;
 	while (my $row = $statement->fetchrow_hashref()) {
 		#print "<TR onMouseOver=\"this.className='highlight'\" onMouseOut=\"this.className='normal'\" onclick=\"location.href='char.shtml?data=$row->{NAME}'\">";
 		print "<TR id=\"check_$counter\" onClick=\"toggle($counter);\" onMouseOver=\"this.className='highlight'\" onMouseOut=\"mouseHighlight($counter);\">";
@@ -282,10 +323,12 @@ DELIMETER
 		lootColor($row->{'30OS'});
 		#Tiered Loot
 		print "<TD> - </TD>";
-		lootColor($row->{'old_tier'});
 		lootColor($row->{'new_tier'});
-		lootColor($row->{'old_contested'});
 		lootColor($row->{'new_contested'});
+		lootColor($row->{'new_trophy'});
+		lootColor($row->{'old_tier'});
+		lootColor($row->{'old_contested'});
+		lootColor($row->{'old_trophy'});
 		print "</TR>\n";
 		$counter = $counter+1;
 		$avg7d = $avg7d+$row->{'7day'};
@@ -299,9 +342,11 @@ DELIMETER
 		$as30d = $as30d+$row->{'30AS'};
 		$os30d = $os30d+$row->{'30OS'};
 		$old_tier_total = $old_tier_total+$row->{'old_tier'};
-		$new_tier_total = $new_tier_total+$row->{'new_tier'};
 		$old_contested_total = $old_contested_total+$row->{'old_contested'};
+		$old_trophy_total = $old_trophy_total+$row->{'old_trophy'};
+		$new_tier_total = $new_tier_total+$row->{'new_tier'};
 		$new_contested_total = $new_contested_total+$row->{'new_contested'};
+		$new_trophy_total = $new_trophy_total+$row->{'new_trophy'};
 	}
 	print "</TBODY>";
 	$avg7d = round($avg7d/$counter);
@@ -324,10 +369,12 @@ DELIMETER
 	lootColor($as30d);
 	lootColor($os30d);
 	print "<TD> - </TD>";
-	lootColor($old_tier_total);
 	lootColor($new_tier_total);
-	lootColor($old_contested_total);
 	lootColor($new_contested_total);
+	lootColor($new_trophy_total);
+	lootColor($old_tier_total);
+	lootColor($old_contested_total);
+	lootColor($old_trophy_total);
 	print "</TR>";
 	print "</tfoot>";
 	print "</TABLE>";
