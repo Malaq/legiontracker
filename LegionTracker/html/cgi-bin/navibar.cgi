@@ -48,10 +48,10 @@ print "</fieldset>";
 
 print "<fieldset>";
 print "<legend>External Links</legend>";
-print "<A HREF=\"http://wowwebstats.com/cdxnr4iegef2w\" TARGET=\"_blank\" STYLE=\"text-decoration:none\"> ";
-print "<B>Wow Web Stats</B>";
+print "<A HREF=\"http://www.worldoflogs.com/guilds/20339/\" TARGET=\"_blank\" STYLE=\"text-decoration:none\"> ";
+print "<B>World of Logs</B>";
 print "</A><br>";
-print "<A HREF=\"http://www.wowmeteronline.com/browse/guild/15265\" TARGET=\"_blank\" STYLE=\"text-decoration:none\"> ";
+print "<A HREF=\"http://www.wowmeteronline.com/browse/guildcalendar/15265#calendar\" TARGET=\"_blank\" STYLE=\"text-decoration:none\"> ";
 print "<B>WoW Meter Online</B>";
 print "</A><br>";
 print "<A HREF=\"http://www.tgguild.com/forums\" TARGET=\"_blank\" STYLE=\"text-decoration:none\">";

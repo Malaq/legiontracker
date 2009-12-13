@@ -438,7 +438,7 @@ $attn_statement->finish();
 print "<fieldset>";
 print "<legend>Loot Details (<B>$char_name</B>):</legend>";
 my $loot_statement =
-	$dbh->prepare("SELECT chr.NAME, it.ITEM_ID, it.ITEM_NAME, il.TIMESTAMP, il.SPEC, il.ZONE, il.SUBZONE, rc.SCHEDULED, it.ITEM_LEVEL " .
+	$dbh->prepare("SELECT chr.NAME, it.ITEM_ID, it.ITEM_NAME, il.TIMESTAMP, il.SPEC, il.ZONE, il.SUBZONE, rc.SCHEDULED, IFNULL(REWARD_ILEVEL,ITEM_LEVEL) ITEM_LEVEL " .
 			"FROM `CHARACTER` chr, ITEMS_LOOTED il, RAID_CALENDAR rc, ITEM it " .
 			"WHERE il.RAID_ID = rc.RAID_ID " .
 			"AND il.CHAR_ID = chr.CHAR_ID " .
