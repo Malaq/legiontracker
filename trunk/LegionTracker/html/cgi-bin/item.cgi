@@ -31,9 +31,9 @@ print "<fieldset>";
 print "<legend>Item Details:</legend>";
 my $sql_text = 
 my $summary_statement =
-	$dbh->prepare("SELECT it1.ITEM_NAME, it1.ITEM_ID, il.TIMESTAMP, chr.NAME " .
+	$dbh->prepare("SELECT it1.ITEM_NAME, it1.ITEM_ID, il.TIMESTAMP, chr.NAME, firstl.COUNT, it1.RARITY, it1.ITEM_LEVEL, it1.ITEM_TYPE, it1.ITEM_SUBTYPE, it1.ITEM_EQUIPLOC, IFNULL(it1.REWARD_ILEVEL,'n/a') REWARD_ILEVEL " .
 			"FROM `CHARACTER` chr, ITEMS_LOOTED il, ITEM it1, ( " .
-			"SELECT il.ITEM_ID, MIN( il.TIMESTAMP ) TIMESTAMP " .
+			"SELECT il.ITEM_ID, MIN( il.TIMESTAMP ) TIMESTAMP, count(*) COUNT " .
 			"FROM ITEMS_LOOTED il, ITEM it " .
 			"WHERE il.ITEM_ID = it.ITEM_ID " .
 			"AND it.ITEM_NAME like ? " .
@@ -50,6 +50,13 @@ my $row = $summary_statement->fetchrow_hashref();
 
 if ( $row->{ITEM_ID} ne "" ) {
 	print "<B>Name:</B><a href=\"http://www.wowhead.com/?item=$row->{ITEM_ID}\" TARGET=\"_blank\">$row->{ITEM_NAME}</a><BR>";
+	print "<B>Rarity:</B> $row->{RARITY}<BR>";
+        print "<B>Item Level:</B> $row->{ITEM_LEVEL}<BR>";
+        print "<B>Reward I-level:</B> $row->{REWARD_ILEVEL}<BR>";
+	print "<B>Item Type:</B> $row->{ITEM_TYPE}<BR>";
+        print "<B>Item Subtype:</B> $row->{ITEM_SUBTYPE}<BR>";
+        print "<B>EquipLoc:</B> $row->{ITEM_EQUIPLOC}<BR>";
+	print "<B>Times Looted:</B> $row->{COUNT}</B><BR>";
 	print "<B>First Time Looted:</B> $row->{TIMESTAMP} <BR>";
 	print "<B>Who First Looted:</B> $row->{NAME} <BR>";
 		my $sql2_text = 

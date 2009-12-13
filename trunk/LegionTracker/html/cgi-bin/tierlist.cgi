@@ -23,34 +23,46 @@ sub round {
 sub classColor {
 	my $tempclass = shift;
 	my $classclr = 'black';
+	my $imagename = '';
 	#my $classbg = 'black';
 	#my $classbg = '#867C6B';
 	#my $classbg = 'silver';
 	if ($tempclass eq 'Druid') {
 		$classclr='#FF7D0A';
+		$imagename = 'druid.gif';
 	} elsif ($tempclass eq 'Hunter') {
 		$classclr='#ABD473';
+		$imagename = 'hunter.gif';
 	} elsif ($tempclass eq 'Mage') {
 		$classclr='#69CCF0';
+		$imagename = 'mage.gif';
 	} elsif ($tempclass eq 'Paladin') {
 		$classclr='#F58CBA';
+		$imagename = 'paladin.gif';
 	} elsif ($tempclass eq 'Priest') {
 		$classclr='#FFFFFF';
+		$imagename = 'priest.gif';
 	} elsif ($tempclass eq 'Rogue') {
 		$classclr='#FFF569';
+		$imagename = 'rogue.gif';
 	} elsif ($tempclass eq 'Shaman') {
 		$classclr='#2459FF';
+		$imagename = 'shaman.gif';
 	} elsif ($tempclass eq 'Warlock') {
 		$classclr='#9482C9';
+		$imagename = 'warlock.gif';
 	} elsif ($tempclass eq 'Warrior') {
 		$classclr='#C79C6E';
+		$imagename = 'warrior.gif';
 	} elsif ($tempclass eq 'Death Knight') {
 		$classclr='#C41F3B';
+		$imagename = 'deathknight.gif';
 	}
 	#print "<TD BGCOLOR=$rowcolor>";
 	print "<TD>";
 	print "<B>";
-	print "<font color=$classclr>$tempclass</font>";
+	#print "<font color=$classclr>$tempclass</font>";
+	print "<img src=\"images/$imagename\" alt=\"$tempclass\">";
 	print "</B>";
 	print "</TD>";
 }
@@ -218,12 +230,12 @@ my $statement =
             " " .
             "LEFT JOIN " .
 	    "(select chr.char_id,   " .
-	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1, 0)),0) New_Tier,  " .
+	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1 or spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.REWARD_ILEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 0)),0) New_Tier,  " .
 	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2 and it.ITEM_EQUIPLOC in ('INVTYPE_TRINKET','INVTYPE_NECK','INVTYPE_CLOAK','INVTYPE_FINGER'),1,0)),0) New_Contested,  " .
-	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.ITEM_NAME like '% Mark of Sanctification', 1, 0)),0) New_Trophy, " .
-	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1, 0)),0) Old_Tier,  " .
+	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.REWARD_ILEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1, 0)),0) New_Trophy,  " .
+	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2 or spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' AND it.REWARD_ILEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1, 0)),0) Old_Tier,  " .
 	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2 and it.ITEM_EQUIPLOC in ('INVTYPE_TRINKET','INVTYPE_NECK','INVTYPE_CLOAK','INVTYPE_FINGER'),1,0)),0) Old_Contested,  " .
-	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' and it.ITEM_NAME like 'Regalia of the%' or spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' and it.ITEM_NAME = 'Trophy of the Crusade', 1, 0)),0) Old_Trophy " .
+	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' AND it.REWARD_ILEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1, 0)),0) Old_Trophy  " .
 	    "from ITEMS_LOOTED il,   " .
 	    "     RAID_CALENDAR rc,   " .
 	    "		 `CHARACTER` chr,   " .
@@ -255,44 +267,47 @@ my $statement =
 <legend><font color=white>Raiding Members</font></legend>
 <form name=\"myform\" id=\"myform\" action=\"checkboxes.asp\" method=\"post\">
 <script src=\"sorttable.js\"></script>\n
-<TABLE class=\"sortable normal\" ALIGN=LEFT id=\"mainTable\">
+<TABLE class=\"sortable normal\" style=\"border-collapse: collapse;\" ALIGN=LEFT id=\"mainTable\">
+<colgroup span=\"3\">
+<colgroup span=\"4\" style=\"border: 1px solid #6374AB;\">
+<colgroup span=\"4\" style=\"border: 1px solid #6374AB;\">
+<colgroup span=\"3\" style=\"border: 1px solid #6374AB;\">
+<colgroup span=\"3\" style=\"border: 1px solid #6374AB;\">
 <thead>
 <TR>
 <TH CLASS=\"sorttable_nosort\" style=\"display:none;\"><input type=\"checkbox\" id=\"checkall\" onclick=\"if(this.checked) checkAll(); else clearAll();\" /></TH>
 <TH><U><B>Name</B></U></TH>
 <TH><U><B>Class</B></U></TH>
 <TH><U><B>Rank</B></U></TH>
-<TH><U><B>7 Day Attn</B></U></TH>
+<TH><U><B>7 Day</B></U></TH>
 <TH title=\"7 Day Benched %\"><U><B>Sit</B></U></TH>
 <TH title=\"Main Spec Loot\"><U><B>MS</B></U></TH>
 <TH title=\"Alternate Spec Loot\"><U><B>AS</B></U></TH>
-<TH title=\"Off Spec Loot\"><U><B>OS</B></U></TH>
-<TH><U><B>21 Day Attn</B></U></TH>
+<TH><U><B>21 Day</B></U></TH>
 <TH title=\"21 Day Benched %\"><U><B>Sit</B></U></TH>
 <TH title=\"Main Spec Loot\"><U><B>MS</B></U></TH>
 <TH title=\"Alternate Spec Loot\"><U><B>AS</B></U></TH>
-<TH title=\"Off Spec Loot\"><U><B>OS</B></U></TH>
-<TH title=\" - \"><U><B> - </B></U></TH>
 <TH title=\"New i-level\"><U><B>$newilevelmin-$newilevelmax</B></U></TH>
-<TH title=\"Cloaks, Necks, Trinkets, Rings\"><U><B>C,N,T,R</B></U></TH>
-<TH title=\"Trophies or Tier Pieces\"><U><B>Tier</B></U></TH>
+<TH title=\"Cloaks, Necks, Trinkets, Rings\"><U><B>Contested</B></U></TH>
+<TH title=\"Trophies or Tier Pieces\"><U><B>Token</B></U></TH>
 <TH title=\"Old i-level\"><U><B>$oldilevelmin-$oldilevelmax</B></U></TH>
-<TH title=\"Cloaks, Necks, Trinkets, Rings\"><U><B>C,N,T,R</B></U></TH>
-<TH title=\"Trophies or Tier Pieces\"><U><B>Tier</B></U></TH>
+<TH title=\"Cloaks, Necks, Trinkets, Rings\"><U><B>Contested</B></U></TH>
+<TH title=\"Trophies or Tier Pieces\"><U><B>Token</B></U></TH>
 </thead>
 <tbody>
 DELIMETER
+#<TH title=\"Off Spec Loot\"><U><B>OS</B></U></TH>
 
 	$statement->execute() or die $dbh->errstr;
 	my $counter = 0;
 	my $ms7d = 0;
 	my $as7d = 0;
-	my $os7d = 0;
+	#my $os7d = 0;
 	my $avg7d = 0;
 	my $avg7sit= 0;
 	my $ms30d = 0;
 	my $as30d = 0;
-	my $os30d = 0;
+	#my $os30d = 0;
 	my $avg30d = 0;	
 	my $avg30sit= 0;
 	my $old_tier_total = 0;
@@ -314,15 +329,14 @@ DELIMETER
 		sittingColor($row->{'7sit'});
 		lootColor($row->{'7MS'});
 		lootColor($row->{'7AS'});
-		lootColor($row->{'7OS'});
+		#lootColor($row->{'7OS'});
 		#30 day stats
 		attendanceColor($row->{'30day'});
 		sittingColor($row->{'30sit'});
 		lootColor($row->{'30MS'});
 		lootColor($row->{'30AS'});
-		lootColor($row->{'30OS'});
+		#lootColor($row->{'30OS'});
 		#Tiered Loot
-		print "<TD> - </TD>";
 		lootColor($row->{'new_tier'});
 		lootColor($row->{'new_contested'});
 		lootColor($row->{'new_trophy'});
@@ -335,12 +349,12 @@ DELIMETER
 		$avg7sit = $avg7sit+$row->{'7sit'};
 		$ms7d = $ms7d+$row->{'7MS'};
 		$as7d = $as7d+$row->{'7AS'};
-		$os7d = $os7d+$row->{'7OS'};
+		#$os7d = $os7d+$row->{'7OS'};
 		$avg30d = $avg30d+$row->{'30day'};	
 		$avg30sit = $avg30sit+$row->{'30sit'};	
 		$ms30d = $ms30d+$row->{'30MS'};
 		$as30d = $as30d+$row->{'30AS'};
-		$os30d = $os30d+$row->{'30OS'};
+		#$os30d = $os30d+$row->{'30OS'};
 		$old_tier_total = $old_tier_total+$row->{'old_tier'};
 		$old_contested_total = $old_contested_total+$row->{'old_contested'};
 		$old_trophy_total = $old_trophy_total+$row->{'old_trophy'};
@@ -362,13 +376,12 @@ DELIMETER
 	sittingColor($avg7sit);
 	lootColor($ms7d);
 	lootColor($as7d);
-	lootColor($os7d);
+	#lootColor($os7d);
 	attendanceColor($avg30d);
 	sittingColor($avg30sit);
 	lootColor($ms30d);
 	lootColor($as30d);
-	lootColor($os30d);
-	print "<TD> - </TD>";
+	#lootColor($os30d);
 	lootColor($new_tier_total);
 	lootColor($new_contested_total);
 	lootColor($new_trophy_total);
