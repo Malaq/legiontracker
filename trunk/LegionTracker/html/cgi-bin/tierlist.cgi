@@ -24,45 +24,56 @@ sub classColor {
 	my $tempclass = shift;
 	my $classclr = 'black';
 	my $imagename = '';
+	my $key = '0';
 	#my $classbg = 'black';
 	#my $classbg = '#867C6B';
 	#my $classbg = 'silver';
 	if ($tempclass eq 'Druid') {
 		$classclr='#FF7D0A';
 		$imagename = 'druid.gif';
+		$key = '2';
 	} elsif ($tempclass eq 'Hunter') {
 		$classclr='#ABD473';
 		$imagename = 'hunter.gif';
+		$key = '3';
 	} elsif ($tempclass eq 'Mage') {
 		$classclr='#69CCF0';
 		$imagename = 'mage.gif';
+		$key = '4';
 	} elsif ($tempclass eq 'Paladin') {
 		$classclr='#F58CBA';
 		$imagename = 'paladin.gif';
+		$key = '5';
 	} elsif ($tempclass eq 'Priest') {
 		$classclr='#FFFFFF';
 		$imagename = 'priest.gif';
+		$key = '6';
 	} elsif ($tempclass eq 'Rogue') {
 		$classclr='#FFF569';
 		$imagename = 'rogue.gif';
+		$key = '7';
 	} elsif ($tempclass eq 'Shaman') {
 		$classclr='#2459FF';
 		$imagename = 'shaman.gif';
+		$key = '8';
 	} elsif ($tempclass eq 'Warlock') {
 		$classclr='#9482C9';
 		$imagename = 'warlock.gif';
+		$key = '9';
 	} elsif ($tempclass eq 'Warrior') {
 		$classclr='#C79C6E';
 		$imagename = 'warrior.gif';
+		$key = '10';
 	} elsif ($tempclass eq 'Death Knight') {
 		$classclr='#C41F3B';
 		$imagename = 'deathknight.gif';
+		$key = '1';
 	}
 	#print "<TD BGCOLOR=$rowcolor>";
-	print "<TD>";
+	print "<TD sorttable_customkey=\"$key\">";
 	print "<B>";
 	#print "<font color=$classclr>$tempclass</font>";
-	print "<img src=\"images/$imagename\" alt=\"$tempclass\">";
+	print "<img src=\"images/$imagename\" align=\"center\" title=\"$tempclass\">";
 	print "</B>";
 	print "</TD>";
 }
@@ -229,24 +240,47 @@ my $statement =
             "ON 30dl.CHAR_ID = chr.CHAR_ID " .
             " " .
             "LEFT JOIN " .
-	    "(select chr.char_id,   " .
-	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1 or spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.REWARD_ILEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 0)),0) New_Tier,  " .
-	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2 and it.ITEM_EQUIPLOC in ('INVTYPE_TRINKET','INVTYPE_NECK','INVTYPE_CLOAK','INVTYPE_FINGER'),1,0)),0) New_Contested,  " .
-	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'NEW_TIER' AND it.REWARD_ILEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1, 0)),0) New_Trophy,  " .
-	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2 or spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' AND it.REWARD_ILEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1, 0)),0) Old_Tier,  " .
-	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' AND it.ITEM_LEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2 and it.ITEM_EQUIPLOC in ('INVTYPE_TRINKET','INVTYPE_NECK','INVTYPE_CLOAK','INVTYPE_FINGER'),1,0)),0) Old_Contested,  " .
-	    "IFNULL(sum(if(spec='Main' and lcl.LOOKUP_NAME = 'OLD_TIER' AND it.REWARD_ILEVEL BETWEEN lcl.LOOKUP_VALUE AND lcl.LOOKUP_VALUE_2, 1, 0)),0) Old_Trophy  " .
-	    "from ITEMS_LOOTED il,   " .
-	    "     RAID_CALENDAR rc,   " .
-	    "		 `CHARACTER` chr,   " .
-	    "		 ITEM it,   " .
-	    "		 LT_CONFIG_LOOKUPS lcl  " .
-    	    "where chr.char_id = il.char_id   " .
-    	    "and rc.raid_id = il.raid_id  " .
-    	    "and il.item_id = it.item_id  " .
-    	    "and rc.scheduled = 1  " .
-    	    "and lcl.GUILD_ID = 1  " .
-    	    "group by chr.char_id) tier_list " .
+	    "( ".
+	"SELECT CHR.CHAR_ID,  " .
+	"IFNULL(SUM(IF(SPEC='MAIN'  " .
+	"					AND LCL.LOOKUP_NAME = 'NEW_TIER'  " .
+	"					AND IT.ITEM_LEVEL BETWEEN LCL.LOOKUP_VALUE AND LCL.LOOKUP_VALUE_2 " .
+	"					OR SPEC='MAIN'  " .
+	"					AND LCL.LOOKUP_NAME = 'NEW_TIER'  " .
+	"					AND IT.REWARD_ILEVEL BETWEEN LCL.LOOKUP_VALUE AND LCL.LOOKUP_VALUE_2, 1, 0)),0) NEW_TIER,   " .
+	"IFNULL(SUM(IF(SPEC='MAIN'  " .
+	"          AND LCL.LOOKUP_NAME = 'NEW_TIER'  " .
+	"					AND IT.ITEM_LEVEL BETWEEN LCL.LOOKUP_VALUE  " .
+	"					AND LCL.LOOKUP_VALUE_2  " .
+	"					AND IT.ITEM_EQUIPLOC IN ('INVTYPE_TRINKET','INVTYPE_NECK','INVTYPE_CLOAK','INVTYPE_FINGER'),1,0)),0) NEW_CONTESTED,   " .
+	"IFNULL(SUM(IF(SPEC='MAIN'  " .
+	"					AND LCL.LOOKUP_NAME = 'NEW_TIER'  " .
+	"					AND IT.REWARD_ILEVEL BETWEEN LCL.LOOKUP_VALUE AND LCL.LOOKUP_VALUE_2, 1, 0)),0) NEW_TROPHY,   " .
+	"IFNULL(SUM(IF(SPEC='MAIN'  " .
+	"					AND LCL.LOOKUP_NAME = 'OLD_TIER'  " .
+	"					AND IT.ITEM_LEVEL BETWEEN LCL.LOOKUP_VALUE AND LCL.LOOKUP_VALUE_2  " .
+	"					OR SPEC='MAIN'  " .
+	"					AND LCL.LOOKUP_NAME = 'OLD_TIER'  " .
+	"					AND IT.REWARD_ILEVEL BETWEEN LCL.LOOKUP_VALUE AND LCL.LOOKUP_VALUE_2, 1, 0)),0) OLD_TIER,   " .
+	"IFNULL(SUM(IF(SPEC='MAIN'  " .
+	"					AND LCL.LOOKUP_NAME = 'OLD_TIER'  " .
+	"					AND IT.ITEM_LEVEL BETWEEN LCL.LOOKUP_VALUE AND LCL.LOOKUP_VALUE_2  " .
+	"					AND IT.ITEM_EQUIPLOC IN ('INVTYPE_TRINKET','INVTYPE_NECK','INVTYPE_CLOAK','INVTYPE_FINGER'),1,0)),0) OLD_CONTESTED,   " .
+	"IFNULL(SUM(IF(SPEC='MAIN'  " .
+	"					AND LCL.LOOKUP_NAME = 'OLD_TIER'  " .
+	"					AND IT.REWARD_ILEVEL BETWEEN LCL.LOOKUP_VALUE AND LCL.LOOKUP_VALUE_2, 1, 0)),0) OLD_TROPHY   " .
+	"FROM ITEMS_LOOTED IL,    " .
+	"     RAID_CALENDAR RC,    " .
+	"		 `CHARACTER` CHR,    " .
+	"		 ITEM IT,    " .
+	"		 LT_CONFIG_LOOKUPS LCL   " .
+	"WHERE CHR.CHAR_ID = IL.CHAR_ID   " .
+	"AND RC.RAID_ID = IL.RAID_ID   " .
+	"AND IL.ITEM_ID = IT.ITEM_ID  " .
+	"AND RC.SCHEDULED = 1   " .
+	"AND LCL.GUILD_ID = 1 " .
+	"GROUP BY CHR.CHAR_ID " .
+	    ") tier_list " .
 	    "ON tier_list.CHAR_ID = chr.CHAR_ID " .
             "WHERE chr.RANK not in ('Friend','Alt','Officer Alt','P.U.G.', '') " . 
             "AND chr.DATE_REMOVED IS NULL " . 
@@ -262,6 +296,7 @@ my $statement =
 #<TD colspan=\"4\">30 Day Data</TD>
 #<TD colspan=\"4\">60 Day Data</TD>
 #</TR>
+#<colgroup span=\"4\" style=\"border: 2px solid #6374AB;\">
 	print <<DELIMETER;
 <fieldset>
 <legend><font color=white>Raiding Members</font></legend>
@@ -269,10 +304,10 @@ my $statement =
 <script src=\"sorttable.js\"></script>\n
 <TABLE class=\"sortable normal\" style=\"border-collapse: collapse;\" ALIGN=LEFT id=\"mainTable\">
 <colgroup span=\"3\">
-<colgroup span=\"4\" style=\"border: 1px solid #6374AB;\">
-<colgroup span=\"4\" style=\"border: 1px solid #6374AB;\">
-<colgroup span=\"3\" style=\"border: 1px solid #6374AB;\">
-<colgroup span=\"3\" style=\"border: 1px solid #6374AB;\">
+<colgroup span=\"4\" style=\"border: 3px solid #35354F;\">
+<colgroup span=\"4\" style=\"border: 3px solid #35354F;\">
+<colgroup span=\"3\" style=\"border: 3px solid #35354F;\">
+<colgroup span=\"3\" style=\"border: 3px solid #35354F;\">
 <thead>
 <TR>
 <TH CLASS=\"sorttable_nosort\" style=\"display:none;\"><input type=\"checkbox\" id=\"checkall\" onclick=\"if(this.checked) checkAll(); else clearAll();\" /></TH>
@@ -280,11 +315,11 @@ my $statement =
 <TH><U><B>Class</B></U></TH>
 <TH><U><B>Rank</B></U></TH>
 <TH><U><B>7 Day</B></U></TH>
-<TH title=\"7 Day Benched %\"><U><B>Sit</B></U></TH>
+<TH title=\"7 Day Benched %\" align=\"center\"><U><B>Sit</B></U></TH>
 <TH title=\"Main Spec Loot\"><U><B>MS</B></U></TH>
 <TH title=\"Alternate Spec Loot\"><U><B>AS</B></U></TH>
 <TH><U><B>21 Day</B></U></TH>
-<TH title=\"21 Day Benched %\"><U><B>Sit</B></U></TH>
+<TH title=\"21 Day Benched %\" align=\"center\"><U><B>Sit</B></U></TH>
 <TH title=\"Main Spec Loot\"><U><B>MS</B></U></TH>
 <TH title=\"Alternate Spec Loot\"><U><B>AS</B></U></TH>
 <TH title=\"New i-level\"><U><B>$newilevelmin-$newilevelmax</B></U></TH>
