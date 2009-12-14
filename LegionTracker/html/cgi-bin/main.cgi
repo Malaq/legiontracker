@@ -23,34 +23,57 @@ sub round {
 sub classColor {
 	my $tempclass = shift;
 	my $classclr = 'black';
+	my $imagename = '';
+	my $key = '0';
 	#my $classbg = 'black';
 	#my $classbg = '#867C6B';
 	#my $classbg = 'silver';
 	if ($tempclass eq 'Druid') {
 		$classclr='#FF7D0A';
+		$imagename = 'druid.gif';
+		$key = '2';
 	} elsif ($tempclass eq 'Hunter') {
 		$classclr='#ABD473';
+		$imagename = 'hunter.gif';
+		$key = '3';
 	} elsif ($tempclass eq 'Mage') {
 		$classclr='#69CCF0';
+		$imagename = 'mage.gif';
+		$key = '4';
 	} elsif ($tempclass eq 'Paladin') {
 		$classclr='#F58CBA';
+		$imagename = 'paladin.gif';
+		$key = '5';
 	} elsif ($tempclass eq 'Priest') {
 		$classclr='#FFFFFF';
+		$imagename = 'priest.gif';
+		$key = '6';
 	} elsif ($tempclass eq 'Rogue') {
 		$classclr='#FFF569';
+		$imagename = 'rogue.gif';
+		$key = '7';
 	} elsif ($tempclass eq 'Shaman') {
 		$classclr='#2459FF';
+		$imagename = 'shaman.gif';
+		$key = '8';
 	} elsif ($tempclass eq 'Warlock') {
 		$classclr='#9482C9';
+		$imagename = 'warlock.gif';
+		$key = '9';
 	} elsif ($tempclass eq 'Warrior') {
 		$classclr='#C79C6E';
+		$imagename = 'warrior.gif';
+		$key = '10';
 	} elsif ($tempclass eq 'Death Knight') {
 		$classclr='#C41F3B';
+		$imagename = 'deathknight.gif';
+		$key = '1';
 	}
 	#print "<TD BGCOLOR=$rowcolor>";
-	print "<TD>";
+	print "<TD sorttable_customkey=\"$key\">";
 	print "<B>";
-	print "<font color=$classclr>$tempclass</font>";
+	#print "<font color=$classclr>$tempclass</font>";
+	print "<img src=\"images/$imagename\" align=\"center\" title=\"$tempclass\">";
 	print "</B>";
 	print "</TD>";
 }
@@ -228,6 +251,10 @@ my $statement =
 <form name=\"myform\" id=\"myform\" action=\"checkboxes.asp\" method=\"post\">
 <script src=\"sorttable.js\"></script>\n
 <TABLE class=\"sortable normal\" ALIGN=LEFT id=\"mainTable\">
+<colgroup span=\"3\">
+<colgroup span=\"5\" style=\"border: 3px solid #35354F;\">
+<colgroup span=\"5\" style=\"border: 3px solid #35354F;\">
+<colgroup span=\"5\" style=\"border: 3px solid #35354F;\">
 <thead>
 <TR>
 <TH CLASS=\"sorttable_nosort\" style=\"display:none;\"><input type=\"checkbox\" id=\"checkall\" onclick=\"if(this.checked) checkAll(); else clearAll();\" /></TH>
@@ -235,17 +262,17 @@ my $statement =
 <TH><U><B>Class</B></U></TH>
 <TH><U><B>Rank</B></U></TH>
 <TH><U><B>7 Day Attn</B></U></TH>
-<TH title=\"7 Day Benched %\"><U><B>Sit</B></U></TH>
+<TH title=\"7 Day Benched %\" align=\"center\"><U><B>Sit</B></U></TH>
 <TH title=\"Main Spec Loot\"><U><B>MS</B></U></TH>
 <TH title=\"Alternate Spec Loot\"><U><B>AS</B></U></TH>
 <TH title=\"Off Spec Loot\"><U><B>OS</B></U></TH>
 <TH><U><B>30 Day Attn</B></U></TH>
-<TH title=\"30 Day Benched %\"><U><B>Sit</B></U></TH>
+<TH title=\"30 Day Benched %\" align=\"center\"><U><B>Sit</B></U></TH>
 <TH title=\"Main Spec Loot\"><U><B>MS</B></U></TH>
 <TH title=\"Alternate Spec Loot\"><U><B>AS</B></U></TH>
 <TH title=\"Off Spec Loot\"><U><B>OS</B></U></TH>
 <TH><U><B>60 Day Attn</B></U></TH>
-<TH title=\"60 Day Benched %\"><U><B>Sit</B></U></TH>
+<TH title=\"60 Day Benched %\" align=\"center\"><U><B>Sit</B></U></TH>
 <TH title=\"Main Spec Loot\"><U><B>MS</B></U></TH>
 <TH title=\"Alternate Spec Loot\"><U><B>AS</B></U></TH>
 <TH title=\"Off Spec Loot\"><U><B>OS</B></U></TH></TR>\n
