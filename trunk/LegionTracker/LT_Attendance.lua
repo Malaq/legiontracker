@@ -25,6 +25,7 @@ function LT_GetAttendees()
 end
 
 function LT_AttendanceTic()
+    LT_SummaryPanel:Hide();
     SetGuildRosterShowOffline(false);
     --Do online first
     local guildCount = GetNumGuildMembers(false);
@@ -46,6 +47,7 @@ function LT_AttendanceTic()
     if (LT_FirstTic) then
         LT_FirstTic = false;
     end
+    LT_SummaryPanel:Show();
 end
 
 function LT_AttendanceResetButton()
@@ -97,6 +99,10 @@ function LT_SingleMemberTic(memberIndex,ticfromalt,altName)
     elseif (rank == "Friend") then
             return;
     elseif (rank == "Alt") or (rank == "Officer Alt") then
+        if (name == onote) then
+            LT_Print(name.." has a looping officer note.  Fix immediately.","yellow");
+            return;
+        end
         if (online ~= nil) or (ticfromalt ~= nil) then
             local pname = LT_GetPlayerIndexFromName(onote);
             if (pname ~= nil) then
@@ -179,6 +185,9 @@ function LT_GetAttendance(playerIndex, bench)
     end
     --If their onote is empty return nothing.
     if (rank == "Alt") or (rank == "Officer Alt") then
+        if (name == onote) then
+            return "";
+        end
         local pname = LT_GetPlayerIndexFromName(onote);
         if (pname ~= nil) then
             if (bench) then
@@ -218,6 +227,9 @@ end
 function LT_GetRawAttendance(playerIndex)
     local _, rank, _, _, _, _, _, onote = GetGuildRosterInfo(playerIndex);
     if (rank == "Alt") or (rank == "Officer Alt") then
+        if (name == onote) then
+            return "";
+        end
         local pname = LT_GetPlayerIndexFromName(onote);
         if (pname ~= nil) then
             return LT_GetRawAttendance(pname);

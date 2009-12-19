@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.79"
+﻿LT_VERSION = "Legion Tracker 0.791"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -566,6 +566,15 @@ end
 function LT_GetMainName(playerIndex)
     local name, rank, _, _, _, _, _, onote = GetGuildRosterInfo(playerIndex);
     if (rank == "Alt") or (rank == "Officer Alt") then
+        if (onote == "<Enter Main Name>") then
+            return onote;
+        end
+        if (name == onote) then
+            GuildRosterSetOfficerNote(LT_GetPlayerIndexFromName(name), "<Enter Main Name>");
+            LT_Print(name.." has a looping officer note.  Fix immediately.","yellow");
+            LT_Main:Hide();
+            return name;
+        end
         local pindex = LT_GetPlayerIndexFromName(onote);
         if (pindex ~= nil) then
             return LT_GetMainName(pindex);
@@ -622,6 +631,7 @@ function LT_Main_OnEvent(this, event, arg1, arg2)
     if (event == "GUILD_ROSTER_UPDATE") then
         LT_UpdatePlayerList();
         -- We get guildroster if someone else updates an officer note.
+        -- Very possible this is the lag bomb when you have the window open.
         LT_Attendance_OnChange();
     elseif (event == "VARIABLES_LOADED") then
         LT_UpdatePlayerList();
