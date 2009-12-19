@@ -31,43 +31,43 @@ sub classColor {
 	if ($tempclass eq 'Druid') {
 		$classclr='#FF7D0A';
 		$imagename = 'druid.gif';
-		$key = '2';
+		$key = '9';
 	} elsif ($tempclass eq 'Hunter') {
 		$classclr='#ABD473';
 		$imagename = 'hunter.gif';
-		$key = '3';
+		$key = '8';
 	} elsif ($tempclass eq 'Mage') {
 		$classclr='#69CCF0';
 		$imagename = 'mage.gif';
-		$key = '4';
+		$key = '7';
 	} elsif ($tempclass eq 'Paladin') {
 		$classclr='#F58CBA';
 		$imagename = 'paladin.gif';
-		$key = '5';
+		$key = '6';
 	} elsif ($tempclass eq 'Priest') {
 		$classclr='#FFFFFF';
 		$imagename = 'priest.gif';
-		$key = '6';
+		$key = '5';
 	} elsif ($tempclass eq 'Rogue') {
 		$classclr='#FFF569';
 		$imagename = 'rogue.gif';
-		$key = '7';
+		$key = '4';
 	} elsif ($tempclass eq 'Shaman') {
 		$classclr='#2459FF';
 		$imagename = 'shaman.gif';
-		$key = '8';
+		$key = '3';
 	} elsif ($tempclass eq 'Warlock') {
 		$classclr='#9482C9';
 		$imagename = 'warlock.gif';
-		$key = '9';
+		$key = '2';
 	} elsif ($tempclass eq 'Warrior') {
 		$classclr='#C79C6E';
 		$imagename = 'warrior.gif';
-		$key = '10';
+		$key = '1';
 	} elsif ($tempclass eq 'Death Knight') {
 		$classclr='#C41F3B';
 		$imagename = 'deathknight.gif';
-		$key = '1';
+		$key = '10';
 	}
 	#print "<TD BGCOLOR=$rowcolor>";
 	print "<TD sorttable_customkey=\"$key\">";
