@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.791"
+﻿LT_VERSION = "Legion Tracker 0.792"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -6,8 +6,9 @@ LT_PlayerList = nil;
 LT_NameLookup = {};
 LT_Main_ST = nil;
 LT_Main_ST1 = nil;
-local LT_LDB = LibStub("LibDataBroker-1.1", true)
-local LT_LDBIcon = LibStub("LibDBIcon-1.0", true)
+LT_LDB = LibStub("LibDataBroker-1.1", true)
+LT_LDBIcon = LibStub("LibDBIcon-1.0", true)
+--LT_Show_Minimap_Icon = true;
 LT_raiderFilter = false;
 LT_Rows_Shown = 0;
 
@@ -54,6 +55,7 @@ function LT_SlashHandler(args)
         LT_Print("vote - Show vote window.", "yellow");
         LT_Print("tableundo - Restore old table data prior to tablecopy.","yellow");
         LT_Print("tablecopy <player> - Request a copy of the loot data from <player>","yellow");
+        LT_Print("minimap hide/show - Displays or hides the minimap icon.","yellow");
 	else
 		if args == "show" then
 		    LT_Main:Show();
@@ -61,6 +63,7 @@ function LT_SlashHandler(args)
 		if args == "hide" then
 		    LT_Main:Hide();
 		end
+        
 		if string.find(args, "^loot") ~= nil then
 			LT_Loot_SlashHandler(args);
 		elseif string.find(args, "^timer") ~= nil then
@@ -79,6 +82,8 @@ function LT_SlashHandler(args)
             LT_Settings_Table_Undo();
         elseif string.find(args, "^add") ~= nil then
             LT_OfficerLoot:Add(string.sub(args, 4));
+        elseif string.find(args, "^minimap") ~= nil then
+            LT_Settings_Minimap_SlashHandler(args);
         elseif args == "olt1" then
             LT_OfficerLoot.msg_channel = "WHISPER";
             LT_OfficerLoot.msg_target = "Happyduude";
@@ -519,15 +524,18 @@ function LT_UpdatePlayerList()
                     table.insert(data, LT_Main_CreateRow(i));                    
                     LT_CleanUp[name] = # data;
                 elseif (rank == "Alt") or (rank == "Officer Alt") then
-                    local _,mainRank,_,_,_,_,_,_,mainOnline = GetGuildRosterInfo(LT_GetPlayerIndexFromName(LT_GetMainName(i)));
-                    if (mainRank ~= "Friend") and (LT_MainOfflineCheckBox:GetChecked() ~= 1) then
-                    --Attempt to show alts instead of mains if the alt is online.
-                    --if (mainRank ~= "Friend") then
-                        if (online == 1) and (mainOnline ~= 1) then
-                            table.insert(data, LT_Main_CreateRow(i));
-                            LT_CleanUp[name] = # data;
-                            LT_CleanUp[counter] = LT_GetMainName(i);--LT_GetMainName(i);
-                            counter = counter+1;
+                    local myMainName = LT_GetMainName(i);
+                    if (myMainName ~= "<Enter Main Name>") then
+                        local _,mainRank,_,_,_,_,_,_,mainOnline = GetGuildRosterInfo(LT_GetPlayerIndexFromName(myMainName));
+                        if (mainRank ~= "Friend") and (LT_MainOfflineCheckBox:GetChecked() ~= 1) then
+                        --Attempt to show alts instead of mains if the alt is online.
+                        --if (mainRank ~= "Friend") then
+                            if (online == 1) and (mainOnline ~= 1) then
+                                table.insert(data, LT_Main_CreateRow(i));
+                                LT_CleanUp[name] = # data;
+                                LT_CleanUp[counter] = LT_GetMainName(i);--LT_GetMainName(i);
+                                counter = counter+1;
+                            end
                         end
                     end
                 end
@@ -639,6 +647,13 @@ function LT_Main_OnEvent(this, event, arg1, arg2)
             LT_savedVarTable = {};
         end
         LT_createLDB();
+--        if (LT_Show_Minimap_Icon == true) then
+--            LT_Print("456");
+--            LT_LDBIcon:Show("LT_LDB");
+--        elseif (LT_Show_Minimap_Icon == false) then
+--            LT_Print("654");
+--            LT_LDBIcon:Hide("LT_LDB");
+--        end
     elseif (event == "CHAT_MSG_WHISPER") then
         LT_OfficerLoot:OnEvent(event, arg1, arg2);
     elseif (event == "CHAT_MSG_SYSTEM") then
@@ -727,7 +742,6 @@ function LT_createLDB()
                 end
             end,
             icon = "Interface\\AddOns\\LegionTracker\\Icons\\LT_map_silver",
-            --icon = "Interface\\Icons\\INV_Jewelry_Talisman_08",
             OnTooltipShow = function(tooltip)
 			    if not tooltip or not tooltip.AddLine then return end
 			    tooltip:AddLine("LegionTracker")
@@ -738,5 +752,11 @@ function LT_createLDB()
     if LT_LDBIcon then
         LT_LDBIcon:Register("LT_LDB", LT_LDB, LT_savedVarTable);
     end
-    LT_LDBIcon:Show("LT_LDB");
+--    if (LT_Show_Minimap_Icon == true) then
+--        LT_LDBIcon:Show("LT_LDB");
+--        LT_Print("123");
+--    elseif (LT_Show_Minimap_Icon == false) then
+--        LT_LDBIcon:Hide("LT_LDB");
+--        LT_Print("321");
+--    end
 end

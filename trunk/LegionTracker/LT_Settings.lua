@@ -73,3 +73,26 @@ function LT_RaidersCheckboxClicked()
         LT_UpdatePlayerList();
     end
 end
+
+function LT_Settings_Minimap_SlashHandler(args)
+    if (string.find(args, " ") == nil) then
+        --LT_Print(LT_Show_Minimap_Icon,"yellow");
+        if (LT_Show_Minimap_Icon == true) then
+		    LT_Print("LT: Show minimap is currently toggled to: TRUE","yellow");
+        elseif (LT_Show_Minimap_Icon == false) then
+            LT_Print("LT: Show minimap is currently toggled to: FALSE","yellow");
+        else
+            LT_Print("LT: Show minimap is currently: NOT SET","yellow");
+		end
+        return;
+	end
+    
+    local cmd = string.sub(args, string.find(args, " ")+1);
+    if (cmd == "hide") then
+        LT_LDBIcon:Hide("LT_LDB");
+        --LT_Show_Minimap_Icon = false;
+    elseif (cmd == "show") then
+        LT_LDBIcon:Show("LT_LDB");
+        --LT_Show_Minimap_Icon = true;
+    end
+end
