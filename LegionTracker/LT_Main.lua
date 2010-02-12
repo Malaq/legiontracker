@@ -752,6 +752,7 @@ function LT_createLDB()
     if LT_LDBIcon then
         LT_LDBIcon:Register("LT_LDB", LT_LDB, LT_savedVarTable);
     end
+    LT_LDBIcon:Show("LT_LDB");
 --    if (LT_Show_Minimap_Icon == true) then
 --        LT_LDBIcon:Show("LT_LDB");
 --        LT_Print("123");
