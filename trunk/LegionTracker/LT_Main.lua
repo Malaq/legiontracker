@@ -1,9 +1,10 @@
-﻿LT_VERSION = "Legion Tracker 0.792"
+﻿LT_VERSION = "Legion Tracker 0.80"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
 LT_PlayerList = nil;
 LT_NameLookup = {};
+LT_InfoLookup = {};
 LT_Main_ST = nil;
 LT_Main_ST1 = nil;
 LT_LDB = LibStub("LibDataBroker-1.1", true)
@@ -11,6 +12,7 @@ LT_LDBIcon = LibStub("LibDBIcon-1.0", true)
 --LT_Show_Minimap_Icon = true;
 LT_raiderFilter = false;
 LT_Rows_Shown = 0;
+LT_NewRosterUpdate = false;
 
 function LT_OnLoad()
 	LT_Main:SetParent(UIParent);
@@ -491,18 +493,77 @@ function LT_GetPlayerIndexFromName(name)
     return LT_NameLookup[name];
 end
 
+function LT_GetPlayerInfoFromName(name,option)
+    if (option == nil) then
+        return;
+    elseif (name == nil) or (name == "") then
+        LT_Print("LT_GetPlayerInfoFromName, nil name passed in");
+        return;
+    elseif (LT_GetPlayerIndexFromName(name) == nil) then    
+        return "-1";
+    elseif (option == "index") then    
+        return LT_InfoLookup[name][option];
+    elseif (option == "rank") then
+        return LT_InfoLookup[name][option];
+    elseif (option == "onote") then
+        return LT_InfoLookup[name][option];
+    elseif (option == "online") then
+        return LT_InfoLookup[name][option];
+    elseif (option == "updated") then
+        return LT_InfoLookup[name][option];
+    elseif (option == "sync") then
+        return LT_InfoLookup[name][option];
+    end
+    return nil;
+end
+
+function LT_SetPlayerInfoFromName(name,option,value)
+    if (option == nil) or (value == nil) then
+        return nil;
+    elseif (name == nil) then
+        LT_Print("LT_SetPlayerInfoFromName, nil name passed in");
+        return;
+    elseif (option == "index") then    
+        LT_InfoLookup[name][option] = value;
+    elseif (option == "rank") then
+        LT_InfoLookup[name][option] = value;
+    elseif (option == "onote") then
+        LT_InfoLookup[name][option] = value;
+    elseif (option == "online") then
+        LT_InfoLookup[name][option] = value;
+    elseif (option == "updated") then
+        LT_InfoLookup[name][option] = value;
+    elseif (option == "sync") then    
+        LT_InfoLookup[name][option] = value;
+    end
+    return nil;
+end
+
+
 function LT_UpdatePlayerList()
     LT_NameLookup = {};
     LT_CleanUp = {};
+    LT_InfoLookup = {};
     
     -- This always needs to be done regardless of whether or not
     -- we're shown, because attendance and loot depend on the lookup.
     local num_all_members = GetNumGuildMembers(true);
     local non_nil = true;
     for i = 1, num_all_members do
-        local name = GetGuildRosterInfo(i);
+        --local name = GetGuildRosterInfo(i);
+        local name, rank, _, _, _, _, _, officernote, online = GetGuildRosterInfo(i);
         if (name ~= nil) then
             LT_NameLookup[name] = i;
+            LT_NameLookup[i] = name;
+            LT_InfoLookup[name] = {};
+            LT_InfoLookup[name]["index"] = i;
+            LT_InfoLookup[name]["rank"] = rank;
+            LT_InfoLookup[name]["onote"] = officernote;
+            LT_InfoLookup[name]["online"] = online;
+            LT_InfoLookup[name]["updated"] = false;
+            LT_InfoLookup[name]["sync"] = false;
+
+            --LT_Print("LT_NameLookup Count: "..#LT_NameLookup.." Info: "..#LT_InfoLookup.." rank: "..LT_InfoLookup[name]["rank"]);
         else
             non_nil = false;
         end
@@ -637,6 +698,7 @@ end
 
 function LT_Main_OnEvent(this, event, arg1, arg2)
     if (event == "GUILD_ROSTER_UPDATE") then
+        LT_NewRosterUpdate = true;
         LT_UpdatePlayerList();
         -- We get guildroster if someone else updates an officer note.
         -- Very possible this is the lag bomb when you have the window open.
