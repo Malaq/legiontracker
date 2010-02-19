@@ -73,9 +73,9 @@ function LT_AttendanceTic()
 end
 
 --Adjusts online member officer notes
-function LT_NewSingleMemberOnlineTic(i)
+function LT_NewSingleMemberOnlineTic(i,tickFromAlt)
         local name = LT_GetPlayerIndexFromName(i);
-        local onlineValue = "1";
+        local onlineValue = "1";        
         if (name == nil) then
             LT_Print("Character not in guild, index: "..i);
             --Character not in guild
@@ -92,6 +92,13 @@ function LT_NewSingleMemberOnlineTic(i)
         local onote = LT_GetPlayerInfoFromName(name,"onote");
         local rank = LT_GetPlayerInfoFromName(name,"rank");
         local online = LT_GetPlayerInfoFromName(name,"online");
+        if (tickFromAlt ~= nil) then
+            if (tickFromAlt == true) then
+                online = 1;
+            else
+                online = nil;
+            end
+        end
         
         if (rank == "Friend") and (onote ~= "Friend") then
             LT_SetPlayerInfoFromName(name,"onote","Friend");
@@ -112,7 +119,7 @@ function LT_NewSingleMemberOnlineTic(i)
                     LT_SetPlayerInfoFromName(name,"sync",true);
                     return;
                 end
-                LT_NewSingleMemberOnlineTic(LT_GetPlayerIndexFromName(onote));
+                LT_NewSingleMemberOnlineTic(LT_GetPlayerIndexFromName(onote),true);
                 LT_SetPlayerInfoFromName(name,"updated",true);
                 LT_SetPlayerInfoFromName(name,"sync",false);
                 return;
