@@ -73,9 +73,9 @@ function LT_AttendanceTic()
 end
 
 --Adjusts online member officer notes
-function LT_NewSingleMemberOnlineTic(i,tickFromAlt)
+function LT_NewSingleMemberOnlineTic(i,tickFromAlt,altName)
         local name = LT_GetPlayerIndexFromName(i);
-        local onlineValue = "1";        
+        local onlineValue = "1"; 
         if (name == nil) then
             LT_Print("Character not in guild, index: "..i);
             --Character not in guild
@@ -119,7 +119,7 @@ function LT_NewSingleMemberOnlineTic(i,tickFromAlt)
                     LT_SetPlayerInfoFromName(name,"sync",true);
                     return;
                 end
-                LT_NewSingleMemberOnlineTic(LT_GetPlayerIndexFromName(onote),true);
+                LT_NewSingleMemberOnlineTic(LT_GetPlayerIndexFromName(onote),true,name);
                 LT_SetPlayerInfoFromName(name,"updated",true);
                 LT_SetPlayerInfoFromName(name,"sync",false);
                 return;
@@ -132,6 +132,12 @@ function LT_NewSingleMemberOnlineTic(i,tickFromAlt)
             else
                 --I am in the raid
                 local subGroup = LT_Attendance_Raid_Group(name, raidCount);
+                if (tickFromAlt ~= nil) then
+                    if (tickFromAlt == true) then
+                        subGroup = LT_Attendance_Raid_Group(altName, raidCount);
+                    end
+                    subGroup = LT_Attendance_Raid_Group(name, raidCount);
+                end
                 if (subGroup < 6) and (subGroup > 0) then
                     --They are in the raid and online
                     onlineValue = "1";

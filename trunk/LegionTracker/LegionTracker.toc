@@ -1,7 +1,7 @@
 ## Interface: 30300
 ## Title: LegionTracker
 ## Author: Malaaq, Happyduude
-## Version: 0.801
+## Version: 0.802
 ## eMail: legiontracker@googlegroups.com
 ## URL: http://www.legiontracker.com
 ## DefaultState: Enabled
