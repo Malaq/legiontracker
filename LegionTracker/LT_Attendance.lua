@@ -454,5 +454,5 @@ function LT_Attendance_Raid_Group(playerName, raidCount)
         end
     end
     --LT_Print(playerName.."- LT_Error, not in raid?");
-    return "-1";
+    return -1;
 end
