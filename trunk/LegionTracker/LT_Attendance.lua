@@ -75,8 +75,14 @@ end
 --Adjusts online member officer notes
 function LT_NewSingleMemberOnlineTic(i,tickFromAlt,altName)
         local name = LT_GetPlayerIndexFromName(i);
+
+        if (name == nil) or (name == "") then
+            LT_Print("Please fix "..altName.."'s officer note.");
+            return;
+        end
+        
         local onlineValue = "1"; 
-        if (name == nil) then
+        if (name == nil) or (name == "") then
             LT_Print("Character not in guild, index: "..i);
             --Character not in guild
             return;
@@ -114,6 +120,7 @@ function LT_NewSingleMemberOnlineTic(i,tickFromAlt,altName)
             if (rank == "Alt") or (rank == "Officer Alt") then
                 --If they have a looping officer note, don't cause a recursive loop.
                 if (name == onote) or (LT_GetPlayerInfoFromName(onote,"rank") == "Alt") or (LT_GetPlayerInfoFromName(onote,"rank") == "Officer Alt")  or (LT_GetPlayerInfoFromName(onote,"rank") == "-1") then
+                    LT_Print("Please fix "..name.."'s officer note.");
                     LT_SetPlayerInfoFromName(name,"onote","<Enter Main Name>");
                     LT_SetPlayerInfoFromName(name,"updated",true);
                     LT_SetPlayerInfoFromName(name,"sync",true);
@@ -169,7 +176,7 @@ end
 function LT_NewSingleMemberOfflineTic(i)
         local name = LT_GetPlayerIndexFromName(i);
         local onlineValue = "0";
-        if (name == nil) then
+        if (name == nil) or (name == "") then
             LT_Print("Character not in guild, index: "..i);
             --Character not in guild
             return;
@@ -199,6 +206,7 @@ function LT_NewSingleMemberOfflineTic(i)
             if (rank == "Alt") or (rank == "Officer Alt") then
                 --If they have a looping officer note, don't cause a recursive loop.
                 if (name == onote) or (LT_GetPlayerInfoFromName(onote,"rank") == "Alt") or (LT_GetPlayerInfoFromName(onote,"rank") == "Officer Alt") or (LT_GetPlayerInfoFromName(onote,"rank") == "-1") then
+                    LT_Print("Please fix "..name.."'s officer note.");
                     LT_SetPlayerInfoFromName(name,"onote","<Enter Main Name>");
                     LT_SetPlayerInfoFromName(name,"updated",true);
                     LT_SetPlayerInfoFromName(name,"sync",true);

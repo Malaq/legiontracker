@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.802"
+﻿LT_VERSION = "Legion Tracker 0.803"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -497,8 +497,10 @@ function LT_GetPlayerInfoFromName(name,option)
     if (option == nil) then
         return;
     elseif (name == nil) or (name == "") then
-        LT_Print("LT_GetPlayerInfoFromName, nil name passed in");
-        return;
+    --Come back and fix this later.  It hit this condition if attendance was checking
+    --the rank of a bad officernote on line 122 and 208.
+        --LT_Print("LT_GetPlayerInfoFromName, nil name passed in for option: "..option);
+        return "-1";
     elseif (LT_GetPlayerIndexFromName(name) == nil) then    
         return "-1";
     elseif (option == "index") then    
