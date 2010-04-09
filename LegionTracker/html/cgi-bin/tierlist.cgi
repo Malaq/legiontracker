@@ -284,6 +284,7 @@ my $statement =
 	    "ON tier_list.CHAR_ID = chr.CHAR_ID " .
             "WHERE chr.RANK not in ('Friend','Alt','Officer Alt','P.U.G.', '') " . 
             "AND chr.DATE_REMOVED IS NULL " . 
+            "AND chr.ACTIVE = 'Y' " . 
             "ORDER BY chr.NAME;");
 
 
