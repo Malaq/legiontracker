@@ -233,6 +233,7 @@ my $statement =
             "ON 60dl.CHAR_ID = chr.CHAR_ID " .
             "WHERE chr.RANK not in ('Friend','Alt','Officer Alt','P.U.G.','') " . 
             "AND chr.DATE_REMOVED IS NULL " . 
+            "AND chr.ACTIVE = 'Y' " . 
 	    "OR (chr.RANK in ('Friend','P.U.G.','Alt') " .
 	    "AND IFNULL(30dl.Main_Spec,0)+IFNULL(30dl.Alt_Spec,0)+IFNULL(30dl.Off_Spec,0) <> 0 )" .
             "ORDER BY chr.NAME;");
