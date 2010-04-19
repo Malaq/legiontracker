@@ -104,7 +104,7 @@
 		<!--#include virtual="cgi-bin/navibar.cgi"-->
 		</div>
 		<div id='main_frame'>
-		<!--#include virtual="cgi-bin/main.cgi"-->
+		<!--#include virtual="cgi-bin/tierlist.cgi"-->
 
 		Created by: <a href="mailto:legiontracker@googlegroups.com?subject=LegionTracker">Malaaq & Happyduude - Trismegistus (Medivh-US)</a>
 		</div>
