@@ -241,24 +241,30 @@ DELIMETER
 		$prog = $prog+$row->{'THU/SUN/MON'};
 	}
 	print "</TBODY>";
-	$wed = round($wed/$counter);
-	$thu = round($thu/$counter);
-	$sun = round($sun/$counter);
-	$mon = round($mon/$counter);
-	$prog = round($prog/$counter);
+	if ($counter == 0) {
+		print "<TR>";
+		print "<TD colspan=\"8\"><B>There have been no raids recorded in the past 30 days.</B></TD>";
+		print "</TR>";
+	} else {
+		$wed = round($wed/$counter);
+		$thu = round($thu/$counter);
+		$sun = round($sun/$counter);
+		$mon = round($mon/$counter);
+		$prog = round($prog/$counter);
 
-	print "<tfoot>";
-	print "<TR>";
-	print "<TD colspan=\"3\">";
-	print "Total Raiders: $counter";
-	print "</TD>";
-	attendanceColor($wed);
-	attendanceColor($thu);
-	attendanceColor($sun);
-	attendanceColor($mon);
-	attendanceColor($prog);
-	print "</TR>";
-	print "</tfoot>";
+		print "<tfoot>";
+		print "<TR>";
+		print "<TD colspan=\"3\">";
+		print "Total Raiders: $counter";
+		print "</TD>";
+		attendanceColor($wed);
+		attendanceColor($thu);
+		attendanceColor($sun);
+		attendanceColor($mon);
+		attendanceColor($prog);
+		print "</TR>";
+		print "</tfoot>";
+	}
 	print "</TABLE>";
 	#print "<script type=\"text/javascript\">";
 	#print "var t = new ScrollableTable(document.getElementById('mainTable'),100);";
