@@ -70,8 +70,10 @@
           </Layer>
         </Layers>
         <Scripts>
-          <OnEscapePressed>LT_AllLoot:ToggleShow();</OnEscapePressed>
-          <OnTextChanged>LT_AllLoot:UpdateSearch();</OnTextChanged>
+          <OnEscapePressed>LT_AllLoot:ToggleShow();
+</OnEscapePressed>
+          <OnTextChanged>LT_AllLoot:UpdateSearch();
+</OnTextChanged>
         </Scripts>
         <FontString font="Fonts\ARIALN.TTF">
           <FontHeight>
@@ -115,13 +117,6 @@
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
         </HighlightTexture>
         <ButtonText name="$parentText">
-          <Anchors>
-            <Anchor point="CENTER">
-              <Offset>
-                <AbsDimension x="0" y="1" />
-              </Offset>
-            </Anchor>
-          </Anchors>
           <FontHeight>
             <AbsValue val="10" />
           </FontHeight>
@@ -145,7 +140,7 @@
       </Frame>
     </Frames>
     <Scripts>
-      <OnLoad>LT_AllLoot:OnLoad();
+      <OnLoad>LT_AllLoot:OnLoad(self);
 </OnLoad>
       <OnShow>LT_AllLoot:OnShow();
 </OnShow>

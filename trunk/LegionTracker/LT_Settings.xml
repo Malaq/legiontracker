@@ -101,7 +101,8 @@
               </Anchor>
             </Anchors>
             <Scripts>
-              <OnClick>LT_AttendanceResetButton();</OnClick>
+              <OnClick>LT_AttendanceResetButton();
+</OnClick>
             </Scripts>
             <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
               <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -481,7 +482,7 @@ LT_Settings:Hide();
       </Button>
     </Frames>
     <Scripts>
-      <OnLoad>LT_Settings_OnLoad();
+      <OnLoad>LT_Settings_OnLoad(self);
 </OnLoad>
       <OnEvent>LT_Settings_OnEvent(this, event, arg1, arg2);
 </OnEvent>

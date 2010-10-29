@@ -1,11 +1,11 @@
-﻿function LT_Settings_OnLoad()
+﻿function LT_Settings_OnLoad(self)
     LT_Credits:SetParent(UIParent);
-    tinsert(UISpecialFrames, this:GetName());
-    this:RegisterEvent("VARIABLES_LOADED");
-    this:Hide();
+    tinsert(UISpecialFrames, self:GetName());
+    self:RegisterEvent("VARIABLES_LOADED");
+    self:Hide();
 end
 
-function LT_Settings_OnEvent(this, event, arg1, arg2)
+function LT_Settings_OnEvent(self, event, arg1, arg2)
     if (event == "VARIABLES_LOADED") then
         LT_Settings:SetFrameLevel(100);
     end
@@ -58,9 +58,13 @@ end
 
 function LT_OfflineCheckBoxClicked()
     if (LT_MainOfflineCheckBox:GetChecked() == 1) then
-        SetGuildRosterShowOffline(true);
+        --SetGuildRosterShowOffline(true);
+        LT_offlineFilter = false;
+        LT_UpdatePlayerList();
     else
-        SetGuildRosterShowOffline(false);
+        --SetGuildRosterShowOffline(false);
+        LT_offlineFilter = true;
+        LT_UpdatePlayerList();
     end
 end
 

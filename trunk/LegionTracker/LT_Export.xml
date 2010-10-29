@@ -96,7 +96,7 @@
             <Frames>
               <Button name="$parentScrollUpButton">
                 <Size>
-                  <AbsDimension x="16" y="16" />
+                  <AbsDimension x="18" y="16" />
                 </Size>
                 <Anchors>
                   <Anchor point="BOTTOM" relativePoint="TOP" />
@@ -104,26 +104,27 @@
                 <Scripts>
                   <OnClick>
 						local parent = self:GetParent();
-						parent:SetValue(parent:GetValue() - (parent:GetHeight() / 2));
+						local scrollStep = self:GetParent().scrollStep or (parent:GetHeight() / 2);
+						parent:SetValue(parent:GetValue() - scrollStep);
 						PlaySound("UChatScrollButton");
 					</OnClick>
                 </Scripts>
                 <NormalTexture file="Interface\Buttons\UI-ScrollBar-ScrollUpButton-Up">
-                  <TexCoords left="0.25" right="0.75" top="0.25" bottom="0.75" />
+                  <TexCoords left="0.2" right="0.8" top="0.25" bottom="0.75" />
                 </NormalTexture>
                 <PushedTexture file="Interface\Buttons\UI-ScrollBar-ScrollUpButton-Down">
-                  <TexCoords left="0.25" right="0.75" top="0.25" bottom="0.75" />
+                  <TexCoords left="0.2" right="0.8" top="0.25" bottom="0.75" />
                 </PushedTexture>
                 <DisabledTexture file="Interface\Buttons\UI-ScrollBar-ScrollUpButton-Disabled">
-                  <TexCoords left="0.25" right="0.75" top="0.25" bottom="0.75" />
+                  <TexCoords left="0.2" right="0.8" top="0.25" bottom="0.75" />
                 </DisabledTexture>
                 <HighlightTexture file="Interface\Buttons\UI-ScrollBar-ScrollUpButton-Highlight" alphaMode="ADD">
-                  <TexCoords left="0.25" right="0.75" top="0.25" bottom="0.75" />
+                  <TexCoords left="0.2" right="0.8" top="0.25" bottom="0.75" />
                 </HighlightTexture>
               </Button>
               <Button name="$parentScrollDownButton">
                 <Size>
-                  <AbsDimension x="16" y="16" />
+                  <AbsDimension x="18" y="16" />
                 </Size>
                 <Anchors>
                   <Anchor point="TOP" relativePoint="BOTTOM" />
@@ -131,21 +132,22 @@
                 <Scripts>
                   <OnClick>
 						local parent = self:GetParent();
-						parent:SetValue(parent:GetValue() + (parent:GetHeight() / 2));
+						local scrollStep = self:GetParent().scrollStep or (parent:GetHeight() / 2);
+						parent:SetValue(parent:GetValue() + scrollStep);
 						PlaySound("UChatScrollButton");
 					</OnClick>
                 </Scripts>
                 <NormalTexture file="Interface\Buttons\UI-ScrollBar-ScrollDownButton-Up">
-                  <TexCoords left="0.25" right="0.75" top="0.25" bottom="0.75" />
+                  <TexCoords left="0.2" right="0.8" top="0.25" bottom="0.75" />
                 </NormalTexture>
                 <PushedTexture file="Interface\Buttons\UI-ScrollBar-ScrollDownButton-Down">
-                  <TexCoords left="0.25" right="0.75" top="0.25" bottom="0.75" />
+                  <TexCoords left="0.2" right="0.8" top="0.25" bottom="0.75" />
                 </PushedTexture>
                 <DisabledTexture file="Interface\Buttons\UI-ScrollBar-ScrollDownButton-Disabled">
-                  <TexCoords left="0.25" right="0.75" top="0.25" bottom="0.75" />
+                  <TexCoords left="0.2" right="0.8" top="0.25" bottom="0.75" />
                 </DisabledTexture>
                 <HighlightTexture file="Interface\Buttons\UI-ScrollBar-ScrollDownButton-Highlight" alphaMode="ADD">
-                  <TexCoords left="0.25" right="0.75" top="0.25" bottom="0.75" />
+                  <TexCoords left="0.2" right="0.8" top="0.25" bottom="0.75" />
                 </HighlightTexture>
               </Button>
             </Frames>
@@ -156,9 +158,9 @@
             </Scripts>
             <ThumbTexture name="$parentThumbTexture" file="Interface\Buttons\UI-ScrollBar-Knob">
               <Size>
-                <AbsDimension x="16" y="24" />
+                <AbsDimension x="18" y="24" />
               </Size>
-              <TexCoords left="0.25" right="0.75" top="0.125" bottom="0.875" />
+              <TexCoords left="0.2" right="0.8" top="0.125" bottom="0.875" />
             </ThumbTexture>
           </Slider>
         </Frames>
@@ -167,7 +169,8 @@
 </OnLoad>
           <OnMouseWheel>ScrollFrameTemplate_OnMouseWheel(self, delta);
 </OnMouseWheel>
-          <OnEscapePressed>LT_Export:Hide();</OnEscapePressed>
+          <OnEscapePressed>LT_Export:Hide();
+</OnEscapePressed>
           <OnVerticalScroll>local scrollbar = getglobal(self:GetName().."ScrollBar");
 scrollbar:SetValue(offset);
 local min;
@@ -205,7 +208,7 @@ end
             </Scripts>
             <FontString font="Fonts\ARIALN.TTF">
               <FontHeight>
-                <AbsValue val="8" />
+                <AbsValue val="14" />
               </FontHeight>
               <Color r="1" g="1" b="1" />
               <Shadow>
@@ -247,13 +250,6 @@ end
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
         </HighlightTexture>
         <ButtonText name="$parentText">
-          <Anchors>
-            <Anchor point="CENTER">
-              <Offset>
-                <AbsDimension x="0" y="1" />
-              </Offset>
-            </Anchor>
-          </Anchors>
           <FontHeight>
             <AbsValue val="10" />
           </FontHeight>
@@ -264,7 +260,7 @@ end
       </Button>
     </Frames>
     <Scripts>
-      <OnLoad>this:Hide();
+      <OnLoad>self:Hide();
 </OnLoad>
       <OnShow>LT_Export_OnShow();
 </OnShow>

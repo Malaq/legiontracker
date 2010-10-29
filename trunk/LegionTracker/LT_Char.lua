@@ -157,12 +157,12 @@ function LT_Char_UpdateFrame()
     end
 end
 
-function LT_Char_OnLoad()
-	this:SetParent(UIParent);
-    this:Hide();
+function LT_Char_OnLoad(self)
+	self:SetParent(UIParent);
+    self:Hide();
 	LT_LootUI:SetupFrame(LT_LootListPanel);
     -- Makes ESC work
-    tinsert(UISpecialFrames, this:GetName());
+    tinsert(UISpecialFrames, self:GetName());
     block_tooltip = CreateFrame("GameTooltip", "LT_BlockToolTip", UIParent, "GameTooltipTemplate");
     --block_tooltip = CreateFrame("GameTooltip", "LT_BlockToolTip");
     block_tooltip:Hide();

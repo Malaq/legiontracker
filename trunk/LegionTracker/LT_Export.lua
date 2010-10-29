@@ -1,5 +1,5 @@
 ﻿function LT_Export_OnShow()
-    local export_label = getglobal("LT_Export".."ExportTextWindow".."Edit");
+    local export_label = _G["LT_Export".."ExportTextWindow".."Edit"];
     export_label:SetText("");
     LT_Export:SetFrameLevel(100);
     LT_Loot_SetFilter();

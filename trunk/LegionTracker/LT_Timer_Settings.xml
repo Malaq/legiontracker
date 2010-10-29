@@ -708,7 +708,8 @@
         </Anchors>
         <Scripts>
           <OnClick>LT_Timer_Default();
-LT_Timer_Settings:Hide();</OnClick>
+LT_Timer_Settings:Hide();
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -733,11 +734,11 @@ LT_Timer_Settings:Hide();</OnClick>
       </Button>
     </Frames>
     <Scripts>
-      <OnLoad>this:Hide();
+      <OnLoad>self:Hide();
 </OnLoad>
       <OnShow>LT_Timer_Settings_OnShow();
 LT_Timer_SettingsDurationHr:SetFocus();
-this:SetFrameLevel(100);
+self:SetFrameLevel(100);
 </OnShow>
     </Scripts>
   </Frame>

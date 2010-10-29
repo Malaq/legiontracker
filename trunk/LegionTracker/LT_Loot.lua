@@ -78,7 +78,7 @@ function LT_Loot_SlashHandler(args)
 	end
 end
 
-function Loot_OnEvent(this, event, arg1)
+function Loot_OnEvent(self, event, arg1)
 	if event == "CHAT_MSG_LOOT" then
 		local player = nil;
 		if (string.find(arg1, "receive loot:") or string.find(arg1, "receives loot:")) then
@@ -95,7 +95,7 @@ function Loot_OnEvent(this, event, arg1)
 		local _, itemId = strsplit(":", itemString);
         
         -- If its a regular loot, see if its been awarded, if so, ignore the message
-        if (this ~= "AWARD") then
+        if (self ~= "AWARD") then
             -- Does the player exist in the awarded items table?
             if (LT_OfficerLoot_AwardedItems[player] ~= nil) then
                 if (LT_OfficerLoot_AwardedItems[player][name] ~= nil) then
@@ -118,7 +118,7 @@ function Loot_OnEvent(this, event, arg1)
 		LT_LootTable[lootId]["time"] = LT_GetGameTime();
 		LT_LootTable[lootId]["player"] = player;
 		LT_LootTable[lootId]["spec"] = "Unassigned";
-        if (this == "AWARD") then
+        if (self == "AWARD") then
             LT_LootTable[lootId]["zone"] = LT_OfficerLoot_ZoneData["ZONE"];
 		    LT_LootTable[lootId]["subzone"] = LT_OfficerLoot_ZoneData["SUBZONE"];
             if (LT_Loot_SavedSpecs[player] and LT_Loot_SavedSpecs[player][GetItemInfo(itemString)]) then

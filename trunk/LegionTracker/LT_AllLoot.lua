@@ -17,10 +17,10 @@ function LT_AllLoot:OnShow()
     LT_LootSearch:SetText(LT_Loot_FilterString);
 end
 
-function LT_AllLoot:OnLoad()
+function LT_AllLoot:OnLoad(self)
     LT_AllLootPanel:Hide();
 	LT_AllLootPanel:SetParent(UIParent);
-    tinsert(UISpecialFrames, this:GetName());
+    tinsert(UISpecialFrames, self:GetName());
     LT_AllLootPanel:SetFrameLevel(100);
 	LT_LootUI:SetupFrame(LT_AllLootTable);
 end
