@@ -6,15 +6,17 @@ LT_Timer_UpdateInterval = 1.0;
 LT_TIME_EXPIRED = false;
 LT_RAID_NAME = date("%Y-%m-%d ", time());
 
-function LT_TimerOnLoad()
-    this:RegisterEvent("VARIABLES_LOADED");
+function LT_TimerOnLoad(self)
+    self:RegisterEvent("VARIABLES_LOADED");
+    local info_label = _G["LT_Main".."TimerInfo".."Label"];
+    info_label:SetText(" ");
 end
 
-function LT_Timer_Clicked(args)
-    --LT_Print("Clicked: "..args);
-    if (args == "LeftButton") then
+function LT_Timer_Clicked(self,button)
+    --LT_Print("Clicked: "..button);
+    if (button == "LeftButton") then
         LT_TimerToggle();
-    elseif (args == "RightButton") then
+    elseif (button == "RightButton") then
         LT_Timer_Settings:Show();
     end
 end
@@ -36,11 +38,11 @@ function LT_Timer_Default()
     LT_SetInterval(4,"durationhr");
     LT_SetInterval(0,"durationmin");
     LT_SetInterval(0,"durationsec");
-    local info_label = getglobal("LT_Main".."TimerInfo".."Label");
+    local info_label = _G["LT_Main".."TimerInfo".."Label"];
     info_label:SetText(string.format("Tic: %02d:%02d; Stop: %02d:%02d:%02d", LT_GetInterval("min"), LT_GetInterval("sec"), LT_GetInterval("durationhr"),LT_GetInterval("durationmin"),LT_GetInterval("durationsec")));
 end
 
-function LT_Timer_OnEvent(arg)
+function LT_Timer_OnEvent(self, event, ...)
     if (event == "VARIABLES_LOADED") then
         if (LT_TimerInterval == nil) then
             LT_TimerInterval = {};
@@ -70,7 +72,7 @@ function LT_Timer_Settings_Cancel()
 end
 
 function LT_Timer_ShowInfo(args)
-    local info_label = getglobal("LT_Main".."TimerInfo".."Label");
+    local info_label = _G["LT_Main".."TimerInfo".."Label"];
     if (args == nil) then
         info_label:SetTextColor(1, 1, 1);
         info_label:SetText(string.format("Tic: %02d:%02d; Stop: %02d:%02d:%02d", LT_GetInterval("min"), LT_GetInterval("sec"), LT_GetInterval("durationhr"),LT_GetInterval("durationmin"),LT_GetInterval("durationsec")));
@@ -80,34 +82,34 @@ function LT_Timer_ShowInfo(args)
 end
 
 function LT_Timer_HideInfo()
-    local info_label = getglobal("LT_Main".."TimerInfo".."Label");
+    local info_label = _G["LT_Main".."TimerInfo".."Label"];
     info_label:SetText("");
 end
 
 function LT_Timer_Settings_OnShow()
-    local min_int = getglobal("LT_Timer_Settings".."MinInterval");
+    local min_int = _G["LT_Timer_Settings".."MinInterval"];
     min_int:SetText(LT_GetInterval("min"));
-    local min_label = getglobal("LT_Timer_Settings".."MinLabel".."Label");
+    local min_label = _G["LT_Timer_Settings".."MinLabel".."Label"];
     min_label:SetText("Min:");
     
-    local sec_int = getglobal("LT_Timer_Settings".."SecInterval");
+    local sec_int = _G["LT_Timer_Settings".."SecInterval"];
     sec_int:SetText(LT_GetInterval("sec"));
-    local sec_label = getglobal("LT_Timer_Settings".."SecLabel".."Label");
+    local sec_label = _G["LT_Timer_Settings".."SecLabel".."Label"];
     sec_label:SetText("Sec:");
     
-    local durhr_int = getglobal("LT_Timer_Settings".."DurationHr");
+    local durhr_int = _G["LT_Timer_Settings".."DurationHr"];
     durhr_int:SetText(LT_GetInterval("durationhr"));
-    local durhr_label = getglobal("LT_Timer_Settings".."DurationHrLabel".."Label");
+    local durhr_label = _G["LT_Timer_Settings".."DurationHrLabel".."Label"];
     durhr_label:SetText("Hr:");
     
-    local durmin_int = getglobal("LT_Timer_Settings".."DurationMin");
+    local durmin_int = _G["LT_Timer_Settings".."DurationMin"];
     durmin_int:SetText(LT_GetInterval("durationmin"));
-    local durmin_label = getglobal("LT_Timer_Settings".."DurationMinLabel".."Label");
+    local durmin_label = _G["LT_Timer_Settings".."DurationMinLabel".."Label"];
     durmin_label:SetText("Min:");
     
-    local dursec_int = getglobal("LT_Timer_Settings".."DurationSec");
+    local dursec_int = _G["LT_Timer_Settings".."DurationSec"];
     dursec_int:SetText(LT_GetInterval("durationsec"));
-    local dursec_label = getglobal("LT_Timer_Settings".."DurationSecLabel".."Label");
+    local dursec_label = _G["LT_Timer_Settings".."DurationSecLabel".."Label"];
     dursec_label:SetText("Sec:");
 end
 
@@ -212,7 +214,7 @@ end
 
 function LT_TimerToggle()
     if (LT_TIME_EXPIRED) then
-            local timer_label = getglobal("LT_Main".."Timer".."Label");
+            local timer_label = _G["LT_Main".."Timer".."Label"];
             timer_label:SetTextColor(0, 1, 1);
             timer_label:SetText("<Click for timer>");
             LT_Timer_HideInfo();
@@ -226,7 +228,7 @@ function LT_TimerToggle()
         button2 = "No",
         OnAccept = function()
             LT_TIMER_TOGGLE = false;
-            local timer_label = getglobal("LT_Main".."Timer".."Label");
+            local timer_label = _G["LT_Main".."Timer".."Label"];
             timer_label:SetTextColor(0, 1, 1);
             timer_label:SetText("<Click for timer>");
             LT_Timer_HideInfo();
@@ -255,7 +257,7 @@ function LT_TimerToggle()
             LT_TIME_OF_LAST_TIC = time();
             --This is happening before the ResetAttendance finishes.
             LT_AttendanceTic();
-            local timer_label = getglobal("LT_Main".."Timer".."Label");
+            local timer_label = _G["LT_Main".."Timer".."Label"];
             timer_label:SetTextColor(0, 1, 1);
             timer_label:SetText("Starting timer...");
             LT_TIMER_TOGGLE = true;
@@ -265,7 +267,7 @@ function LT_TimerToggle()
             LT_TIMER_START = time();
             LT_TIME_OF_LAST_TIC = time();
             --LT_AttendanceTic();
-            local timer_label = getglobal("LT_Main".."Timer".."Label");
+            local timer_label = _G["LT_Main".."Timer".."Label"];
             timer_label:SetTextColor(0, 1, 1);
             timer_label:SetText("Starting timer...");
             LT_TIMER_TOGGLE = true;
@@ -335,8 +337,8 @@ function LT_TimerOnUpdate(self, elapsed)
                 local TIMER_MIN = mod(floor(LT_TIMER_TOTAL/60),60);
                 local TIMER_HR = floor(LT_TIMER_TOTAL/3600);
                 
-                local timer_label = getglobal("LT_Main".."Timer".."Label");
-                local info_label = getglobal("LT_Main".."TimerInfo".."Label");
+                local timer_label = _G["LT_Main".."Timer".."Label"];
+                local info_label = _G["LT_Main".."TimerInfo".."Label"];
                 
                 if (ticremain < LT_GetInterval()/100) then
                     info_label:SetTextColor(1,0,0);
@@ -362,7 +364,7 @@ function LT_TimerOnUpdate(self, elapsed)
             end
             if ( (time()-LT_TIMER_START) >= LT_TimerInterval["durationtotal"]) then
                 LT_TIMER_TOGGLE = false;
-                local timer_label = getglobal("LT_Main".."Timer".."Label");
+                local timer_label = _G["LT_Main".."Timer".."Label"];
                 timer_label:SetTextColor(1, 0, 0);
                 LT_TIME_EXPIRED = true;
             end

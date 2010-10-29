@@ -1,13 +1,13 @@
-﻿function LT_Credits_OnLoad()
+﻿function LT_Credits_OnLoad(self)
     LT_Credits:SetParent(UIParent);
-    tinsert(UISpecialFrames, this:GetName());
-    this:RegisterEvent("VARIABLES_LOADED");
-    this:Hide();
+    tinsert(UISpecialFrames, self:GetName());
+    self:RegisterEvent("VARIABLES_LOADED");
+    self:Hide();
 end
 
 function LT_Credits_Fill()
     LT_Credits:SetFrameLevel(100);
-    local credit_label = getglobal("LT_Credits".."CreditsLabel".."Edit");
+    local credit_label = _G["LT_Credits".."CreditsLabel".."Edit"];
     credit_label:SetTextColor(1, .75, 0);
     credit_label:SetText("");
     credit_label:Insert("Original Developers:\n");
@@ -39,7 +39,7 @@ function LT_Credits_Fill()
     credit_label:Insert("for all of your suggestions and interest in this project.\n");
 end
 
-function LT_Credits_OnEvent(this, event, arg1, arg2)
+function LT_Credits_OnEvent(self, event, ...)
     if (event == "VARIABLES_LOADED") then
         --LT_Credits_Fill();
     end

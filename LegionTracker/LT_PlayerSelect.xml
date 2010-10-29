@@ -38,7 +38,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_PlayerSelect:Enter();</OnClick>
+          <OnClick>LT_PlayerSelect:Enter();
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-Panel-Button-Up">
           <TexCoords left="0" right="0.625" top="0" bottom="0.6875" />
@@ -114,8 +115,10 @@
           </Layer>
         </Layers>
         <Scripts>
-          <OnEnterPressed>LT_PlayerSelect:Enter();</OnEnterPressed>
-          <OnEscapePressed>LT_PlayerSelect:Escape();</OnEscapePressed>
+          <OnEnterPressed>LT_PlayerSelect:Enter();
+</OnEnterPressed>
+          <OnEscapePressed>LT_PlayerSelect:Escape();
+</OnEscapePressed>
         </Scripts>
         <FontString font="Fonts\ARIALN.TTF">
           <FontHeight>
@@ -132,7 +135,8 @@
       </EditBox>
     </Frames>
     <Scripts>
-      <OnLoad>LT_PlayerSelect:OnLoad();</OnLoad>
+      <OnLoad>LT_PlayerSelect:OnLoad(self);
+</OnLoad>
     </Scripts>
   </Frame>
 </Ui>

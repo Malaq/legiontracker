@@ -12,10 +12,10 @@ function LT_PlayerSelect:Show(player_name, loot_id)
     self.loot_id = loot_id;
 end
 
-function LT_PlayerSelect:OnLoad()
+function LT_PlayerSelect:OnLoad(self)
     LT_PlayerSelectForm:SetParent(UIParent);
     LT_PlayerSelectForm:Hide();
-    tinsert(UISpecialFrames, this:GetName());
+    tinsert(UISpecialFrames, self:GetName());
     LT_PlayerSelectForm:SetFrameLevel(200);
 end
 

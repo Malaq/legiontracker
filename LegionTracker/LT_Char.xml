@@ -424,7 +424,7 @@ LT_Char_CurPlayer = nil;
       </Frame>
     </Frames>
     <Scripts>
-      <OnLoad>LT_Char_OnLoad();
+      <OnLoad>LT_Char_OnLoad(self);
 </OnLoad>
       <OnEscapePressed>this:Hide();
 </OnEscapePressed>

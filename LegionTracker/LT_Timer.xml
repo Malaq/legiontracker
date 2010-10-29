@@ -63,10 +63,11 @@
       </Layer>
     </Layers>
     <Scripts>
+      <OnEvent>LT_Timer_OnEvent(self, event, ...);
+</OnEvent>
       <OnLoad>self.TimeSinceLastUpdate = 0;
-LT_TimerOnLoad();
+LT_TimerOnLoad(self);
 </OnLoad>
-      <OnEvent>LT_Timer_OnEvent();</OnEvent>
       <OnUpdate>LT_TimerOnUpdate(self, elapsed);
 </OnUpdate>
     </Scripts>

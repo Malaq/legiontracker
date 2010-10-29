@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.803"
+﻿LT_VERSION = "Legion Tracker 0.900"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -11,33 +11,67 @@ LT_LDB = LibStub("LibDataBroker-1.1", true)
 LT_LDBIcon = LibStub("LibDBIcon-1.0", true)
 --LT_Show_Minimap_Icon = true;
 LT_raiderFilter = false;
+LT_offlineFilter = true;
 LT_Rows_Shown = 0;
 LT_NewRosterUpdate = false;
 
-function LT_OnLoad()
+function LT_OnLoad(self)
 	LT_Main:SetParent(UIParent);
     --Makes Esc Work?
-    tinsert(UISpecialFrames, this:GetName());
+    tinsert(UISpecialFrames, self:GetName());
     --Minimap icon?
     --if LT_LDB then
     --    LT_createLDB();
     --end
-    this:RegisterEvent("VARIABLES_LOADED");
-    this:RegisterEvent("GUILD_ROSTER_UPDATE");
-    this:RegisterEvent("CHAT_MSG_SYSTEM");
-    this:RegisterEvent("CHAT_MSG_WHISPER");
-    this:RegisterEvent("RAID_ROSTER_UPDATE");
+    self:RegisterEvent("VARIABLES_LOADED");
+    self:RegisterEvent("GUILD_ROSTER_UPDATE");
+    self:RegisterEvent("CHAT_MSG_SYSTEM");
+    self:RegisterEvent("CHAT_MSG_WHISPER");
+    self:RegisterEvent("RAID_ROSTER_UPDATE");
     --this:RegisterForClicks("LeftButtonDown", "RightButtonDown");
     LT_LoadLabels();
-    LT_Main_SetupTable();
-    this:EnableMouseWheel(true);
-    this:SetScript("OnMouseWheel", LT_OnMouseWheel);
+    LT_Main_SetupTable(self);
+    self:EnableMouseWheel(true);
+    self:SetScript("OnMouseWheel", LT_OnMouseWheel);
     SLASH_LEGIONTRACKER1 = "/lt";
     SLASH_LEGIONTRACKER2 = "/legiontracker";
 	SlashCmdList['LEGIONTRACKER'] = function(msg)
 		LT_SlashHandler(msg)
 	end
-    this:Hide();
+    self:Hide();
+end
+
+--function LT_Main_OnEvent(this, event, arg1, arg2)
+function LT_Main_OnEvent(self, event, ...)
+
+    --LT_Print("LT_MAIN_EVENT event: "..event,"yellow");
+    if (event == "GUILD_ROSTER_UPDATE") then
+        LT_NewRosterUpdate = true;
+        LT_UpdatePlayerList();
+        -- We get guildroster if someone else updates an officer note.
+        -- Very possible this is the lag bomb when you have the window open.
+        LT_Attendance_OnChange();
+    elseif (event == "VARIABLES_LOADED") then
+        LT_UpdatePlayerList();
+        if (LT_savedVarTable == nil) then
+            LT_savedVarTable = {};
+        end
+        LT_createLDB();
+--        if (LT_Show_Minimap_Icon == true) then
+--            LT_Print("456");
+--            LT_LDBIcon:Show("LT_LDB");
+--        elseif (LT_Show_Minimap_Icon == false) then
+--            LT_Print("654");
+--            LT_LDBIcon:Hide("LT_LDB");
+--        end
+    elseif (event == "CHAT_MSG_WHISPER") then
+        local arg1, arg2 = ...;
+        LT_OfficerLoot:OnEvent(event, arg1, arg2);
+    elseif (event == "CHAT_MSG_SYSTEM") then
+        if (arg1 == "You have joined a raid group.") then
+            LT_ResetLootButton();
+        end
+    end
 end
 
 function LT_Main_OnShow()
@@ -115,6 +149,10 @@ end
 
 --Add color choices for msg_format?
 function LT_Print(message, msg_format)
+    if (message == nil) then
+        message = "LT_BLANK_MESSAGE";
+    end
+    
     if (msg_format == nil) then
         DEFAULT_CHAT_FRAME:AddMessage(message);
     else
@@ -132,7 +170,7 @@ function LT_Print(message, msg_format)
     end
 end
 
-function LT_Main_SetupTable()
+function LT_Main_SetupTable(self)
 	local cols = {};
     --New totals table
     local total_row = {};
@@ -258,14 +296,14 @@ function LT_Main_SetupTable()
 	local dropdown = CreateFrame("Frame", "LT_LootFilterSelect", LT_Main, "UIDropDownMenuTemplate");
 	dropdown:ClearAllPoints();
 	dropdown:SetAllPoints(LT_Main_Dropdown);
-    UIDropDownMenu_Initialize(dropdown, LT_Main_DropdownInit);
+    UIDropDownMenu_Initialize(dropdown, LT_Main_DropdownInit(self));
 	UIDropDownMenu_SetText(dropdown, "All Loot");
 end
 
-function LT_Main_DropdownInit()
+function LT_Main_DropdownInit(self)
     local info = UIDropDownMenu_CreateInfo();
     info.text = "All Loot";
-    info.owner = this:GetParent();
+    info.owner = self:GetParent();
     info.checked = nil;
     info.icon = nil;
 	info.func = function()
@@ -549,7 +587,9 @@ function LT_UpdatePlayerList()
     
     -- This always needs to be done regardless of whether or not
     -- we're shown, because attendance and loot depend on the lookup.
+
     local num_all_members = GetNumGuildMembers(true);
+    
     local non_nil = true;
     for i = 1, num_all_members do
         --local name = GetGuildRosterInfo(i);
@@ -578,34 +618,82 @@ function LT_UpdatePlayerList()
         local data = {};
         local counter = 1;
     
-        local num_members = GetNumGuildMembers(false);
+        local num_members = GetNumGuildMembers(true);
         --Added logic for raider filter
+        --NEW LOGIC
         for i = 1, num_members do
-            if (LT_raiderFilter) then
-                local name,rank,_,_,_,_,_,_,online = GetGuildRosterInfo(i);
-                if (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "Friend") then
-                    table.insert(data, LT_Main_CreateRow(i));                    
-                    LT_CleanUp[name] = # data;
-                elseif (rank == "Alt") or (rank == "Officer Alt") then
-                    local myMainName = LT_GetMainName(i);
-                    if (myMainName ~= "<Enter Main Name>") then
-                        local _,mainRank,_,_,_,_,_,_,mainOnline = GetGuildRosterInfo(LT_GetPlayerIndexFromName(myMainName));
-                        if (mainRank ~= "Friend") and (LT_MainOfflineCheckBox:GetChecked() ~= 1) then
-                        --Attempt to show alts instead of mains if the alt is online.
-                        --if (mainRank ~= "Friend") then
-                            if (online == 1) and (mainOnline ~= 1) then
-                                table.insert(data, LT_Main_CreateRow(i));
-                                LT_CleanUp[name] = # data;
-                                LT_CleanUp[counter] = LT_GetMainName(i);--LT_GetMainName(i);
-                                counter = counter+1;
-                            end
+            local name,rank,_,_,_,_,_,_,online = GetGuildRosterInfo(i);
+            if (rank == "Alt") or (rank == "Officer Alt") then
+                local myMainName = LT_GetMainName(i);
+                local mainIndex = LT_GetPlayerIndexFromName(myMainName);
+                if (myMainName ~= "<Enter Main Name>") then
+                    local _,mainRank,_,_,_,_,_,_,mainOnline = GetGuildRosterInfo(mainIndex);
+                end
+            end
+
+            if (LT_raiderFilter == false) and (LT_offlineFilter) then
+                --Show everyone online
+                if (online == 1) then
+                    table.insert(data, LT_Main_CreateRow(i));
+                end
+            elseif (LT_raiderFilter) and (LT_offlineFilter) then
+                --Show all online raiders
+                if (online == 1) then
+                    if (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "Friend") then
+                        table.insert(data, LT_Main_CreateRow(i));
+                        LT_CleanUp[name] = # data;
+                    elseif (rank == "Alt") or (rank == "Officer Alt") then
+                        if (mainRank ~= "Friend") and (mainOnline ~= 1) then
+                            table.insert(data, LT_Main_CreateRow(i));
+                            LT_CleanUp[name] = # data;
+                            LT_CleanUp[counter] = LT_GetMainName(i);--LT_GetMainName(i);
+                            counter = counter+1;
                         end
                     end
                 end
-            else
+            elseif (LT_raiderFilter == false) and (LT_offlineFilter == false) then
+                --Show everyone
                 table.insert(data, LT_Main_CreateRow(i));
+            elseif (LT_raiderFilter) and (LT_offlineFilter == false) then
+                --Show all raider mains (on or offline)
+                if (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "Friend") then
+                    table.insert(data, LT_Main_CreateRow(i));
+                end
             end
         end
+        
+--        --OLD LOGIC
+--        for i = 1, num_members do
+--            local name,rank,_,_,_,_,_,_,online = GetGuildRosterInfo(i);
+--            if (LT_raiderFilter) then    
+--                if (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "Friend") then
+--                    table.insert(data, LT_Main_CreateRow(i));                    
+--                    LT_CleanUp[name] = # data;
+--                elseif (rank == "Alt") or (rank == "Officer Alt") then
+--                    local myMainName = LT_GetMainName(i);
+--                    if (myMainName ~= "<Enter Main Name>") then
+--                        local _,mainRank,_,_,_,_,_,_,mainOnline = GetGuildRosterInfo(LT_GetPlayerIndexFromName(myMainName));
+--                        if (mainRank ~= "Friend") and (LT_offlineFilter) then
+--                        --(LT_MainOfflineCheckBox:GetChecked() ~= 1) then
+--                        --Attempt to show alts instead of mains if the alt is online.
+--                        --if (mainRank ~= "Friend") then
+--                            if (online == 1) and (mainOnline ~= 1) then
+--                                table.insert(data, LT_Main_CreateRow(i));
+--                                LT_CleanUp[name] = # data;
+--                                LT_CleanUp[counter] = LT_GetMainName(i);--LT_GetMainName(i);
+--                                counter = counter+1;
+--                            end
+--                        end
+--                    end
+--                end
+--            else
+--                if (LT_offlineFilter) and (online == 1) then  
+--                    table.insert(data, LT_Main_CreateRow(i));
+--                elseif (LT_offlineFilter == false) then    
+--                    table.insert(data, LT_Main_CreateRow(i));
+--                end
+--            end
+--        end
         
         --Attempted logic to show alts instead of mains if the alt is online
 --        if (LT_MainOfflineCheckBox:GetChecked() == 1) then
@@ -690,41 +778,12 @@ function LT_ResetLootButton()
 end
 
 function LT_LoadLabels()
-    local timer_label = getglobal("LT_Main".."Timer".."Label");
+    local timer_label = _G["LT_Main".."Timer".."Label"];
     timer_label:SetTextColor(0, 1, 1);
     timer_label:SetText("<Click for timer>");
     
-    local version_label = getglobal("LT_Main".."TitleString");
+    local version_label = _G["LT_Main".."TitleString"];
     version_label:SetText(LT_VERSION);
-end
-
-function LT_Main_OnEvent(this, event, arg1, arg2)
-    if (event == "GUILD_ROSTER_UPDATE") then
-        LT_NewRosterUpdate = true;
-        LT_UpdatePlayerList();
-        -- We get guildroster if someone else updates an officer note.
-        -- Very possible this is the lag bomb when you have the window open.
-        LT_Attendance_OnChange();
-    elseif (event == "VARIABLES_LOADED") then
-        LT_UpdatePlayerList();
-        if (LT_savedVarTable == nil) then
-            LT_savedVarTable = {};
-        end
-        LT_createLDB();
---        if (LT_Show_Minimap_Icon == true) then
---            LT_Print("456");
---            LT_LDBIcon:Show("LT_LDB");
---        elseif (LT_Show_Minimap_Icon == false) then
---            LT_Print("654");
---            LT_LDBIcon:Hide("LT_LDB");
---        end
-    elseif (event == "CHAT_MSG_WHISPER") then
-        LT_OfficerLoot:OnEvent(event, arg1, arg2);
-    elseif (event == "CHAT_MSG_SYSTEM") then
-        if (arg1 == "You have joined a raid group.") then
-            LT_ResetLootButton();
-        end
-    end
 end
 
 function LT_ExportButton()

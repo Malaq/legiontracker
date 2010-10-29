@@ -106,7 +106,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_RaidersCheckboxClicked();</OnClick>
+          <OnClick>LT_RaidersCheckboxClicked();
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-CheckBox-Up" />
         <PushedTexture file="Interface\Buttons\UI-CheckBox-Down" />
@@ -158,7 +159,8 @@
           </Anchor>
         </Anchors>
         <Scripts>
-          <OnClick>LT_OfflineCheckBoxClicked();</OnClick>
+          <OnClick>LT_OfflineCheckBoxClicked();
+</OnClick>
         </Scripts>
         <NormalTexture file="Interface\Buttons\UI-CheckBox-Up" />
         <PushedTexture file="Interface\Buttons\UI-CheckBox-Down" />
@@ -469,19 +471,19 @@
           </Layer>
         </Layers>
         <Scripts>
-          <OnMouseDown>LT_Timer_Clicked(arg1);
+          <OnMouseDown>LT_Timer_Clicked(self,button);
 </OnMouseDown>
         </Scripts>
       </Frame>
     </Frames>
     <Scripts>
-      <OnLoad>LT_OnLoad();
+      <OnLoad>LT_OnLoad(self);
 </OnLoad>
-      <OnEvent>LT_Main_OnEvent(this, event, arg1, arg2);
+      <OnEvent>LT_Main_OnEvent(self, event, ...);
 </OnEvent>
       <OnShow>LT_Main_OnShow();
 </OnShow>
-      <OnEscapePressed>this:Hide();
+      <OnEscapePressed>self:Hide();
 </OnEscapePressed>
     </Scripts>
   </Frame>
