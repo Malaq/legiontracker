@@ -68,6 +68,8 @@ function LT_Main_OnEvent(self, event, ...)
         local arg1, arg2 = ...;
         LT_OfficerLoot:OnEvent(event, arg1, arg2);
     elseif (event == "CHAT_MSG_SYSTEM") then
+        local arg1 = ...;
+        --LT_Print("System message received: "..arg1);
         if (arg1 == "You have joined a raid group.") then
             LT_ResetLootButton();
         end
