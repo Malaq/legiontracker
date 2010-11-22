@@ -29,13 +29,15 @@ end
 function LT_AttendanceTic()   
     LT_NewRosterUpdate = false;
     local counter = 0;
+    SetGuildRosterShowOffline(false);
     local num_all_members,num_online_members = GetNumGuildMembers(false);
     
-    --LT_Print("Online members: "..num_online_members,"yellow");
+    LT_Print("Online members: "..num_online_members,"yellow");
 
     for i=1, num_online_members do
         if (LT_NewRosterUpdate == true) then
-            LT_Print("ERROR1 - Roster updated during attendance tick.  Cancelling attendance tick.");
+            LT_Print("ERROR1 - Roster updated during attendance tick.  Restarting attendance tick.");
+            LT_AttendanceTic();
             return nil;
         end
         LT_NewSingleMemberOnlineTic(i);
@@ -43,7 +45,7 @@ function LT_AttendanceTic()
     
     --num_all_members = GetNumGuildMembers(true);
     
-    --LT_Print("All members: "..num_all_members,"yellow");
+    LT_Print("All members: "..num_all_members,"yellow");
     
     for i=1, num_all_members do
         if (LT_NewRosterUpdate == true) then
@@ -195,7 +197,7 @@ function LT_NewSingleMemberOfflineTic(i)
         local name = LT_GetPlayerIndexFromName(i);
         local onlineValue = "0";
         if (name == nil) or (name == "") then
-            LT_Print("Character not in guild, index: "..i);
+            LT_Print("Character not in guild, index: "..i,"yellow");
             --Character not in guild
             return;
         end
@@ -239,7 +241,7 @@ function LT_NewSingleMemberOfflineTic(i)
             onlineValue = "0";
         else
             --We already dealt with online characters, we should never hit this.
-            LT_Print("Logic error, found an online person that has not had attendance updated in offlineTic. Name: "..name.." onote: "..onote);
+            LT_Print("Logic error, found an online person that has not had attendance updated in offlineTic. Name: "..name.." onote: "..onote,"yellow");
             return;
         end 
         
