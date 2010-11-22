@@ -1,6 +1,7 @@
 ﻿LT_AttendanceCheckList = {};
 LT_FirstTic = false;
 LT_NewRosterUpdate = false;
+LT_Attendance = {};
 
 function LT_Attendance_SlashHandler(args)
     if (string.find(args, " ") == nil) then
@@ -25,18 +26,24 @@ function LT_GetAttendees()
     return count;
 end
 
-function LT_AttendanceTic()
+function LT_AttendanceTic()   
     LT_NewRosterUpdate = false;
     local counter = 0;
-    local num_all_members = GetNumGuildMembers(true);
+    local num_all_members,num_online_members = GetNumGuildMembers(false);
+    
+    --LT_Print("Online members: "..num_online_members,"yellow");
 
-    for i=1, num_all_members do
+    for i=1, num_online_members do
         if (LT_NewRosterUpdate == true) then
             LT_Print("ERROR1 - Roster updated during attendance tick.  Cancelling attendance tick.");
             return nil;
         end
         LT_NewSingleMemberOnlineTic(i);
     end
+    
+    --num_all_members = GetNumGuildMembers(true);
+    
+    --LT_Print("All members: "..num_all_members,"yellow");
     
     for i=1, num_all_members do
         if (LT_NewRosterUpdate == true) then
@@ -58,9 +65,10 @@ function LT_AttendanceTic()
         end
         local name = LT_GetPlayerIndexFromName(i);
         local onote = LT_GetPlayerInfoFromName(name,"onote")
+        local attendance = LT_GetPlayerInfoFromName(name,"attendance")
         local sync = LT_GetPlayerInfoFromName(name,"sync")
         if (sync == true) then
-            GuildRosterSetOfficerNote(i, onote);
+            GuildRosterSetOfficerNote(i, attendance);
             counter = counter+1;
         end
     end
@@ -69,12 +77,16 @@ function LT_AttendanceTic()
         LT_FirstTic = false;
     end
     LT_Print("Synchronized "..counter.." officer notes.","yellow");
+    --LT_CheckForUnevenTicks();
     GuildRoster();
 end
 
 --Adjusts online member officer notes
 function LT_NewSingleMemberOnlineTic(i,tickFromAlt,altName)
         local name = LT_GetPlayerIndexFromName(i);
+        --if (tickFromAlt == nil) then
+        --    tickFromAlt = false;
+        --end
 
         if (name == nil) or (name == "") then
             LT_Print("Please fix "..altName.."'s officer note.");
@@ -155,16 +167,22 @@ function LT_NewSingleMemberOnlineTic(i,tickFromAlt,altName)
             end
         else
             --Otherwise we do not want to deal with offline members until online have completed.
+            if (tickFromAlt ~= nil) then
+                LT_Print(name.." was not dealt with because it was assumed they were offline.","yellow");
+            end
             return;
         end 
         
-        if (LT_FirstTic) then
+        if (LT_FirstTic) or (onote == nil) or (onote == "") then
             LT_SetPlayerInfoFromName(name,"onote",onlineValue);
+            LT_SetPlayerInfoFromName(name,"attendance",onlineValue);
             LT_SetPlayerInfoFromName(name,"updated",true);
             LT_SetPlayerInfoFromName(name,"sync",true);
             return;
         else
             LT_SetPlayerInfoFromName(name,"onote",onote..onlineValue);
+            local attendance = LT_GetPlayerInfoFromName(name,"attendance");
+            LT_SetPlayerInfoFromName(name,"attendance",attendance..onlineValue);
             LT_SetPlayerInfoFromName(name,"updated",true);
             LT_SetPlayerInfoFromName(name,"sync",true);
             return;
@@ -225,13 +243,16 @@ function LT_NewSingleMemberOfflineTic(i)
             return;
         end 
         
-        if (LT_FirstTic) then
+        if (LT_FirstTic) or (onote == nil) or (onote == "") then
             LT_SetPlayerInfoFromName(name,"onote",onlineValue);
+            LT_SetPlayerInfoFromName(name,"attendance",onlineValue);
             LT_SetPlayerInfoFromName(name,"updated",true);
             LT_SetPlayerInfoFromName(name,"sync",true);
             return;
         else
             LT_SetPlayerInfoFromName(name,"onote",onote..onlineValue);
+            local attendance = LT_GetPlayerInfoFromName(name,"attendance");
+            LT_SetPlayerInfoFromName(name,"attendance",attendance..onlineValue);
             LT_SetPlayerInfoFromName(name,"updated",true);
             LT_SetPlayerInfoFromName(name,"sync",true);
             return;
@@ -303,6 +324,7 @@ function LT_ResetAttendance()
             count = count+1;
         end
     end
+    LT_Attendance = {};
     LT_Print("Attendance reset for " ..count.. " players.");
 end
 
@@ -398,6 +420,7 @@ function LT_GetAttendance(playerIndex, bench)
     local name = LT_GetPlayerIndexFromName(playerIndex);
     local rank = LT_GetPlayerInfoFromName(name,"rank");
     local onote = LT_GetPlayerInfoFromName(name,"onote");
+    local attendance = LT_GetPlayerInfoFromName(name,"attendance");
     
     if (name == nil) then
         return playerIndex;
@@ -417,23 +440,24 @@ function LT_GetAttendance(playerIndex, bench)
         end
     end
     
-    if (onote == "") then
+    --if (onote == "") or (onote == nil) then
+    if (attendance == "") or (attendance == nil) then
         return "";
     end
     
-    local total = string.len(onote);
+    local total = string.len(attendance);
     
     --Test if the o-note is valid.  Just 1's and 0's.
-    local test = string.find(onote, "%D");
+    local test = string.find(attendance, "%D");
     if (test ~= nil) then
         return "";
     end
     if (bench) then
-        for w in string.gmatch(onote, "2") do
+        for w in string.gmatch(attendance, "2") do
             counter = counter + 1;
         end
     else
-        for w in string.gmatch(onote, "0") do
+        for w in string.gmatch(attendance, "0") do
             counter = counter + 1;
         end
         counter = total - counter;
@@ -447,6 +471,7 @@ function LT_GetRawAttendance(playerIndex)
     --local _, rank, _, _, _, _, _, onote = GetGuildRosterInfo(playerIndex);
     local name = LT_GetPlayerIndexFromName(playerIndex);
     local onote = LT_GetPlayerInfoFromName(name,"onote");
+    local attendance = LT_GetPlayerInfoFromName(name,"attendance");
     
     if (rank == "Alt") or (rank == "Officer Alt") then
         if (name == onote) then
@@ -457,7 +482,11 @@ function LT_GetRawAttendance(playerIndex)
             return LT_GetRawAttendance(pname);
         end
     end
-    return onote;
+    if (attendance == "") or (attendance == nil) then
+        return "";
+    else
+        return attendance;
+    end
 end
 
 function LT_Attendance_OnChange()

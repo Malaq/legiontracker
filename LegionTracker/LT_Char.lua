@@ -79,6 +79,11 @@ function LT_Char_DrawTimeline()
                 end
 				attendance = string.sub(attendance, 1, i-1)..newchar..string.sub(attendance, i+1);
                 GuildRosterSetOfficerNote(LT_GetPlayerIndexFromName(LT_GetMainName(index)), attendance);
+                LT_SetPlayerInfoFromName(LT_GetMainName(index),"attendance",attendance);
+                --If you aren't running the timer, broadcast to the person that is.
+                if (LT_TIMER_TOGGLE == false) then
+                    LT_OfficerLoot:BroadcastAttendanceChange(LT_GetMainName(index));
+                end
 				LT_Attendance_OnChange();
             end);
             block:SetScript("OnEnter", function()
