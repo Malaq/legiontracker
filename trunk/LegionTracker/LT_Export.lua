@@ -11,7 +11,6 @@
     export_label:Insert("#"..LT_RAID_NAME.."/1/"..LT_GetAttendees().."\n");
     for i = 1, guildCount do 
         local name, rank, _, level, class, _, _, onote = GetGuildRosterInfo(i);
-        --export_label:Insert(name..";"..rank..";"..level..";"..class..";"..onote..";");
         export_label:Insert("@"..name..";"..class..";"..onote..";"..rank.."\n");
         local LT_Char_Loots = LT_Loot_GetLoots(name);
         local NumEntries = #LT_Char_Loots;

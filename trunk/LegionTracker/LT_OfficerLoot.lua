@@ -142,6 +142,18 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
         return;
     end
     
+    if (cmd.type == "AttendanceChange") then
+        --Attendance updates only need to be passed to the person running the timer.
+        if (LT_TIMER_TOGGLE == true) then
+            local attendance = LT_GetPlayerInfoFromName(cmd.name,"attendance");
+            if (string.len(attendance) == string.len(cmd.attendance)) then
+                LT_SetPlayerInfoFromName(cmd.name,"attendance",cmd.attendance);
+            else
+                LT_Print(sender.." sent an out of date attendance record: "..cmd.name,"yellow");
+            end
+        end
+    end
+    
     if (cmd.type == "AwardItem") then
         Loot_OnEvent("AWARD", "CHAT_MSG_LOOT", cmd.message);
         if (LT_OfficerLoot_AwardedItems[cmd.pname] == nil) then
@@ -256,6 +268,12 @@ end
 function LT_OfficerLoot:BroadcastNewItems(items, item_links)
     local cmd = {["type"] = "Start", ["items"] = items, ["item_links"] = item_links, ["whisper_id"] = time(), ["real_zone"] = GetRealZoneText(), ["sub_zone"] = GetSubZoneText()};
     self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
+end
+
+function LT_OfficerLoot:BroadcastAttendanceChange(name)
+    local attendance = LT_GetPlayerInfoFromName(name,"attendance");
+    local cmd = {["type"] = "AttendanceChange", ["name"] = name, ["attendance"] = attendance};
+    self:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd), "GUILD");
 end
 
 function LT_OfficerLoot:SendTable(targetPlayer)
@@ -456,13 +474,14 @@ function LT_OfficerLoot:OnLeave(table_id, row_frame, cell_frame, data, cols, row
 end
 
 function LT_OfficerLoot:SendInstructions(channel, player)
+    local itemlink1 = "|cffa335ee|Hitem:40256:0:0:0:0:0:0:0:80:0|h[Grim Toll]|h|r"
+    local itemlink2 = "|cffa335ee|Hitem:34472:0:0:0:0:0:0:0:80:0|h[Shard of Contempt]|h|r"
     local instructions = {
         "To bid for an item, send a tell in the following format:",
         "[Item],[Replacing], spec (main/alt/off), comments",
         "For example, if you want to bid for a Grim Toll, ",
-        "You could send: \124cffa335ee\124Hitem:40256:0:0:0:0:0:0:0:0\124h[Grim Toll]\124h\124r,  \124cffa335ee\124Hitem:34472:0:0:0:0:0:0:0:0\124h[Shard of Contempt]\124h\124r, Main, best in slot"
+        "You could send: "..itemlink1..", "..itemlink2..",Main,best in slot"
     };
-    
     for i = 1, #instructions do
         self:SendInvisChatMessage(instructions[i], channel, nil, player);
     end
@@ -527,8 +546,19 @@ function LT_OfficerLoot:MungeItem(s)
     end
     local delim = s:find("|h|r") + 3;
     local itemlink = s:sub(1, delim);
+    
+    --Workaround to make sure you have the item
+    --in local cache.
+    --LT_Print("munge: "..itemlink,"yellow");
+    GameTooltip:SetHyperlink(itemlink);
+    GameTooltip:Hide();
+    
     local _, item = GetItemInfo(itemlink);
-    return item, s:sub(delim + 1);
+    if (item == nil) then
+        return itemlink, s:sub(delim + 1);
+    else
+        return item, s:sub(delim + 1);
+    end
 end
 
 function LT_OfficerLoot:MungeDelimeters(s)
@@ -560,7 +590,6 @@ function LT_OfficerLoot:OnEvent(event, arg1, arg2)
         spec, msg = self:MungeSpec(msg);
         msg = self:MungeDelimeters(msg);
         comments = msg;
-        
 
         if (item == "") then
             -- Could send back an error message here... but if you aren't linking an item first,
@@ -585,6 +614,14 @@ function LT_OfficerLoot:OnEvent(event, arg1, arg2)
             SendChatMessage("Please specify a spec of 'Main', 'Alt', or 'Off' (instead of '" .. spec .."')", "WHISPER", nil, player);
             return;
         end
+        
+        --Make sure item is in local client cache.
+        --LT_Print(item,"yellow");
+        --LT_Print(replacing,"yellow");
+        GameTooltip:SetHyperlink(item);
+        GameTooltip:Hide();
+        GameTooltip:SetHyperlink(replacing);
+        GameTooltip:Hide();
         
         self:AddBid(item, player, spec, replacing, comments);
         self.inc_msg_ignore[arg1] = 1;

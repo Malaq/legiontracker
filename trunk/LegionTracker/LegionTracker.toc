@@ -6,7 +6,7 @@
 ## URL: http://www.legiontracker.com
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
-## SavedVariables: LT_LootTable,LT_PlayerLootTable,LT_UniqueLootId,LT_TimerInterval,LT_LastRunVersion,LT_savedVarTable,LT_TIMER_TOGGLE,LT_TIMER_START,LT_TIMER_TOTAL,LT_TIME_OF_LAST_TIC
+## SavedVariables: LT_LootTable,LT_PlayerLootTable,LT_UniqueLootId,LT_TimerInterval,LT_LastRunVersion,LT_savedVarTable,LT_TIMER_TOGGLE,LT_TIMER_START,LT_TIMER_TOTAL,LT_TIME_OF_LAST_TIC,LT_Attendance
 embeds.xml
 LT_LootUI.lua
 LT_Credits.lua

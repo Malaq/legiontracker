@@ -546,13 +546,23 @@ function LT_GetPlayerInfoFromName(name,option)
     elseif (option == "rank") then
         return LT_InfoLookup[name][option];
     elseif (option == "onote") then
-        return LT_InfoLookup[name][option];
+        if (LT_InfoLookup[name][option] == nil) then
+            return "";
+        else
+            return LT_InfoLookup[name][option];
+        end
     elseif (option == "online") then
         return LT_InfoLookup[name][option];
     elseif (option == "updated") then
         return LT_InfoLookup[name][option];
     elseif (option == "sync") then
         return LT_InfoLookup[name][option];
+    elseif (option == "attendance") then
+        if (LT_Attendance[name] == nil) then
+            return "";
+        else
+            return LT_Attendance[name];
+        end
     end
     return nil;
 end
@@ -575,15 +585,38 @@ function LT_SetPlayerInfoFromName(name,option,value)
         LT_InfoLookup[name][option] = value;
     elseif (option == "sync") then    
         LT_InfoLookup[name][option] = value;
+    elseif (option == "attendance") then
+        LT_Attendance[name] = value;
     end
     return nil;
+end
+
+function LT_CheckForUnevenTicks()
+    local maxTicks = 0;
+    for i = 1, GetNumGuildMembers() do        
+        local name = LT_GetPlayerIndexFromName(i);
+        local rank = LT_GetPlayerInfoFromName(name,"rank");
+        if (rank ~= "Friend") and (rank ~= "Alt") and (rank ~= "Officer Alt") then
+            local ticks = string.len(LT_GetPlayerInfoFromName(name,"attendance"));
+            --local oticks = string.len(LT_GetPlayerInfoFromName(name,"onote"));
+            local _, _, _, _, _, _, _, onote = GetGuildRosterInfo(i);
+            if (onote == nil) then
+                onote = "";
+            end
+            local oticks = string.len(onote);
+            LT_Print("Name: "..name.." has "..ticks.." ticks.  Onote: "..oticks);
+            if (ticks > maxTicks) then
+                maxTicks = ticks;
+            end
+        end
+    end
 end
 
 
 function LT_UpdatePlayerList()
     LT_NameLookup = {};
     LT_CleanUp = {};
-    LT_InfoLookup = {};
+    --LT_InfoLookup = {};
     
     -- This always needs to be done regardless of whether or not
     -- we're shown, because attendance and loot depend on the lookup.
@@ -600,7 +633,13 @@ function LT_UpdatePlayerList()
             LT_InfoLookup[name] = {};
             LT_InfoLookup[name]["index"] = i;
             LT_InfoLookup[name]["rank"] = rank;
+            --if (LT_TIMER_TOGGLE == true) and (rank ~= "Friend") and (rank ~= "Alt") and (rank ~= "Officer Alt") then
+            --    LT_Print(name.." is not having their officer note updated.");
+            --else
             LT_InfoLookup[name]["onote"] = officernote;
+            if (LT_TIMER_TOGGLE == false) then
+                LT_Attendance[name] = officernote;
+            end
             LT_InfoLookup[name]["online"] = online;
             LT_InfoLookup[name]["updated"] = false;
             LT_InfoLookup[name]["sync"] = false;
@@ -617,17 +656,26 @@ function LT_UpdatePlayerList()
         local totals = {};
         local data = {};
         local counter = 1;
+        local mainRank, mainOnline;
     
+        --Stupid reminder...OfflineFilter true = checkbox is not checked
+        --                  offlineFilter false = checkbox IS checked
+        --The thought was that when it is checked, you are displaying offline players
+        --when its not checked, you want to filter out the offline players...
+        --fail logic.
+        
         local num_members = GetNumGuildMembers(true);
         --Added logic for raider filter
         --NEW LOGIC
         for i = 1, num_members do
+            mainRank = nil;
+            mainOnline = nil;
             local name,rank,_,_,_,_,_,_,online = GetGuildRosterInfo(i);
             if (rank == "Alt") or (rank == "Officer Alt") then
                 local myMainName = LT_GetMainName(i);
                 local mainIndex = LT_GetPlayerIndexFromName(myMainName);
                 if (myMainName ~= "<Enter Main Name>") then
-                    local _,mainRank,_,_,_,_,_,_,mainOnline = GetGuildRosterInfo(mainIndex);
+                    _,mainRank,_,_,_,_,_,_,mainOnline = GetGuildRosterInfo(mainIndex);
                 end
             end
 
