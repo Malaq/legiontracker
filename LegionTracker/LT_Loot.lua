@@ -41,6 +41,12 @@ function LT_Loot_SlashHandler(args)
 				LT_Print(string.format("%s:  %s", key, value));
 			end
 		end
+    elseif cmd == "test loot" then
+		for k1, v1 in pairs(LT_LootTable) do
+            GameTooltip:SetHyperlink(LT_LootTable[k1]["itemString"]);
+            LT_Print(LT_LootTable[k1]["itemString"]);
+            GameTooltip:Hide();
+		end
 	elseif cmd == "print players" then
 		LT_Print("Players:");
 		for k1, v1 in pairs(LT_PlayerLootTable) do

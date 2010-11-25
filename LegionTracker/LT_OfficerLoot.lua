@@ -194,18 +194,26 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
     if (cmd.type == "TableResponse") then
         if (cmd.target == UnitName("player") or cmd.target == "BROADCAST") then
             if (cmd.loottable ~= nil and cmd.playerloottable ~= nil) then
-                LT_Print("Received loot table from: "..cmd.player);
+                LT_Print("Receiving loot table from: "..cmd.player);
                 LT_LootTable_backup = LT_LootTable;
                 LT_PlayerLootTable_backup = LT_PlayerLootTable;
                 LT_LootTable = cmd.loottable;
                 LT_PlayerLootTable = cmd.playerloottable;
-                LT_Print("Table copy complete, from: "..cmd.player);
+                LT_Print("Table copy received, from: "..cmd.player);
             else
                 LT_Print("Loot data incoming from: "..cmd.player..". This may take a few minutes.");
             end
         else
             LT_Print("This error should not happen. Invalid table copy.","red");
         end
+        
+        LT_Print("Loading loot data into local client history (so your game can retrieve the item data).");
+        --Run this to hopefully load all of the copied items into client data.
+		for k1, v1 in pairs(LT_LootTable) do
+            GameTooltip:SetHyperlink(LT_LootTable[k1]["itemString"]);
+            GameTooltip:Hide();
+		end
+        LT_Print("Table copy complete.");
     end
     
     if (cmd.type == "VersionResponse") then
@@ -610,6 +618,8 @@ function LT_OfficerLoot:OnEvent(event, arg1, arg2)
 			replacing = "";
 		end
         
+        --LT_Print("Replacing: "..replacing);
+        
         if (spec ~= "main" and spec ~= "alt" and spec ~= "off") then
             SendChatMessage("Please specify a spec of 'Main', 'Alt', or 'Off' (instead of '" .. spec .."')", "WHISPER", nil, player);
             return;
@@ -620,8 +630,10 @@ function LT_OfficerLoot:OnEvent(event, arg1, arg2)
         --LT_Print(replacing,"yellow");
         GameTooltip:SetHyperlink(item);
         GameTooltip:Hide();
-        GameTooltip:SetHyperlink(replacing);
-        GameTooltip:Hide();
+        if (replacing ~= "") then
+            GameTooltip:SetHyperlink(replacing);
+            GameTooltip:Hide();
+        end
         
         self:AddBid(item, player, spec, replacing, comments);
         self.inc_msg_ignore[arg1] = 1;
