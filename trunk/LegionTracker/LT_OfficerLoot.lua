@@ -209,10 +209,11 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
         
         LT_Print("Loading loot data into local client history (so your game can retrieve the item data).");
         --Run this to hopefully load all of the copied items into client data.
-		for k1, v1 in pairs(LT_LootTable) do
-            GameTooltip:SetHyperlink(LT_LootTable[k1]["itemString"]);
-            GameTooltip:Hide();
-		end
+        Loot_CacheLoot(true);
+--		for k1, v1 in pairs(LT_LootTable) do
+--            GameTooltip:SetHyperlink(LT_LootTable[k1]["itemString"]);
+--            GameTooltip:Hide();
+--		end
         LT_Print("Table copy complete.");
     end
     
