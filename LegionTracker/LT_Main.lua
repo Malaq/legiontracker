@@ -302,14 +302,14 @@ function LT_Main_SetupTable(self)
 	local dropdown = CreateFrame("Frame", "LT_LootFilterSelect", LT_Main, "UIDropDownMenuTemplate");
 	dropdown:ClearAllPoints();
 	dropdown:SetAllPoints(LT_Main_Dropdown);
-    UIDropDownMenu_Initialize(dropdown, LT_Main_DropdownInit(self));
+    UIDropDownMenu_Initialize(dropdown, LT_Main_DropdownInit);
 	UIDropDownMenu_SetText(dropdown, "All Loot");
 end
 
 function LT_Main_DropdownInit(self)
     local info = UIDropDownMenu_CreateInfo();
     info.text = "All Loot";
-    info.owner = self:GetParent();
+    info.owner = self;
     info.checked = nil;
     info.icon = nil;
 	info.func = function()
