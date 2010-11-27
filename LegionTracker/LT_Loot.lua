@@ -42,11 +42,7 @@ function LT_Loot_SlashHandler(args)
 			end
 		end
     elseif cmd == "test loot" then
-		for k1, v1 in pairs(LT_LootTable) do
-            GameTooltip:SetHyperlink(LT_LootTable[k1]["itemString"]);
-            LT_Print(LT_LootTable[k1]["itemString"]);
-            GameTooltip:Hide();
-		end
+        Loot_CacheLoot(false);
 	elseif cmd == "print players" then
 		LT_Print("Players:");
 		for k1, v1 in pairs(LT_PlayerLootTable) do
@@ -82,6 +78,19 @@ function LT_Loot_SlashHandler(args)
 		end
 		LT_Print("10 lootui:sort: "..(debugprofilestop()/1000));
 	end
+end
+
+function Loot_CacheLoot(quiet)
+    if (quiet == nil) then
+        quiet = true;
+    end
+    for k1, v1 in pairs(LT_LootTable) do
+        GameTooltip:SetHyperlink(LT_LootTable[k1]["itemString"]);
+        if (quiet == false) then
+            LT_Print(LT_LootTable[k1]["itemString"]);
+        end
+        GameTooltip:Hide();
+    end
 end
 
 function Loot_OnEvent(self, event, arg1)

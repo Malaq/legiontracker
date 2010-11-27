@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.900"
+﻿LT_VERSION = "Legion Tracker 0.901"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -77,6 +77,10 @@ function LT_Main_OnEvent(self, event, ...)
 end
 
 function LT_Main_OnShow()
+    --Load all items into local cache.
+    --For some reason this had no effect when fired from variables loaded.  So I moved
+    --it here instead.
+    Loot_CacheLoot(true);
 end
 
 function LT_SlashHandler(args)

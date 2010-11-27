@@ -71,6 +71,12 @@ function LT_LootUI:CreateRow(id)
 
 				{ --Quality
 					value = function()
+                        --At this point the items should be loaded into cache already by the LTMain OnShow
+                        --but just incase they aren't this should prevent the arithmatic error on the rarity.
+                        if (self.loots[id].itemString ~= nil) and (self.loots[id].itemString ~= "") then
+                            GameTooltip:SetHyperlink(self.loots[id].itemString);
+                            GameTooltip:Hide();
+                        end
 						local types = {"Poor", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Artifact", "Heirloom"};
 						local _, _, rarity = GetItemInfo(self.loots[id].itemString);
 						return types[rarity+1];
