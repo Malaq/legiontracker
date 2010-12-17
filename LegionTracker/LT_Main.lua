@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.901"
+﻿LT_VERSION = "Legion Tracker 0.902"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -128,8 +128,9 @@ function LT_SlashHandler(args)
             LT_Settings_Minimap_SlashHandler(args);
         elseif args == "olt1" then
             LT_OfficerLoot.msg_channel = "WHISPER";
-            LT_OfficerLoot.msg_target = "Happyduude";
-            local items = {"Mirror of Truth", "Grim Toll", "Slime Stream Bands", "Totem of Dueling", "Aged Winter Cloak", "Favor of the Dragon Queen", "Ring of Invincibility", "Ring of Invincibility"};
+            LT_OfficerLoot.msg_target = "Malaaq";
+            --local items = {"Mirror of Truth", "Grim Toll", "Slime Stream Bands", "Totem of Dueling", "Aged Winter Cloak", "Favor of the Dragon Queen", "Ring of Invincibility", "Ring of Invincibility"};
+            local items = {"Azure Silk Belt", "Hydrocane", "Jeweler's Kit", "Simple Grinder", "Flask of Enhancement", "Guild Tabard", "Hearthstone", "Hearthstone"};
             local item_links = {};
             for i = 1, #items do 
                 local _, link = GetItemInfo(items[i]);
@@ -138,17 +139,21 @@ function LT_SlashHandler(args)
             LT_OfficerLoot:BroadcastNewItems(items, item_links);
             LT_OfficerLoot:OnShow();
         elseif args == "olt2" then
-            LT_OfficerLoot:AddBid("Grim Toll", "Yuzuki", "main", "Shard of Contempt", "Shouldn't see this");
-            LT_OfficerLoot:AddBid("Grim Toll", "Yuzuki", "main", "Shard of Contempt", "I like hit rating");
-            LT_OfficerLoot:AddBid("Grim Toll", "Happyduude", "main", "", "Wooo");
-            LT_OfficerLoot:AddBid("Grim Toll", "Vaulk", "alt", "Mirror of Truth", "I also like hit rating");
+            LT_OfficerLoot:AddBid("Azure Silk Belt", "Yuzuki", "main", "Shard of Contempt", "Shouldn't see this");
+            LT_OfficerLoot:AddBid("Azure Silk Belt", "Yuzuki", "main", "Shard of Contempt", "I like hit rating");
+            LT_OfficerLoot:AddBid("Azure Silk Belt", "Happyduude", "main", "", "Wooo");
+            LT_OfficerLoot:AddBid("Azure Silk Belt", "Vaulk", "alt", "Mirror of Truth", "I also like hit rating");
+            LT_OfficerLoot:AddBid("Azure Silk Belt", "Sindaga", "alt", "Mirror of Truth", "I also like hit rating");
+            LT_OfficerLoot:AddBid("Azure Silk Belt", "Malaaq", "alt", "Mirror of Truth", "I also like hit rating");
+            LT_OfficerLoot:AddBid("Azure Silk Belt", "Jinkoos", "alt", "Mirror of Truth", "I also like hit rating");
+            LT_OfficerLoot:AddBid("Azure Silk Belt", "Ntrx", "alt", "Mirror of Truth", "I also like hit rating");
             
-            LT_OfficerLoot:AddBid("Ring of Invincibility", "Yuzuki", "main", "Shard of Contempt", "I like hit rating");
-            LT_OfficerLoot:AddBid("Ring of Invincibility", "Happyduude", "main", "Shard of Contempt", "I like hit rating");
-            LT_OfficerLoot:AddBid("Ring of Invincibility", "Sindaga", "main", "Shard of Contempt", "I like hit rating");
-            LT_OfficerLoot:AddBid("Ring of Invincibility", "Cahrin", "main", "Shard of Contempt", "I like hit rating");
-            LT_OfficerLoot:AddBid("Ring of Invincibility", "Nobunaga", "main", "Shard of Contempt", "I like hit rating");
-            LT_OfficerLoot:AddBid("Aged Winter Cloak", "Threelibra", "main", "Shard of Contempt", "I like hit rating");
+            LT_OfficerLoot:AddBid("Hydrocane", "Yuzuki", "main", "Shard of Contempt", "I like hit rating");
+            LT_OfficerLoot:AddBid("Hydrocane", "Happyduude", "main", "Shard of Contempt", "I like hit rating");
+            LT_OfficerLoot:AddBid("Hydrocane", "Sindaga", "main", "Shard of Contempt", "I like hit rating");
+            LT_OfficerLoot:AddBid("Hydrocane", "Cahrin", "main", "Shard of Contempt", "I like hit rating");
+            LT_OfficerLoot:AddBid("Hydrocane", "Nobunaga", "main", "Shard of Contempt", "I like hit rating");
+            LT_OfficerLoot:AddBid("Simple Grinder", "Threelibra", "main", "Shard of Contempt", "I like hit rating");
         end
 	end
 end
