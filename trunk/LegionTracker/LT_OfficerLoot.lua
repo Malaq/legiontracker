@@ -816,8 +816,9 @@ function LT_OfficerLoot:ScrollUp()
     end
 end
 
-function LT_OfficerLoot:ScrollWheel(dir)
-    if (dir == -1) then
+function LT_OfficerLoot:ScrollWheel(self,delta)
+    --LT_Print("TEST"..dir,"red");
+    if (delta == -1) then
         LT_OfficerLoot:ScrollDown();
     else
         LT_OfficerLoot:ScrollUp();
