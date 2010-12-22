@@ -309,14 +309,16 @@ function LT_ResetAttendance()
     guildCount = GetNumGuildMembers(true);
     for i = 1, guildCount do 
         --temp = GetGuildRosterSelection();
-        _, rank, _, _, _, _, _, onote = GetGuildRosterInfo(i);
+        local name, rank, _, _, _, _, _, onote = GetGuildRosterInfo(i);
         if (rank == "Alt") or (rank == "Officer Alt") then
             local pname = LT_GetPlayerIndexFromName(onote);
             if (pname == nil) then
+                LT_SetPlayerInfoFromName(name,"onote","<Enter Main Name>");
                 GuildRosterSetOfficerNote(i, "<Enter Main Name>");
             end
             count = count+1;
         elseif (rank == "Friend") and (onote ~= "Friend") then
+            LT_SetPlayerInfoFromName(name,"onote","Friend");
             GuildRosterSetOfficerNote(i, "Friend");
             count = count+1;
         elseif (rank == "Friend") then
