@@ -208,7 +208,7 @@ $utf8name = URLEncode($utf8name);
 print "<table>";
 print "<TR>";
 print "<TD rowspan=\"5\">";
-print "<B>Name:</B> <A HREF=\"http://www.wowarmory.com/character-sheet.xml?r=Medivh&n=$utf8name\" TITLE=\"CHAR_ID=$row->{char_id}\" TARGET=\"_blank\">$row->{name}</A><BR>";
+print "<B>Name:</B> <A HREF=\"http://us.battle.net/wow/en/character/medivh/$utf8name/simple\" TITLE=\"CHAR_ID=$row->{char_id}\" TARGET=\"_blank\">$row->{name}</A><BR>";
 print "<B>Class:</B> $row->{class} <BR>";
 print "<B>Rank:</B> $row->{rank} <BR>";
 print "<B>Active:</B> $row->{active} <BR>";

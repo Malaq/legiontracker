@@ -61,7 +61,7 @@ print "</A><br>";
 print "<A HREF=\"http://www.wowmeteronline.com/browse/guildcalendar/15265#calendar\" TARGET=\"_blank\" STYLE=\"text-decoration:none\"> ";
 print "<B>WoW Meter Online</B>";
 print "</A><br>";
-print "<A HREF=\"http://www.tgguild.com/\" TARGET=\"_blank\" STYLE=\"text-decoration:none\">";
+print "<A HREF=\"http://www.tgguild.com/forum.php\" TARGET=\"_blank\" STYLE=\"text-decoration:none\">";
 print "<B>Forums</B>";
 print "</A>";
 print "</fieldset>";
