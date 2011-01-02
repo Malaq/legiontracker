@@ -1,4 +1,0 @@
-AuthName "secure"
-AuthUserFile "/home/legion/.htpasswds/public_html/hermit/passwd"
-AuthType Basic
-require valid-user
