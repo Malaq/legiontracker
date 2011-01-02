@@ -1,6 +1,7 @@
 ﻿LT_AttendanceCheckList = {};
 LT_FirstTic = false;
 LT_NewRosterUpdate = false;
+LT_Ticks = {};
 LT_Attendance = {};
 
 function LT_Attendance_SlashHandler(args)
@@ -11,6 +12,138 @@ function LT_Attendance_SlashHandler(args)
     local cmd = string.sub(args, string.find(args, " ")+1);
     if (cmd == "reset") then
         LT_ResetAttendance();
+    end
+end
+
+--function LT_SimpleAttendanceTic()
+function LT_AttendanceTic()   
+    LT_NewRosterUpdate = false;
+    LT_Ticks = {};
+    local counter = 0;
+    
+    SetGuildRosterShowOffline(true);
+    local num_all_members,num_online_members = GetNumGuildMembers(false);
+    LT_Print("Online members: "..num_online_members,"yellow");
+    
+    for i=1, num_all_members do
+        if (LT_NewRosterUpdate == true) then
+            LT_Print("ERROR1 - Roster updated during attendance tick.  Restarting attendance tick.");
+            LT_AttendanceTic();
+            return nil;
+        end
+        LT_SingleMemberTic(i);
+    end
+    
+    local raidCount = GetNumRaidMembers();
+    --I am not in the raid, skip raid tick.
+    if (raidCount ~= 0) then
+        LT_RaiderTick();
+    end
+    
+    --Apply ticks to attendance and officer notes
+    for k,v in pairs(LT_Ticks) do
+        local attendance = "";
+        local guildId = LT_Ticks[k]["id"];
+        if (LT_FirstTic) then
+            attendance = LT_Ticks[k]["tick"];
+        else
+            --LT_Print("onote: "..LT_GetPlayerInfoFromName(k,"onote"));
+            --LT_Print("tick:"..LT_Ticks[k]["tick"]);
+            attendance = LT_GetPlayerInfoFromName(k,"onote")..LT_Ticks[k]["tick"];
+        end
+        --LT_Print(k.." id: "..guildId.." setting attendance: "..attendance);
+        LT_SetPlayerInfoFromName(k,"onote",attendance);
+        LT_SetPlayerInfoFromName(k,"attendance",attendance);
+        GuildRosterSetOfficerNote(guildId, attendance);
+        --LT_Print("k: "..k.." tick: "..LT_Ticks[k]["tick"]);
+        counter = counter+1;
+    end
+    LT_Print("LT: Set attendance for "..counter.." players.","yellow");
+    LT_FirstTic = false;
+end
+
+--New attendance ticker for simpletick
+function LT_SingleMemberTic(guildId, tickFromAlt, altName, tickFromRaid)
+    --If you're not in the raid, just count everyone as online.
+    local raidCount = GetNumRaidMembers();
+    local onlineValue = "2";
+    if (raidCount == 0) then
+        onlineValue = "1";
+    end
+    
+    local name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName, achievementPoints, achievementRank, isMobile = GetGuildRosterInfo(guildId);
+    if (rank == "Alt") or (rank == "Officer Alt") then
+        local mainRank = LT_GetPlayerInfoFromName(officernote,"rank");
+        local mainId = LT_GetPlayerInfoFromName(officernote,"index");
+        
+        if (tickFromAlt ~= nil) or (mainRank == "-1") then
+            --No longer allowing alt names to go multiple levels deep.  Too many possibilities for deadlock.
+            LT_Print("Please fix "..name.."'s officer note.","yellow");
+            return nil;
+        end
+        --Recursively run the function but stop this instance once the tick has occurred.
+        if (online == 1) then
+            --LT_Print("Giving "..officernote.." a tick from alt "..name);
+            LT_SingleMemberTic(mainId, true, name, tickFromRaid);
+            return nil;
+        else
+            --If the alt is offline, we'll set the attendance elsewhere.
+            return nil;
+        end
+    end
+    
+    if (rank == "Friend") then
+        if (officernote ~= "Friend") then
+            GuildRosterSetOfficerNote(guildId, "Friend");
+        end
+        return nil;
+    end
+    
+    if (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "Friend") then 
+        --Give a online sitting out tick, we will overwrite these ticks with raider ticks later
+        --LT_Print("Test: "..name.." guildid: "..guildId);
+        if (LT_Ticks[name] == nil) then
+            LT_Ticks[name] = {};
+        end
+        LT_Ticks[name]["id"] = guildId;
+        if (online == 1) or (tickFromAlt ~= nil) then
+            --Online
+            if (tickFromRaid ~= nil) then
+                LT_Ticks[name]["tick"] = "1";
+            else
+                LT_Ticks[name]["tick"] = onlineValue;
+            end
+        else
+            --Offline
+            --Don't overwrite a online tick with offline tick.
+            --this doesn't seem to work
+            local temptick = LT_Ticks[name]["tick"] or "test";
+            
+            if (temptick == "1") or (temptick == "2") then
+                --LT_Print("Not changing tick for: "..name);
+                return nil;
+            else
+                LT_Ticks[name]["tick"] = "0";
+            end
+        end
+        
+        return nil;
+        --LT_SetPlayerInfoFromName(name,"onote","Friend");
+    else
+        LT_Print("Error with player "..name..".  Did not pass the alt and friend validation.  Please review.");
+        return nil;
+    end
+    LT_Print("Attendance error, player: "..name.." failed all validation.  Please review.");
+end
+
+function LT_RaiderTick()
+    local raidCount = GetNumRaidMembers();
+    for i=1, raidCount do
+        local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(i);
+        local guildId = LT_GetPlayerInfoFromName(name,"index");
+        if (guildId ~= "-1") and (subgroup < 6) and (subgroup > 0) then
+            LT_SingleMemberTic(guildId, nil, nil, true);
+        end        
     end
 end
 
@@ -26,7 +159,7 @@ function LT_GetAttendees()
     return count;
 end
 
-function LT_AttendanceTic()   
+function LT_AttendanceTicold()   
     LT_NewRosterUpdate = false;
     local counter = 0;
     SetGuildRosterShowOffline(false);
