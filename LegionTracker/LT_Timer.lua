@@ -227,6 +227,8 @@ function LT_TimerToggle()
         button1 = "Yes",
         button2 = "No",
         OnAccept = function()
+            local counter = LT_ApplyAttendance();
+            LT_Print("Timer stopped, reapplied attenadnce for "..counter.." raiders to officer notes.","yellow");
             LT_TIMER_TOGGLE = false;
             local timer_label = _G["LT_Main".."Timer".."Label"];
             timer_label:SetTextColor(0, 1, 1);

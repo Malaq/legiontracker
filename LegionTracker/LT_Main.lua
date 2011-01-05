@@ -98,6 +98,7 @@ function LT_SlashHandler(args)
         LT_Print("tableundo - Restore old table data prior to tablecopy.","yellow");
         LT_Print("tablecopy <player> - Request a copy of the loot data from <player>","yellow");
         LT_Print("minimap hide/show - Displays or hides the minimap icon.","yellow");
+        --LT_Print("mainchange <oldmain> <newmain> - This will correct all onotes for that player.","yellow");
 	else
 		if args == "show" then
 		    LT_Main:Show();
@@ -538,6 +539,21 @@ function LT_IsNumber(str)
     end
 end
 
+function LT_GetNumRaiders(verbose)
+    counter = 0;
+    for k,v in pairs(LT_InfoLookup) do
+        --LT_Print("Key: "..k);
+        local rank = LT_GetPlayerInfoFromName(k,"rank");
+        if (rank ~= "Friend") and (rank ~= "Alt") and (rank ~= "Officer Alt") then
+            if (verbose ~= nil) then
+                LT_Print(k.." rank: "..rank,"yellow");
+            end
+            counter = counter+1;
+        end
+    end
+    return counter;
+end
+
 function LT_GetPlayerIndexFromName(name)
     return LT_NameLookup[name];
 end
@@ -602,24 +618,54 @@ function LT_SetPlayerInfoFromName(name,option,value)
     return nil;
 end
 
+function LT_RankIsRaider(rank)
+    if (rank ~= "Friend") and (rank ~= "Alt") and (rank ~= "Officer Alt") then
+        return true;
+    else
+        return false;
+    end
+end
+
+function LT_NameIsRaider(name)
+    rank = LT_GetPlayerInfoFromName(name,"rank");
+    if (rank ~= "Friend") and (rank ~= "Alt") and (rank ~= "Officer Alt") then
+        return true;
+    else
+        return false;
+    end
+end
+
 function LT_CheckForUnevenTicks()
     local maxTicks = 0;
+    local sensor = 0;
     for i = 1, GetNumGuildMembers() do        
         local name = LT_GetPlayerIndexFromName(i);
         local rank = LT_GetPlayerInfoFromName(name,"rank");
         if (rank ~= "Friend") and (rank ~= "Alt") and (rank ~= "Officer Alt") then
             local ticks = string.len(LT_GetPlayerInfoFromName(name,"attendance"));
             --local oticks = string.len(LT_GetPlayerInfoFromName(name,"onote"));
-            local _, _, _, _, _, _, _, onote = GetGuildRosterInfo(i);
+            local name, _, _, _, _, _, _, onote = GetGuildRosterInfo(i);
             if (onote == nil) then
                 onote = "";
             end
             local oticks = string.len(onote);
-            LT_Print("Name: "..name.." has "..ticks.." ticks.  Onote: "..oticks);
-            if (ticks > maxTicks) then
+            local color = nil;
+            if (oticks ~= ticks) then
+                color = "red";
+                sensor = 2;
+            end
+            if (sensor ~= 0) and (ticks ~= maxTicks) then
+                color = "yellow";
+            end
+            LT_Print("Name: "..name.." has -- Onote: "..oticks.." - LT Table: "..ticks,color);
+            if (ticks ~= maxTicks) then
                 maxTicks = ticks;
+                sensor = sensor+1;
             end
         end
+    end
+    if (sensor > 1) then
+        LT_Print("LT: Attendance has an inconcistancy, please review.","red");
     end
 end
 
