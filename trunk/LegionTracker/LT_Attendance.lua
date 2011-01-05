@@ -6,13 +6,36 @@ LT_Attendance = {};
 
 function LT_Attendance_SlashHandler(args)
     if (string.find(args, " ") == nil) then
-		LT_Print("lt attendance reset");
+		LT_Print("lt attendance reset","yellow");
+        LT_Print("lt attendance check","yellow");
+        LT_Print("lt attendance raiders","yellow");
 		return;
 	end
     local cmd = string.sub(args, string.find(args, " ")+1);
     if (cmd == "reset") then
         LT_ResetAttendance();
+    elseif (cmd == "check") then
+        LT_CheckForUnevenTicks();
+    elseif (cmd == "raiders") then
+        LT_GetNumRaiders(true);
     end
+end
+
+--This is called when the timer is stopped to ensure all ticks from
+--the localized table get applied to officer notes before export.
+function LT_ApplyAttendance()
+    local counter = 0;
+    local LT_Attendance_bak = {};
+    LT_Attendance_bak = LT_Attendance;
+    for k,v in pairs(LT_Attendance_bak) do
+        local attendance = LT_Attendance_bak[k];
+        local guildId = LT_GetPlayerIndexFromName(k);
+        LT_SetPlayerInfoFromName(k,"onote",attendance);
+        LT_SetPlayerInfoFromName(k,"attendance",attendance);
+        GuildRosterSetOfficerNote(guildId, attendance);
+        counter = counter+1;
+    end
+    return counter;
 end
 
 --function LT_SimpleAttendanceTic()
@@ -21,9 +44,9 @@ function LT_AttendanceTic()
     LT_Ticks = {};
     local counter = 0;
     
-    SetGuildRosterShowOffline(true);
-    local num_all_members,num_online_members = GetNumGuildMembers(false);
-    LT_Print("Online members: "..num_online_members,"yellow");
+    --SetGuildRosterShowOffline(true);
+    local num_all_members,num_online_members = GetNumGuildMembers();
+    LT_Print("Online guildmates: "..num_online_members.."/"..num_all_members,"yellow");
     
     for i=1, num_all_members do
         if (LT_NewRosterUpdate == true) then
@@ -49,7 +72,12 @@ function LT_AttendanceTic()
         else
             --LT_Print("onote: "..LT_GetPlayerInfoFromName(k,"onote"));
             --LT_Print("tick:"..LT_Ticks[k]["tick"]);
-            attendance = LT_GetPlayerInfoFromName(k,"onote")..LT_Ticks[k]["tick"];
+            
+            --why would you do this...seriously? After redesigning attendance you
+            --leave in this gaping hole.  Corrected it to use the localized table
+            --instead of onotes.
+            --attendance = LT_GetPlayerInfoFromName(k,"onote")..LT_Ticks[k]["tick"];
+            attendance = LT_GetPlayerInfoFromName(k,"attendance")..LT_Ticks[k]["tick"];
         end
         --LT_Print(k.." id: "..guildId.." setting attendance: "..attendance);
         LT_SetPlayerInfoFromName(k,"onote",attendance);
@@ -58,8 +86,15 @@ function LT_AttendanceTic()
         --LT_Print("k: "..k.." tick: "..LT_Ticks[k]["tick"]);
         counter = counter+1;
     end
-    LT_Print("LT: Set attendance for "..counter.." players.","yellow");
+    
+    local raiders = LT_GetNumRaiders();
+    LT_Print("LT: Set attendance for "..counter.." raiders.","yellow");
+    LT_Print("LT: Attendance should have been set for "..raiders.." raiders.","yellow");
+    if (raiders ~= counter) then
+        LT_Print("LT: WARNING WARNING WARNING, ticks do not match raiders.","red");
+    end
     LT_FirstTic = false;
+    GuildRoster();
 end
 
 --New attendance ticker for simpletick
@@ -78,7 +113,7 @@ function LT_SingleMemberTic(guildId, tickFromAlt, altName, tickFromRaid)
         
         if (tickFromAlt ~= nil) or (mainRank == "-1") then
             --No longer allowing alt names to go multiple levels deep.  Too many possibilities for deadlock.
-            LT_Print("Please fix "..name.."'s officer note.","yellow");
+            LT_Print("Please fix "..altName.."'s officer note.","red");
             return nil;
         end
         --Recursively run the function but stop this instance once the tick has occurred.
