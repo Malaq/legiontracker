@@ -100,22 +100,38 @@ function LT_OfficerLoot:OnLoad()
     self.inc_msg_ignore = {};
     self.out_msg_ignore = {};
     -- Hook into whispers so that we can hide things...
-    ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", function(...)
-        return LT_OfficerLoot:WhisperFilter(...);
-    end);
-    ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(...)
-        return LT_OfficerLoot:OutgoingWhisperFilter(...);
-    end);
+    ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", LT_WhisperFilter);
+    --ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", function(self, event, msg, ...)
+    --    return LT_OfficerLoot:WhisperFilter(msg);
+    --end);
+    ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", LT_OutgoingWhisperFilter);
+    --ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(self, event, msg, ...)
+    --    return LT_OfficerLoot:OutgoingWhisperFilter(msg);
+    --end);
 end
 
-function LT_OfficerLoot:WhisperFilter(msg)
-    if (self.inc_msg_ignore[msg]) then
+--function LT_OfficerLoot:WhisperFilter(msg)
+function LT_OfficerLoot:WhisperFilter(self, event, msg, ...)
+    if (LT_OfficerLoot.inc_msg_ignore[msg] or false) then
         return true;
     end
 end
 
-function LT_OfficerLoot:OutgoingWhisperFilter(msg)
-    if (self.out_msg_ignore[msg]) then
+function LT_WhisperFilter(self, event, msg, ...)
+    if (LT_OfficerLoot.inc_msg_ignore[msg]) then
+        return true;
+    end
+end
+
+--function LT_OfficerLoot:OutgoingWhisperFilter(msg)
+function LT_OfficerLoot:OutgoingWhisperFilter(self, event, msg, ...)
+    if (LT_OfficerLoot.out_msg_ignore[msg]) then
+        return true;
+    end
+end
+
+function LT_OutgoingWhisperFilter(self, event, msg, ...)
+    if (LT_OfficerLoot.out_msg_ignore[msg]) then
         return true;
     end
 end
@@ -639,6 +655,8 @@ function LT_OfficerLoot:OnEvent(event, arg1, arg2)
         self:AddBid(item, player, spec, replacing, comments);
         self.inc_msg_ignore[arg1] = 1;
         self:SendInvisChatMessage("Your bid for " .. item .. " was received successfully.", "WHISPER", nil, player);
+        self:SendInvisChatMessage("DONT ZONE OUT BITCH.", "WHISPER", nil, player);
+        self:SendInvisChatMessage("-- Signed, Nobu", "WHISPER", nil, player);
     end
 end
 
@@ -703,6 +721,8 @@ function LT_OfficerLoot:StartNewItems(items, item_links, dont_clear_bids)
         _G["LT_OfficerLoot_TimeSpentTotalLabel"]:SetText("(" .. self:TimeStr(LT_OfficerLoot_TotalLootTime) .. ")");
         _G["LT_OfficerLoot_TimeSpentCurLabel"]:SetText("");
         LT_Print("Time spent dealing with loot: "..self:TimeStr(chg));
+        self.inc_msg_ignore = {};
+        self.out_msg_ignore = {};
     end
     
     self:Display();

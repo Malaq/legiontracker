@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.903"
+﻿LT_VERSION = "Legion Tracker 0.904"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -14,6 +14,7 @@ LT_raiderFilter = false;
 LT_offlineFilter = true;
 LT_Rows_Shown = 0;
 LT_NewRosterUpdate = false;
+LT_FirstRosterUpdate = true;
 
 function LT_OnLoad(self)
 	LT_Main:SetParent(UIParent);
@@ -694,8 +695,10 @@ function LT_UpdatePlayerList()
             --    LT_Print(name.." is not having their officer note updated.");
             --else
             LT_InfoLookup[name]["onote"] = officernote;
-            if (LT_TIMER_TOGGLE == false) then
+            -- Added LT_FirstRosterUpdate to correct attendance data from crashes or relogins.
+            if (LT_TIMER_TOGGLE == false) or (LT_FirstRosterUpdate == true) then
                 LT_Attendance[name] = officernote;
+                LT_FirstRosterUpdate = false;
             end
             LT_InfoLookup[name]["online"] = online;
             LT_InfoLookup[name]["updated"] = false;

@@ -30,10 +30,12 @@ function LT_ApplyAttendance()
     for k,v in pairs(LT_Attendance_bak) do
         local attendance = LT_Attendance_bak[k];
         local guildId = LT_GetPlayerIndexFromName(k);
-        LT_SetPlayerInfoFromName(k,"onote",attendance);
-        LT_SetPlayerInfoFromName(k,"attendance",attendance);
-        GuildRosterSetOfficerNote(guildId, attendance);
-        counter = counter+1;
+        if (guildId ~= nil) then
+            LT_SetPlayerInfoFromName(k,"onote",attendance);
+            LT_SetPlayerInfoFromName(k,"attendance",attendance);
+            GuildRosterSetOfficerNote(guildId, attendance);
+            counter = counter+1;
+        end
     end
     return counter;
 end
@@ -113,6 +115,9 @@ function LT_SingleMemberTic(guildId, tickFromAlt, altName, tickFromRaid)
         
         if (tickFromAlt ~= nil) or (mainRank == "-1") then
             --No longer allowing alt names to go multiple levels deep.  Too many possibilities for deadlock.
+            if (altName == nil) then
+                altName = name;
+            end
             LT_Print("Please fix "..altName.."'s officer note.","red");
             return nil;
         end
