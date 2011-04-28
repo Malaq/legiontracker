@@ -18,9 +18,9 @@ function LT_Settings_VersionCheck()
     --LT_Print(UnitName("player").. ": " ..LT_VERSION);
     LT_Print("LegionTracker: Running version check...", "yellow");
     local cmd = {type = "VersionCheck", player = UnitName("player")};
-    LT_OfficerLoot:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd), "GUILD");
+    LT_OfficerLoot:SendOfficerMessage("LT_OLoot_Cmd", LT_OfficerLoot:Serialize(cmd), "GUILD");
     --cmd = {type = "VersionResponse", version = LT_VERSION, player = UnitName("player")};
-    --LT_OfficerLoot:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd));
+    --LT_OfficerLoot:SendOfficerMessage("LT_OLoot_Cmd", LT_OfficerLoot:Serialize(cmd));
 end
 
 function LT_Settings_Table_Request(args)
@@ -39,7 +39,7 @@ function LT_Settings_Table_Request(args)
         LT_OfficerLoot.msg_channel = "WHISPER";
         LT_OfficerLoot.msg_target = targetPlayer;
         local cmd = {type = "TableRequest", player = UnitName("player"), target = targetPlayer};
-        LT_OfficerLoot:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd),nil);
+        LT_OfficerLoot:SendOfficerMessage("LT_OLoot_Cmd", LT_OfficerLoot:Serialize(cmd),nil);
         LT_OfficerLoot.msg_channel = "RAID";
         LT_OfficerLoot.msg_target = nil;
     end

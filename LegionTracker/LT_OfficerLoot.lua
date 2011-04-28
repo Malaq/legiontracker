@@ -1,4 +1,5 @@
-﻿LT_OfficerLoot = LibStub("AceAddon-3.0"):NewAddon("LT_OfficerLoot", "AceComm-3.0", "AceSerializer-3.0");
+﻿--LT_OfficerLoot = LibStub("AceAddon-3.0"):NewAddon("LT_OfficerLoot", "AceComm-3.0", "AceSerializer-3.0");
+LT_OfficerLoot = LibStub("AceAddon-3.0"):NewAddon("LT_OLoot", "AceComm-3.0", "AceSerializer-3.0");
 LT_OfficerLoot_AwardedItems = {};
 LT_OfficerLoot_ZoneData = {};
 LT_copyingTable = false;
@@ -93,9 +94,9 @@ function LT_OfficerLoot:OnLoad()
     self.last_instructed = {};
     self.mode = "Master";
     
-    self:RegisterComm("LT_OfficerLoot_Vote", "OnReceiveVote");
-    self:RegisterComm("LT_OfficerLoot_Bid", "OnReceiveBid");
-    self:RegisterComm("LT_OfficerLoot_Command", "OnReceiveCommand");
+    self:RegisterComm("LT_OLoot_Vote", "OnReceiveVote");
+    self:RegisterComm("LT_OLoot_Bid", "OnReceiveBid");
+    self:RegisterComm("LT_OLoot_Cmd", "OnReceiveCommand");
     
     self.inc_msg_ignore = {};
     self.out_msg_ignore = {};
@@ -153,6 +154,7 @@ end
 
 function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
     local success, cmd = self:Deserialize(message);
+    --LT_Print("Command received: "..cmd.type,"yellow");
     if (success == false) then
         LT_Print("Error: received a bad command.  This shouldn't happen.");
         return;
@@ -181,7 +183,7 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
     if (cmd.type == "VersionCheck") then
         --LT_Print(cmd.player.. " is running version check...", "yellow");
         local cmd = {type = "VersionResponse", version = LT_VERSION, player = UnitName("player"), target = cmd.player};
-        self:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd), "GUILD");
+        self:SendOfficerMessage("LT_OLoot_Cmd", LT_OfficerLoot:Serialize(cmd), "GUILD");
     end
     
     if (cmd.type == "TableRequest") then
@@ -292,13 +294,13 @@ end
 
 function LT_OfficerLoot:BroadcastNewItems(items, item_links)
     local cmd = {["type"] = "Start", ["items"] = items, ["item_links"] = item_links, ["whisper_id"] = time(), ["real_zone"] = GetRealZoneText(), ["sub_zone"] = GetSubZoneText()};
-    self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
+    self:SendOfficerMessage("LT_OLoot_Cmd", self:Serialize(cmd));
 end
 
 function LT_OfficerLoot:BroadcastAttendanceChange(name)
     local attendance = LT_GetPlayerInfoFromName(name,"attendance");
     local cmd = {["type"] = "AttendanceChange", ["name"] = name, ["attendance"] = attendance};
-    self:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd), "GUILD");
+    self:SendOfficerMessage("LT_OLoot_Cmd", LT_OfficerLoot:Serialize(cmd), "GUILD");
 end
 
 function LT_OfficerLoot:SendTable(targetPlayer)
@@ -309,10 +311,10 @@ function LT_OfficerLoot:SendTable(targetPlayer)
         self.msg_target = targetPlayer;
         --Alert them the data is coming
         local cmd = {type = "TableResponse", target = targetPlayer, player = UnitName("player")};
-        self:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd), "WHISPER", cmd.player);
+        self:SendOfficerMessage("LT_OLoot_Cmd", LT_OfficerLoot:Serialize(cmd), "WHISPER", cmd.player);
         --Actual data send
         cmd = {type = "TableResponse", loottable = LT_LootTable, playerloottable = LT_PlayerLootTable, target = targetPlayer, player = UnitName("player")};
-        self:SendOfficerMessage("LT_OfficerLoot_Command", LT_OfficerLoot:Serialize(cmd), "WHISPER", cmd.player);
+        self:SendOfficerMessage("LT_OLoot_Cmd", LT_OfficerLoot:Serialize(cmd), "WHISPER", cmd.player);
         self.msg_channel = "RAID";
         self.msg_target = nil;
         LT_copyingTable = false;
@@ -324,7 +326,7 @@ end
 
 function LT_OfficerLoot:ForcePopup()
     local cmd = {type = "Popup"};
-    self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
+    self:SendOfficerMessage("LT_OLoot_Cmd", self:Serialize(cmd));
 end
 
 function LT_OfficerLoot:Remove(id, dust)
@@ -332,7 +334,7 @@ function LT_OfficerLoot:Remove(id, dust)
     local item = self.items[real_id];
     local link = self.item_links[real_id];
     local cmd = {type = "Remove", name = item}; 
-    self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
+    self:SendOfficerMessage("LT_OLoot_Cmd", self:Serialize(cmd));
     
     if (dust) then
         SendChatMessage("Dusting item: " ..link, "RAID");
@@ -342,7 +344,7 @@ end
 function LT_OfficerLoot:Add(item)
     LT_Print("Adding "..item);
     local cmd = {type = "Add", name = item};
-    self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
+    self:SendOfficerMessage("LT_OLoot_Cmd", self:Serialize(cmd));
 end
 
 function LT_OfficerLoot:GetBestBid(id)
@@ -378,11 +380,13 @@ end
 
 function LT_OfficerLoot:AwardItem(msg,player,item)
     local cmd = {type = "AwardItem", message = msg, pname = player, iname = item};
-    self:SendOfficerMessage("LT_OfficerLoot_Command", self:Serialize(cmd));
+    self:SendOfficerMessage("LT_OLoot_Cmd", self:Serialize(cmd));
 end
 
 function LT_OfficerLoot:OnReceiveVote(prefix, message, distr, sender)
     local success, vote = self:Deserialize(message);
+    --LT_Print("Vote received: "..sender,"yellow");
+    
     if (success == false) then
         LT_Print("Error: received a bad vote.  This shouldn't happen.");
         return;
@@ -418,7 +422,7 @@ function LT_OfficerLoot:BroadcastVote(item, player)
     local vote = {};
     vote.item = item;
     vote.player = player;
-    self:SendOfficerMessage("LT_OfficerLoot_Vote", self:Serialize(vote));
+    self:SendOfficerMessage("LT_OLoot_Vote", self:Serialize(vote));
 end
 
 
@@ -514,6 +518,8 @@ end
 
 function LT_OfficerLoot:OnReceiveBid(prefix, message, distr, sender)
     local success, bid = self:Deserialize(message);
+    --LT_Print("Bid received: "..sender,"yellow");
+    
     if (success == false) then
         LT_Print("Error: received a bad bid.  This shouldn't happy.");
         return;
@@ -561,7 +567,7 @@ function LT_OfficerLoot:AddBid(item, player, spec, replacing, comments)
     if (player ~= mainname) then
         bid.main = mainname;
     end
-    self:SendOfficerMessage("LT_OfficerLoot_Bid", self:Serialize(bid));
+    self:SendOfficerMessage("LT_OLoot_Bid", self:Serialize(bid));
 end
 
 function LT_OfficerLoot:MungeItem(s)
