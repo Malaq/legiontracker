@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.904"
+﻿LT_VERSION = "Legion Tracker 0.905a"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -52,6 +52,8 @@ function LT_Main_OnEvent(self, event, ...)
         -- We get guildroster if someone else updates an officer note.
         -- Very possible this is the lag bomb when you have the window open.
         LT_Attendance_OnChange();
+    elseif (event == "PLAYER_ENTERING_WORLD") then
+        RegisterAddonMessagePrefix( "LT_OLoot" );
     elseif (event == "VARIABLES_LOADED") then
         LT_UpdatePlayerList();
         if (LT_savedVarTable == nil) then
