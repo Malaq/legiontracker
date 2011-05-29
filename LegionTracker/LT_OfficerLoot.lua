@@ -371,10 +371,27 @@ function LT_OfficerLoot:CanAward(id)
 end
 
 function LT_OfficerLoot:Award(id)
+    local given = "F";
     local bid = self:GetBestBid(id);
     local iname, link = GetItemInfo(bid.item);
     SendChatMessage("Grats to " .. bid.player .. " on " .. link .. " (" .. bid.spec .. " spec)", "RAID");
     LT_OfficerLoot:AwardItem(bid.player .. " receives loot: " .. link, bid.player,iname);
+    
+    --Auto looting
+--    for ci = 1, GetNumRaidMembers() do
+--        if (GetMasterLootCandidate(ci) == bid.player) then
+--            for li = 1, GetNumLootItems() do
+--                GiveMasterLoot(id, ci);
+--                given = "T";
+--            end
+--        end
+--    end
+--    
+--    if (given == "F") then
+--        LT_Print(link.." was not master looted.  Please manually award.","red");
+--    end
+    --End auto looting.
+
     self:Remove(id);
 end
 

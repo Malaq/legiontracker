@@ -109,6 +109,9 @@ function LT_SingleMemberTic(guildId, tickFromAlt, altName, tickFromRaid)
     end
     
     local name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName, achievementPoints, achievementRank, isMobile = GetGuildRosterInfo(guildId);
+    if (isMobile) then
+        LT_Print("Player: "..name..", isMobile.","yellow");
+    end
     if (rank == "Alt") or (rank == "Officer Alt") then
         local mainRank = LT_GetPlayerInfoFromName(officernote,"rank");
         local mainId = LT_GetPlayerInfoFromName(officernote,"index");
@@ -122,7 +125,7 @@ function LT_SingleMemberTic(guildId, tickFromAlt, altName, tickFromRaid)
             return nil;
         end
         --Recursively run the function but stop this instance once the tick has occurred.
-        if (online == 1) then
+        if ((online == 1) and (not isMobile)) then
             --LT_Print("Giving "..officernote.." a tick from alt "..name);
             LT_SingleMemberTic(mainId, true, name, tickFromRaid);
             return nil;
@@ -146,7 +149,7 @@ function LT_SingleMemberTic(guildId, tickFromAlt, altName, tickFromRaid)
             LT_Ticks[name] = {};
         end
         LT_Ticks[name]["id"] = guildId;
-        if (online == 1) or (tickFromAlt ~= nil) then
+        if ((online == 1) and (not isMobile)) or (tickFromAlt ~= nil) then
             --Online
             if (tickFromRaid ~= nil) then
                 LT_Ticks[name]["tick"] = "1";
