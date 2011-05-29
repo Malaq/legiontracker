@@ -19,7 +19,8 @@ function LT_OfficerLoot:OnLoad()
     
     tinsert(UISpecialFrames, "LT_OfficerLoot_Frame");
     
-    self.msg_channel = "RAID";
+    --self.msg_channel = "RAID";
+    self.msg_channel = "OFFICER";
     self.msg_target = nil;
     
     self.vote_tooltip = CreateFrame("GameTooltip", "LT_VoteTooltip", UIParent, "GameTooltipTemplate");
