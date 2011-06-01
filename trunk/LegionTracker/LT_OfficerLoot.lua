@@ -179,6 +179,36 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
             LT_OfficerLoot_AwardedItems[cmd.pname] = {};
         end
         LT_OfficerLoot_AwardedItems[cmd.pname][cmd.iname] = 1;
+        
+            --Auto looting
+            local given = "F"
+            local lootmethod, _, masterlooterRaidID = GetLootMethod();
+            local ml = GetRaidRosterInfo(masterlooterRaidID);
+            if ((lootmethod == "master") and (ml == UnitName("player"))) then
+                LT_Print("LT: You are master looter. Autolooting "..cmd.iname.." to "..cmd.pname,"yellow");
+                    --for ci = 1, GetNumRaidMembers() do
+                    for ci = 1, 40 do
+                        --LT_Print("test: "..GetMasterLootCandidate(ci).." player: "..cmd.pname,"yellow");
+                        if (GetMasterLootCandidate(ci) == cmd.pname) then
+                            for li = 1, GetNumLootItems() do
+                                if (GetLootSlotLink(li) ~= nil) then
+                                    local item, link = GetItemInfo(GetLootSlotLink(li));
+                                    if ((item == cmd.iname) and (given == "F")) then
+                                        --LT_Print("Giving "..li.." to "..cmd.pname,"yellow");
+                                        GiveMasterLoot(li, ci);
+                                        given = "T";
+                                    end
+                                end
+                            end
+                        end
+                    end
+                
+                if (given == "F") then
+                    LT_Print("LT: "..cmd.iname.." was not master looted.  Please manually award.","red");
+                end
+            end
+            --End auto looting.
+            
     end
     
     if (cmd.type == "VersionCheck") then
@@ -377,27 +407,12 @@ function LT_OfficerLoot:Award(id)
     local iname, link = GetItemInfo(bid.item);
     SendChatMessage("Grats to " .. bid.player .. " on " .. link .. " (" .. bid.spec .. " spec)", "RAID");
     LT_OfficerLoot:AwardItem(bid.player .. " receives loot: " .. link, bid.player,iname);
-    
-    --Auto looting
---    for ci = 1, GetNumRaidMembers() do
---        if (GetMasterLootCandidate(ci) == bid.player) then
---            for li = 1, GetNumLootItems() do
---                GiveMasterLoot(id, ci);
---                given = "T";
---            end
---        end
---    end
---    
---    if (given == "F") then
---        LT_Print(link.." was not master looted.  Please manually award.","red");
---    end
-    --End auto looting.
 
     self:Remove(id);
 end
 
-function LT_OfficerLoot:AwardItem(msg,player,item)
-    local cmd = {type = "AwardItem", message = msg, pname = player, iname = item};
+function LT_OfficerLoot:AwardItem(msg,player,item,id)
+    local cmd = {type = "AwardItem", message = msg, pname = player, iname = item, lootid = id};
     self:SendOfficerMessage("LT_OLoot_Cmd", self:Serialize(cmd));
 end
 
