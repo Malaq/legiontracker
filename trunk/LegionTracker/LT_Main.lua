@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.907"
+﻿LT_VERSION = "Legion Tracker 0.908"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -329,7 +329,9 @@ function LT_Main_DropdownInit(self)
     
     info.text = "Epics+ (no badges)"
 	info.func = function()
-		LT_Loot_SetFilter("!Poor !Uncommon !Common !Rare !Emblem !Abyss");
+        --Removed due to some items having Emblem in the name, and potentially Abyss.
+		--LT_Loot_SetFilter("!Poor !Uncommon !Common !Rare !Emblem !Abyss");
+        LT_Loot_SetFilter("!Poor !Uncommon !Common !Rare");
 		UIDropDownMenu_SetText(LT_LootFilterSelect, "Epics+ (no badges)");
 	end
     UIDropDownMenu_AddButton(info, 1);
@@ -924,7 +926,9 @@ function LT_Main_StartLootWhispers()
     for i = 1, GetNumLootItems() do
         if (GetLootSlotLink(i)) then -- money returns nil
             local item, link = GetItemInfo(GetLootSlotLink(i));
-            if (item and string.find(item, "Emblem of") == nil) then
+            --Removed to allow loot with Emblem of to be distributed...
+            --if (item and string.find(item, "Emblem of") == nil) then
+            if (item) then
                 table.insert(item_links, link);
                 table.insert(items, item);
             end

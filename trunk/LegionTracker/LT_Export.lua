@@ -19,8 +19,8 @@
             local ltime = date("%Y-%m-%d %H:%M:%S", LT_Char_Loots[i].time);--LT_Char_Loots[i]["time"];
             --local player = LT_LootTable[i]["player"];
             local spec = LT_Char_Loots[i]["spec"];
-            local zone = LT_Char_Loots[i]["zone"];
-            local subzone = LT_Char_Loots[i]["subzone"];
+            local zone = LT_Char_Loots[i]["zone"] or "";
+            local subzone = LT_Char_Loots[i]["subzone"] or "";
             if (GetItemInfo(item) ~= nil) then
                 local itemName, tempItemLink, rarity, iLevel, _, iType, iSubType, _, iEquipLoc = GetItemInfo(item);
                 --local _, blizItemId = strsplit(":",item);
