@@ -378,6 +378,16 @@ function LT_OfficerLoot:Add(item)
     self:SendOfficerMessage("LT_OLoot_Cmd", self:Serialize(cmd));
 end
 
+function LT_OfficerLoot:Dust(player)
+    LT_Print("Player "..player.." added to all votes as duster.");
+    --local cmd = {type = "Add", name = item};
+    --for i = 1, something do
+    --    self:AddBid(item, player, spec, replacing, comments);
+    --end
+    
+    --self:SendOfficerMessage("LT_OLoot_Cmd", self:Serialize(cmd));
+end
+
 function LT_OfficerLoot:GetBestBid(id)
     local real_id = id + self.cur_id - 1;
     local item = self.items[real_id];

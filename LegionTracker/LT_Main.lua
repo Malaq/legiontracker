@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.908"
+﻿LT_VERSION = "Legion Tracker 0.909"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -98,9 +98,12 @@ function LT_SlashHandler(args)
         LT_Print("timer - Display timer commands.", "yellow");
         LT_Print("version - Broadcasts a LT version check.", "yellow");
         LT_Print("vote - Show vote window.", "yellow");
+        LT_Print("add <item> - start loot voting on a single item.", "yellow");
+        LT_Print("***Note: add can be used to display previous bids after an item is awarded.","yellow");
         LT_Print("tableundo - Restore old table data prior to tablecopy.","yellow");
         LT_Print("tablecopy <player> - Request a copy of the loot data from <player>","yellow");
         LT_Print("minimap hide/show - Displays or hides the minimap icon.","yellow");
+        LT_Print("dust <name> - Autobid DE'd on all items for this person.","yellow");
         --LT_Print("mainchange <oldmain> <newmain> - This will correct all onotes for that player.","yellow");
 	else
 		if args == "show" then
@@ -128,6 +131,8 @@ function LT_SlashHandler(args)
             LT_Settings_Table_Undo();
         elseif string.find(args, "^add") ~= nil then
             LT_OfficerLoot:Add(string.sub(args, 4));
+        elseif string.find(args, "dust") ~= nil then
+            LT_OfficerLoot:Dust(args);
         elseif string.find(args, "^minimap") ~= nil then
             LT_Settings_Minimap_SlashHandler(args);
         elseif args == "olt1" then
@@ -549,7 +554,7 @@ function LT_GetNumRaiders(verbose)
     for k,v in pairs(LT_InfoLookup) do
         --LT_Print("Key: "..k);
         local rank = LT_GetPlayerInfoFromName(k,"rank");
-        if (rank ~= "Friend") and (rank ~= "Alt") and (rank ~= "Officer Alt") then
+        if (rank ~= "Friend") and (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "PvPer") then
             if (verbose ~= nil) then
                 LT_Print(k.." rank: "..rank,"yellow");
             end
@@ -624,7 +629,7 @@ function LT_SetPlayerInfoFromName(name,option,value)
 end
 
 function LT_RankIsRaider(rank)
-    if (rank ~= "Friend") and (rank ~= "Alt") and (rank ~= "Officer Alt") then
+    if (rank ~= "Friend") and (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "PvPer") then
         return true;
     else
         return false;
@@ -633,7 +638,7 @@ end
 
 function LT_NameIsRaider(name)
     rank = LT_GetPlayerInfoFromName(name,"rank");
-    if (rank ~= "Friend") and (rank ~= "Alt") and (rank ~= "Officer Alt") then
+    if (rank ~= "Friend") and (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "PvPer") then
         return true;
     else
         return false;
@@ -646,7 +651,7 @@ function LT_CheckForUnevenTicks()
     for i = 1, GetNumGuildMembers() do        
         local name = LT_GetPlayerIndexFromName(i);
         local rank = LT_GetPlayerInfoFromName(name,"rank");
-        if (rank ~= "Friend") and (rank ~= "Alt") and (rank ~= "Officer Alt") then
+        if (rank ~= "Friend") and (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "PvPer") then
             local ticks = string.len(LT_GetPlayerInfoFromName(name,"attendance"));
             --local oticks = string.len(LT_GetPlayerInfoFromName(name,"onote"));
             local name, _, _, _, _, _, _, onote = GetGuildRosterInfo(i);
@@ -751,11 +756,11 @@ function LT_UpdatePlayerList()
             elseif (LT_raiderFilter) and (LT_offlineFilter) then
                 --Show all online raiders
                 if (online == 1) then
-                    if (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "Friend") then
+                    if (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "Friend") and (rank ~= "PvPer") then
                         table.insert(data, LT_Main_CreateRow(i));
                         LT_CleanUp[name] = # data;
                     elseif (rank == "Alt") or (rank == "Officer Alt") then
-                        if (mainRank ~= "Friend") and (mainOnline ~= 1) then
+                        if (mainRank ~= "Friend") and (mainRank ~= "PvPer") and (mainOnline ~= 1) then
                             table.insert(data, LT_Main_CreateRow(i));
                             LT_CleanUp[name] = # data;
                             LT_CleanUp[counter] = LT_GetMainName(i);--LT_GetMainName(i);
@@ -768,7 +773,7 @@ function LT_UpdatePlayerList()
                 table.insert(data, LT_Main_CreateRow(i));
             elseif (LT_raiderFilter) and (LT_offlineFilter == false) then
                 --Show all raider mains (on or offline)
-                if (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "Friend") then
+                if (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "Friend") and (rank ~= "PvPer") then
                     table.insert(data, LT_Main_CreateRow(i));
                 end
             end

@@ -148,6 +148,8 @@ function LT_Char_UpdateFrame()
             LT_CharUpperLeftAttendancePercentLabel:SetText("");
             if (rank == "Friend") then
                 LT_CharUpperLeftAttendancePercentLabel:SetText("Friend");
+            elseif (rank == "PvPer") then
+                LT_CharUpperLeftAttendancePercentLabel:SetText("PvPer");
             elseif (rank == "Alt") or (rank == "Officer Alt") then
                 LT_CharUpperLeftAttendancePercentLabel:SetText("Alt");
             end

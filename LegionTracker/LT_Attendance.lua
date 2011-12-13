@@ -142,7 +142,14 @@ function LT_SingleMemberTic(guildId, tickFromAlt, altName, tickFromRaid)
         return nil;
     end
     
-    if (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "Friend") then 
+    if (rank == "PvPer") then
+        if (officernote ~= "PvPer") then
+            GuildRosterSetOfficerNote(guildId, "PvPer");
+        end
+        return nil;
+    end
+    
+    if (rank ~= "Alt") and (rank ~= "Officer Alt") and (rank ~= "Friend") and (rank ~= "PvPer") then 
         --Give a online sitting out tick, we will overwrite these ticks with raider ticks later
         --LT_Print("Test: "..name.." guildid: "..guildId);
         if (LT_Ticks[name] == nil) then
@@ -305,6 +312,16 @@ function LT_NewSingleMemberOnlineTic(i,tickFromAlt,altName)
             return;
         end
         
+        if (rank == "PvPer") and (onote ~= "PvPer") then
+            LT_SetPlayerInfoFromName(name,"onote","PvPer");
+            LT_SetPlayerInfoFromName(name,"updated",true);
+            LT_SetPlayerInfoFromName(name,"sync",true);
+            return;
+        elseif (rank == "PvPer") then
+            return;
+        end
+
+        
         --If they are online
         if (online ~= nil) then
             if (rank == "Alt") or (rank == "Officer Alt") then
@@ -394,6 +411,15 @@ function LT_NewSingleMemberOfflineTic(i)
             LT_SetPlayerInfoFromName(name,"sync",true);
             return;
         elseif (rank == "Friend") then
+            return;
+        end
+        
+        if (rank == "PvPer") and (onote ~= "PvPer") then
+            LT_SetPlayerInfoFromName(name,"onote","PvPer");
+            LT_SetPlayerInfoFromName(name,"updated",true);
+            LT_SetPlayerInfoFromName(name,"sync",true);
+            return;
+        elseif (rank == "PvPer") then
             return;
         end
         
@@ -498,6 +524,12 @@ function LT_ResetAttendance()
             GuildRosterSetOfficerNote(i, "Friend");
             count = count+1;
         elseif (rank == "Friend") then
+            count = count+1;
+        elseif (rank == "PvPer") and (onote ~= "PvPer") then
+            LT_SetPlayerInfoFromName(name,"onote","PvPer");
+            GuildRosterSetOfficerNote(i, "PvPer");
+            count = count+1;
+        elseif (rank == "PvPer") then
             count = count+1;
         else
             GuildRosterSetOfficerNote(i, "");
