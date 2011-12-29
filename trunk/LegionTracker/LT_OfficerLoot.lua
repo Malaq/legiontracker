@@ -13,6 +13,7 @@ LT_PlayerLootTable_backup = nil;
 -- Interesting data structures:
 -- self.bids: Map from item names to a list of bid info tables
 -- self.items: List of item (names) currently being bid for
+-- self.item_links: List of item (links) currently being bid on
 
 function LT_OfficerLoot:OnLoad()
     LT_OfficerLoot_Frame:SetParent(UIParent);
@@ -183,7 +184,7 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
             --Auto looting
             local given = "F"
             local lootmethod, _, masterlooterRaidID = GetLootMethod();
-            local ml = GetRaidRosterInfo(masterlooterRaidID);
+            local ml = GetRaidRosterInfo(masterlooterRaidID or 0);
             if ((lootmethod == "master") and (ml == UnitName("player"))) then
                 LT_Print("LT: You are master looter. Autolooting "..cmd.iname.." to "..cmd.pname,"yellow");
                     --for ci = 1, GetNumRaidMembers() do
@@ -206,6 +207,8 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
                 if (given == "F") then
                     LT_Print("LT: "..cmd.iname.." was not master looted.  Please manually award.","red");
                 end
+            else 
+                SendChatMessage("Master loot not engaged.  Loot this item manually.", "RAID");
             end
             --End auto looting.
             
@@ -213,7 +216,11 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
     
     if (cmd.type == "VersionCheck") then
         --LT_Print(cmd.player.. " is running version check...", "yellow");
-        local cmd = {type = "VersionResponse", version = LT_VERSION, player = UnitName("player"), target = cmd.player};
+        local timer = ""
+        if LT_TIMER_TOGGLE == true then
+            timer = "(Running attendance)"
+        end
+        local cmd = {type = "VersionResponse", version = LT_VERSION, timer=timer, player = UnitName("player"), target = cmd.player};
         self:SendOfficerMessage("LT_OLoot_Cmd", LT_OfficerLoot:Serialize(cmd), "GUILD");
     end
     
@@ -268,21 +275,28 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
     
     if (cmd.type == "VersionResponse") then
         --LT_Print("Version Response: from: "..cmd.player.." version: "..cmd.version.." LT_VERSION: " ..LT_VERSION);
+        local timer_value
+        if cmd.timer == nil then
+            timer_value = ""
+        else
+            timer_value = cmd.timer
+        end
+        
         if (cmd.target ~= nil) then
             --LT_Print("Version Response: target="..cmd.target.." from: "..cmd.player.." version: "..cmd.version.." LT_VERSION: " ..LT_VERSION);
             if (cmd.target == UnitName("player")) then
                 if (cmd.version == LT_VERSION) then
-                    LT_Print(" "..cmd.player.. ": " ..cmd.version, "green");
+                    LT_Print(" "..cmd.player.. ": " ..cmd.version..timer_value, "green");
                 else
-                    LT_Print(" "..cmd.player.. ": " ..cmd.version, "red");
+                    LT_Print(" "..cmd.player.. ": " ..cmd.version..timer_value, "red");
                 end
             end
         else
             --LT_Print(" * If you get this message, tell "..cmd.player.. " to upgrade from: " ..cmd.version);
             if (cmd.version == LT_VERSION) then
-                LT_Print(" "..cmd.player.. ": " ..cmd.version, "green");
+                LT_Print(" "..cmd.player.. ": " ..cmd.version..timer_value, "green");
             else
-                LT_Print(" "..cmd.player.. ": " ..cmd.version, "red");
+                LT_Print(" "..cmd.player.. ": " ..cmd.version..timer_value, "red");
             end
         end
     end
@@ -368,7 +382,7 @@ function LT_OfficerLoot:Remove(id, dust)
     self:SendOfficerMessage("LT_OLoot_Cmd", self:Serialize(cmd));
     
     if (dust) then
-        SendChatMessage("Dusting item: " ..link, "RAID");
+        SendChatMessage("Removing item: " ..link, "RAID");
     end
 end
 
@@ -379,11 +393,40 @@ function LT_OfficerLoot:Add(item)
 end
 
 function LT_OfficerLoot:Dust(player)
-    LT_Print("Player "..player.." added to all votes as duster.");
-    --local cmd = {type = "Add", name = item};
-    --for i = 1, something do
-    --    self:AddBid(item, player, spec, replacing, comments);
-    --end
+    local spec = "DE'd"
+    local replacing = ""
+    local comments = ""
+    
+    --Make sure a name was entered.
+    if player == "" then
+        LT_Print("LT: Please enter a name to disenchant items.","red");
+        return;
+    end
+
+    --Make sure the player entered exists in raid.
+    local raidCount = GetNumRaidMembers();
+    if (((LT_Attendance_Raid_Group(player, raidCount) < 6) and (LT_Attendance_Raid_Group(player, raidCount) > 0)) or player == UnitName("player")) then
+        LT_Print(player.." is a valid duster.");
+    else
+        LT_Print("LT: "..player.." is not a player in groups 1-5. Choose a different duster.","red");
+        return;
+    end
+    
+    --Make sure there is loot being distributed.
+    if #self.items > 0 then
+        LT_Print("Player '"..player.."' added to all items as duster.");
+        SendChatMessage("LegionTracker: You have been registered as the target for dust/vendor items for this loot distribution.", "WHISPER", nil, player);
+   
+        local link;
+        for i = 1, #self.items do
+            link = self.item_links[i];
+            --LT_Print("Item: "..link..", Player: "..player..", Spec: "..spec..", Replacing: "..replacing..", Comment: "..comments);
+            self:AddBid(link, player, spec, replacing, comments);
+        end
+    else
+        LT_Print("LT: Can not assign duster.  No items are being distributed.","red");
+        return;
+    end
     
     --self:SendOfficerMessage("LT_OLoot_Cmd", self:Serialize(cmd));
 end
@@ -415,7 +458,11 @@ function LT_OfficerLoot:Award(id)
     local given = "F";
     local bid = self:GetBestBid(id);
     local iname, link = GetItemInfo(bid.item);
-    SendChatMessage("Grats to " .. bid.player .. " on " .. link .. " (" .. bid.spec .. " spec)", "RAID");
+    if (bid.spec == "DE'd") then
+        SendChatMessage(bid.player.." is dusting or vendoring item: " ..link, "RAID");
+    else
+        SendChatMessage("Grats to " .. bid.player .. " on " .. link .. " (" .. bid.spec .. " spec)", "RAID");
+    end
     LT_OfficerLoot:AwardItem(bid.player .. " receives loot: " .. link, bid.player,iname);
 
     self:Remove(id);
