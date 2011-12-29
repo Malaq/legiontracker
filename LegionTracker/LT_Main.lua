@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.909"
+﻿LT_VERSION = "Legion Tracker 0.910"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -131,8 +131,8 @@ function LT_SlashHandler(args)
             LT_Settings_Table_Undo();
         elseif string.find(args, "^add") ~= nil then
             LT_OfficerLoot:Add(string.sub(args, 4));
-        elseif string.find(args, "dust") ~= nil then
-            LT_OfficerLoot:Dust(args);
+        elseif string.find(args, "^dust") ~= nil then
+            LT_OfficerLoot:Dust(string.sub(args, 6));
         elseif string.find(args, "^minimap") ~= nil then
             LT_Settings_Minimap_SlashHandler(args);
         elseif args == "olt1" then
