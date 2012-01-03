@@ -418,10 +418,30 @@ function LT_OfficerLoot:Dust(player)
         SendChatMessage("LegionTracker: You have been registered as the target for dust/vendor items for this loot distribution.", "WHISPER", nil, player);
    
         local link;
+        local item;
+        local player_bid;
+        local has_bid = "F";
+        
         for i = 1, #self.items do
+            item = self.items[i];
             link = self.item_links[i];
+            
+            --LT_Print("LT: Item: 
+            --Determine if the designated duster submitted a bid prior to this.
+            local bids = self.bids[item];
+            for i = 1, #bids do
+                player_bid = bids[i].player or "";
+                --LT_Print("LT - Item: "..link.." Bid: "..player_bid);
+                if player_bid == player then
+                    has_bid = "T";
+                end
+            end
+            --if self.bids[item] == player
             --LT_Print("Item: "..link..", Player: "..player..", Spec: "..spec..", Replacing: "..replacing..", Comment: "..comments);
-            self:AddBid(link, player, spec, replacing, comments);
+            if has_bid == "F" then
+                self:AddBid(link, player, spec, replacing, comments);
+            end
+            has_bid = "F";
         end
     else
         LT_Print("LT: Can not assign duster.  No items are being distributed.","red");
