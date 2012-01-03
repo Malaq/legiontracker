@@ -207,7 +207,7 @@ function LT_OfficerLoot:OnReceiveCommand(prefix, message, distr, sender)
                 if (given == "F") then
                     LT_Print("LT: "..cmd.iname.." was not master looted.  Please manually award.","red");
                 end
-            else 
+            elseif (lootmethod ~= "master") then
                 SendChatMessage("Master loot not engaged.  Loot this item manually.", "RAID");
             end
             --End auto looting.
