@@ -390,6 +390,10 @@ function LT_OfficerLoot:Add(item)
     LT_Print("Adding "..item);
     local cmd = {type = "Add", name = item};
     self:SendOfficerMessage("LT_OLoot_Cmd", self:Serialize(cmd));
+    SendChatMessage("Whisper !bid to an officer for instructions", "RAID");
+    SendChatMessage("Items are:", "RAID");
+    SendChatMessage(item, "RAID");
+    LT_OfficerLoot:ForcePopup();
 end
 
 function LT_OfficerLoot:Dust(player)
