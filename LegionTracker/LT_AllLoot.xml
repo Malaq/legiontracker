@@ -74,6 +74,7 @@
 </OnEscapePressed>
           <OnTextChanged>LT_AllLoot:UpdateSearch();
 </OnTextChanged>
+          <OnEditFocusLost>LT_LootSearch:ClearFocus();</OnEditFocusLost>
         </Scripts>
         <FontString font="Fonts\ARIALN.TTF">
           <FontHeight>

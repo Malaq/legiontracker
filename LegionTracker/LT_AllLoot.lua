@@ -23,6 +23,7 @@ function LT_AllLoot:OnLoad(self)
     tinsert(UISpecialFrames, self:GetName());
     LT_AllLootPanel:SetFrameLevel(100);
 	LT_LootUI:SetupFrame(LT_AllLootTable);
+    LT_LootSearch:SetAutoFocus(false);
 end
 
 function LT_AllLoot:UpdateSearch()
