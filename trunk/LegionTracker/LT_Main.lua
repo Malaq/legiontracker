@@ -1,4 +1,4 @@
-﻿LT_VERSION = "Legion Tracker 0.910c"
+﻿LT_VERSION = "Legion Tracker 0.911"
 LT_NumPlayersShown = 5;
 LT_Main_SortIndex = 1;
 -- {0, 1, ..., n-1} -> player_name
@@ -29,6 +29,7 @@ function LT_OnLoad(self)
     self:RegisterEvent("CHAT_MSG_SYSTEM");
     self:RegisterEvent("CHAT_MSG_WHISPER");
     self:RegisterEvent("RAID_ROSTER_UPDATE");
+    self:RegisterEvent("LOOT_OPENED");
     --this:RegisterForClicks("LeftButtonDown", "RightButtonDown");
     LT_LoadLabels();
     LT_Main_SetupTable(self);
@@ -70,6 +71,9 @@ function LT_Main_OnEvent(self, event, ...)
     elseif (event == "CHAT_MSG_WHISPER") then
         local arg1, arg2 = ...;
         LT_OfficerLoot:OnEvent(event, arg1, arg2);
+    elseif (event == "LOOT_OPENED") then
+        local arg1 = ...;
+        LT_OfficerLoot:LootOpened(arg1);
     elseif (event == "CHAT_MSG_SYSTEM") then
         local arg1 = ...;
         --LT_Print("System message received: "..arg1);

@@ -23,12 +23,15 @@ end
 
 function LT_Timer_SlashHandler(args)
     if (string.find(args, " ") == nil) then
-		LT_Print("lt timer default");
+		LT_Print("lt timer default - Reset timer to defaults (10 min tick, 4 hour duration).", "yellow");
+        LT_Print("lt timer toggle  - Toggle the timer to start or stop.", "yellow");
 		return;
 	end
     local cmd = string.sub(args, string.find(args, " ")+1);
     if (cmd == "default") then
         LT_Timer_Default();
+    elseif (cmd == "toggle") then
+        LT_TimerToggle();
     end
 end
 
