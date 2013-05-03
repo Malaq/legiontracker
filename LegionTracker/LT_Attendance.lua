@@ -33,7 +33,8 @@ function LT_ApplyAttendance()
         if (guildId ~= nil) then
             LT_SetPlayerInfoFromName(k,"onote",attendance);
             LT_SetPlayerInfoFromName(k,"attendance",attendance);
-            GuildRosterSetOfficerNote(guildId, attendance);
+            --Commented out just in case
+            --GuildRosterSetOfficerNote(guildId, attendance);
             counter = counter+1;
         end
     end
@@ -84,7 +85,8 @@ function LT_AttendanceTic()
         --LT_Print(k.." id: "..guildId.." setting attendance: "..attendance);
         LT_SetPlayerInfoFromName(k,"onote",attendance);
         LT_SetPlayerInfoFromName(k,"attendance",attendance);
-        GuildRosterSetOfficerNote(guildId, attendance);
+        --Commenting out just in case
+        --GuildRosterSetOfficerNote(guildId, attendance);
         --LT_Print("k: "..k.." tick: "..LT_Ticks[k]["tick"]);
         counter = counter+1;
     end
@@ -137,14 +139,16 @@ function LT_SingleMemberTic(guildId, tickFromAlt, altName, tickFromRaid)
     
     if (rank == "Friend") then
         if (officernote ~= "Friend") then
-            GuildRosterSetOfficerNote(guildId, "Friend");
+            --Commenting out just in case
+            --GuildRosterSetOfficerNote(guildId, "Friend");
         end
         return nil;
     end
     
     if (rank == "PvPer") then
         if (officernote ~= "PvPer") then
-            GuildRosterSetOfficerNote(guildId, "PvPer");
+            --Commenting out just in case
+            --GuildRosterSetOfficerNote(guildId, "PvPer");
         end
         return nil;
     end
@@ -253,7 +257,8 @@ function LT_AttendanceTicold()
         local attendance = LT_GetPlayerInfoFromName(name,"attendance")
         local sync = LT_GetPlayerInfoFromName(name,"sync")
         if (sync == true) then
-            GuildRosterSetOfficerNote(i, attendance);
+            --Commented out just in case
+            --GuildRosterSetOfficerNote(i, attendance);
             counter = counter+1;
         end
     end
@@ -508,35 +513,35 @@ end
 
 function LT_ResetAttendance()
     local count = 0;
-    guildCount = GetNumGuildMembers(true);
-    for i = 1, guildCount do 
-        --temp = GetGuildRosterSelection();
-        local name, rank, _, _, _, _, _, onote = GetGuildRosterInfo(i);
-        if (rank == "Alt") or (rank == "Officer Alt") then
-            local pname = LT_GetPlayerIndexFromName(onote);
-            if (pname == nil) then
-                LT_SetPlayerInfoFromName(name,"onote","<Enter Main Name>");
-                GuildRosterSetOfficerNote(i, "<Enter Main Name>");
-            end
-            count = count+1;
-        elseif (rank == "Friend") and (onote ~= "Friend") then
-            LT_SetPlayerInfoFromName(name,"onote","Friend");
-            GuildRosterSetOfficerNote(i, "Friend");
-            count = count+1;
-        elseif (rank == "Friend") then
-            count = count+1;
-        elseif (rank == "PvPer") and (onote ~= "PvPer") then
-            LT_SetPlayerInfoFromName(name,"onote","PvPer");
-            GuildRosterSetOfficerNote(i, "PvPer");
-            count = count+1;
-        elseif (rank == "PvPer") then
-            count = count+1;
-        else
-            GuildRosterSetOfficerNote(i, "");
-            count = count+1;
-        end
-    end
-    LT_Attendance = {};
+--    guildCount = GetNumGuildMembers(true);
+--    for i = 1, guildCount do 
+--        --temp = GetGuildRosterSelection();
+--        local name, rank, _, _, _, _, _, onote = GetGuildRosterInfo(i);
+--        if (rank == "Alt") or (rank == "Officer Alt") then
+--            local pname = LT_GetPlayerIndexFromName(onote);
+--            if (pname == nil) then
+--                LT_SetPlayerInfoFromName(name,"onote","<Enter Main Name>");
+--                GuildRosterSetOfficerNote(i, "<Enter Main Name>");
+--            end
+--            count = count+1;
+--        elseif (rank == "Friend") and (onote ~= "Friend") then
+--            LT_SetPlayerInfoFromName(name,"onote","Friend");
+--            GuildRosterSetOfficerNote(i, "Friend");
+--            count = count+1;
+--        elseif (rank == "Friend") then
+--            count = count+1;
+--        elseif (rank == "PvPer") and (onote ~= "PvPer") then
+--            LT_SetPlayerInfoFromName(name,"onote","PvPer");
+--            GuildRosterSetOfficerNote(i, "PvPer");
+--            count = count+1;
+--        elseif (rank == "PvPer") then
+--            count = count+1;
+--        else
+--            GuildRosterSetOfficerNote(i, "");
+--            count = count+1;
+--        end
+--    end
+--    LT_Attendance = {};
     LT_Print("Attendance reset for " ..count.. " players.");
 end
 
