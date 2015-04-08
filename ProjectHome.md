@@ -1,0 +1,1 @@
+WoW mod to track raid attendance and loot
